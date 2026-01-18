@@ -10,7 +10,6 @@
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -41,11 +40,25 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/proj4.js"></script>
         <script src="js/proj4leaflet.js"></script>
-        <script src="js/leaflet-search.js"></script>
         <script src="data/UPDATE_15_01_2026_2102_0.js"></script>
         <script src="data/UPDATE_FLOATING_1.js"></script>
         <script src="data/UPDATE_KEKURANGAN_2.js"></script>
         <script>
+        var highlightLayer;
+        function highlightFeature(e) {
+            highlightLayer = e.target;
+
+            if (e.target.feature.geometry.type === 'LineString' || e.target.feature.geometry.type === 'MultiLineString') {
+              highlightLayer.setStyle({
+                color: 'rgba(255, 255, 0, 1.00)',
+              });
+            } else {
+              highlightLayer.setStyle({
+                fillColor: 'rgba(255, 255, 0, 1.00)',
+                fillOpacity: 1
+              });
+            }
+        }
         var crs = new L.Proj.CRS('EPSG:23835', '+proj=tmerc +lat_0=0 +lon_0=109.5 +k=0.9999 +x_0=200000 +y_0=1500000 +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs', {
             resolutions: [2800, 1400, 700, 350, 175, 84, 42, 21, 11.2, 5.6, 2.8, 1.4, 0.7, 0.35, 0.14, 0.07],
         });
@@ -54,7 +67,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.9772407238215335,108.68283142463615],[-6.963020938388921,108.71836539392248]]);
+        }).fitBounds([[-6.9807213350540325,108.68639774181459],[-6.977155044497939,108.7018459889616]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -136,6 +149,16 @@
         function setBounds() {
         }
         function pop_UPDATE_15_01_2026_2102_0(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">fid</th>\
@@ -305,6 +328,16 @@
         bounds_group.addLayer(layer_UPDATE_15_01_2026_2102_0);
         map.addLayer(layer_UPDATE_15_01_2026_2102_0);
         function pop_UPDATE_FLOATING_1(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">fid</th>\
@@ -460,6 +493,16 @@
         bounds_group.addLayer(layer_UPDATE_FLOATING_1);
         map.addLayer(layer_UPDATE_FLOATING_1);
         function pop_UPDATE_KEKURANGAN_2(feature, layer) {
+            layer.on({
+                mouseout: function(e) {
+                    for (var i in e.target._eventParents) {
+                        if (typeof e.target._eventParents[i].resetStyle === 'function') {
+                            e.target._eventParents[i].resetStyle(e.target);
+                        }
+                    }
+                },
+                mouseover: highlightFeature,
+            });
             var popupContent = '<table>\
                     <tr>\
                         <th scope="row">fid</th>\
@@ -571,23 +614,13 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context) !== null?String('<div style="color: #323232; font-size: 3pt; font-family: \'Open Sans\', sans-serif;">' + exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UPDATE_15_01_2026_2102_0'});
+            layer.bindTooltip((exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context) !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UPDATE_15_01_2026_2102_0'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        map.addControl(new L.Control.Search({
-            layer: layer_UPDATE_15_01_2026_2102_0,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            propertyName: 'key'}));
-        if (typeof url === 'undefined') {
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
-        } else {
-            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
-        }
         resetLabels([layer_UPDATE_15_01_2026_2102_0]);
         map.on("zoomend", function(){
             resetLabels([layer_UPDATE_15_01_2026_2102_0]);
