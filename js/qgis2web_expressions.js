@@ -757,32 +757,6 @@ function fnc_project_color(values, context) {
 
 
 
-function exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context) {
-    // '<b>' + nib + '</b>|' + pemilik
-
-    var feature = context.feature;
-    
-    if (feature.properties) {
-        return ((('<b>' + feature.properties['nib'] ) + '</b>|') + feature.properties['pemilik'] );
-    } else {
-        return ((('<b>' + feature['nib'] ) + '</b>|') + feature['pemilik'] );
-    }
-}
-
-
-function exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context) {
-    // '<b>' + nib + '</b>|' + pemilik
-
-    var feature = context.feature;
-    
-    if (feature.properties) {
-        return ((('<b>' + feature.properties['nib'] ) + '</b>|') + feature.properties['pemilik'] );
-    } else {
-        return ((('<b>' + feature['nib'] ) + '</b>|') + feature['pemilik'] );
-    }
-}
-
-
 function exp_UPDATE_15_01_2026_2102_0rule0_eval_expression(context) {
     // desa = 'sukajaya'
 

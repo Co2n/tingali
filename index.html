@@ -67,7 +67,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.9807213350540325,108.68639774181459],[-6.977155044497939,108.7018459889616]]);
+        }).fitBounds([[-6.982409829126311,108.6858605631244],[-6.980626609109954,108.6935847382458]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -614,7 +614,7 @@
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context) !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + exp_label_UPDATE_15_01_2026_2102_0_eval_expression(context)) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UPDATE_15_01_2026_2102_0'});
+            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_UPDATE_15_01_2026_2102_0'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
