@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
@@ -40,6 +41,7 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/proj4.js"></script>
         <script src="js/proj4leaflet.js"></script>
+        <script src="js/leaflet-search.js"></script>
         <script src="data/UPDATE_15_01_2026_2102_0.js"></script>
         <script src="data/UPDATE_FLOATING_1.js"></script>
         <script src="data/UPDATE_KEKURANGAN_2.js"></script>
@@ -67,7 +69,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.982409829126311,108.6858605631244],[-6.980626609109954,108.6935847382458]]);
+        }).fitBounds([[-6.991335609521735,108.66379409914757],[-6.962898641570795,108.73308464112093]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -175,6 +177,9 @@
                     <tr>\
                         <th scope="row">pemilik</th>\
                         <td class="visible-with-data" id="pemilik">' + (feature.properties['pemilik'] !== null ? autolinker.link(String(feature.properties['pemilik']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -371,6 +376,15 @@
                         <th scope="row">jenis</th>\
                         <td class="visible-with-data" id="jenis">' + (feature.properties['jenis'] !== null ? autolinker.link(String(feature.properties['jenis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['keynibnama'] !== null ? autolinker.link(String(feature.properties['keynibnama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['label'] !== null ? autolinker.link(String(feature.properties['label']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -536,6 +550,15 @@
                         <th scope="row">Kekurangan</th>\
                         <td class="visible-with-data" id="validasi">' + (feature.properties['validasi'] !== null ? autolinker.link(String(feature.properties['validasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['keynibnama'] !== null ? autolinker.link(String(feature.properties['keynibnama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['label'] !== null ? autolinker.link(String(feature.properties['label']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -621,6 +644,16 @@
               addLabel(layer, i);
               i++;
         });
+        map.addControl(new L.Control.Search({
+            layer: layer_UPDATE_15_01_2026_2102_0,
+            initial: false,
+            hideMarkerOnCollapse: true,
+            propertyName: 'key'}));
+        if (typeof url === 'undefined') {
+            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+        } else {
+            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
+        }
         resetLabels([layer_UPDATE_15_01_2026_2102_0]);
         map.on("zoomend", function(){
             resetLabels([layer_UPDATE_15_01_2026_2102_0]);
