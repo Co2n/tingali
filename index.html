@@ -69,7 +69,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.991335609521735,108.66379409914757],[-6.962898641570795,108.73308464112093]]);
+        }).fitBounds([[-6.981745629460837,108.69158270898699],[-6.980857181038589,108.6936110232534]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -177,9 +177,6 @@
                     <tr>\
                         <th scope="row">pemilik</th>\
                         <td class="visible-with-data" id="pemilik">' + (feature.properties['pemilik'] !== null ? autolinker.link(String(feature.properties['pemilik']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -376,15 +373,6 @@
                         <th scope="row">jenis</th>\
                         <td class="visible-with-data" id="jenis">' + (feature.properties['jenis'] !== null ? autolinker.link(String(feature.properties['jenis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['keynibnama'] !== null ? autolinker.link(String(feature.properties['keynibnama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['label'] !== null ? autolinker.link(String(feature.properties['label']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
 			layer.on('popupopen', function(e) {
@@ -549,15 +537,6 @@
                     <tr>\
                         <th scope="row">Kekurangan</th>\
                         <td class="visible-with-data" id="validasi">' + (feature.properties['validasi'] !== null ? autolinker.link(String(feature.properties['validasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['keynibnama'] !== null ? autolinker.link(String(feature.properties['keynibnama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['label'] !== null ? autolinker.link(String(feature.properties['label']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <td colspan="2">' + (feature.properties['reff'] !== null ? autolinker.link(String(feature.properties['reff']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
