@@ -102,19 +102,19 @@
             <div class="card-body">
                <div class="row g-3">
                   <div class="col-md-4">
-                     <!-- tambahkan class required ke label jika wajib diisi -->
+                     <!-- tambahkan label class required ke label jika wajib diisi dan tambahkan setelah id required -->
                      <label class="form-label">NOP</label>
-                     <input type="text" class="form-control" name="nop" id="nopInput" required
+                     <input type="text" class="form-control" name="nop" id="nopInput"
                         placeholder="Contoh: 3208..." inputmode="numeric">
                      <small class="text-danger d-none" id="nopError">Tidak boleh mengandung titik!</small>
                   </div>
                   <div class="col-md-4">
                      <label class="form-label">Nama di SPPT</label>
-                     <input type="text" class="form-control uppercase-input" name="nama" required placeholder="NAMA">
+                     <input type="text" class="form-control uppercase-input" name="nama" placeholder="NAMA">
                   </div>
                   <div class="col-md-4">
                      <label class="form-label">Luas di SPPT (m²)</label>
-                     <input type="number" class="form-control" name="luas" required>
+                     <input type="number" class="form-control" name="luas">
                   </div>
                   <div class="col-12">
                      <label class="form-label">Foto SPPT</label>
@@ -133,7 +133,7 @@
                <div class="row g-3">
                   <div class="col-md-4">
                      <label class="form-label">Nama Pemilik</label>
-                     <input type="text" class="form-control uppercase-input" name="pemilik" required
+                     <input type="text" class="form-control uppercase-input" name="pemilik"
                         placeholder="NAMA SESUAI KTP">
                   </div>
                   <div class="col-md-4">
@@ -159,7 +159,7 @@
             <div class="card-body">
                <div class="mb-3">
                   <label class="form-label">Nomor Bukti</label>
-                  <input type="text" class="form-control" name="nobukti" required>
+                  <input type="text" class="form-control" name="nobukti">
                </div>
                <div class="row g-3">
                   <div class="col-md-6">
@@ -200,11 +200,11 @@
                <div class="row g-3">
                   <div class="col-md-6">
                      <label class="form-label">Nama Persetujuan</label>
-                     <input type="text" class="form-control uppercase-input" name="nm_persetujuan" required>
+                     <input type="text" class="form-control uppercase-input" name="nm_persetujuan">
                   </div>
                   <div class="col-md-6">
                      <label class="form-label">Sebagai (SBG)</label>
-                     <select class="form-select" name="sbg" required>
+                     <select class="form-select" name="sbg">
                         <option value="" selected disabled>Pilih Status...</option>
                         <option value="SUAMI">SUAMI</option>
                         <option value="ISTRI">ISTRI</option>
@@ -232,7 +232,7 @@
             <div class="card-body">
                <div class="mb-3">
                   <label class="form-label required">Masukkan Kode Akses (Password)</label>
-                  <input type="password" class="form-control" id="securityPass" required
+                  <input type="password" class="form-control" id="securityPass"
                      placeholder="Masukkan password untuk menyimpan">
                </div>
             </div>
