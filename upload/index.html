@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Form Input Data Rekap</title>
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+   <style>
+      body {
+         background-color: #f8f9fa;
+         padding-bottom: 50px;
+      }
+
+      .card {
+         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+         border: none;
+         margin-bottom: 20px;
+      }
+
+      .card-header {
+         background-color: #0d6efd;
+         color: white;
+         font-weight: bold;
+      }
+
+      .preview-container {
+         margin-top: 10px;
+         border: 2px dashed #ccc;
+         min-height: 150px;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         position: relative;
+         background: #fff;
+         overflow: hidden;
+      }
+
+      canvas {
+         max-width: 100%;
+         height: auto;
+      }
+
+      .loading-overlay {
+         display: none;
+         position: absolute;
+         top: 0;
+         left: 0;
+         right: 0;
+         bottom: 0;
+         background: rgba(255, 255, 255, 0.8);
+         z-index: 10;
+         align-items: center;
+         justify-content: center;
+      }
+
+      .required::after {
+         content: " *";
+         color: red;
+      }
+
+      /* Style untuk loading screen saat submit */
+      #global-loading {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: rgba(0, 0, 0, 0.7);
+         z-index: 9999;
+         color: white;
+         flex-direction: column;
+         align-items: center;
+         justify-content: center;
+      }
+   </style>
+   <script async src="https://docs.opencv.org/4.5.4/opencv.js" onload="onOpenCvReady();"
+      type="text/javascript"></script>
+</head>
+
+<body>
+
+   <div id="global-loading">
+      <div class="spinner-border text-light mb-3" role="status"></div>
+      <h3>Mengirim Data ke Server...</h3>
+      <p>Mohon jangan tutup halaman ini.</p>
+   </div>
+
+   <div class="container mt-4">
+      <h2 class="text-center mb-2">Form Input Data Tanah (Rekap)</h2>
+      <h4 class="text-center mb-4 text-muted" id="fidDisplay">Memuat FID...</h4>
+
+      <div id="cv-status" class="alert alert-warning text-center">Memuat library pemrosesan gambar...</div>
+
+      <form id="rekapForm">
+
+         <input type="hidden" name="fid" id="fidInput">
+
+         <div class="card">
+            <div class="card-header">1. Data Objek Pajak</div>
+            <div class="card-body">
+               <div class="row g-3">
+                  <div class="col-md-4">
+                     <!-- tambahkan class required ke label jika wajib diisi -->
+                     <label class="form-label">NOP</label>
+                     <input type="text" class="form-control" name="nop" id="nopInput" required
+                        placeholder="Contoh: 3208..." inputmode="numeric">
+                     <small class="text-danger d-none" id="nopError">Tidak boleh mengandung titik!</small>
+                  </div>
+                  <div class="col-md-4">
+                     <label class="form-label">Nama di SPPT</label>
+                     <input type="text" class="form-control uppercase-input" name="nama" required placeholder="NAMA">
+                  </div>
+                  <div class="col-md-4">
+                     <label class="form-label">Luas di SPPT (m²)</label>
+                     <input type="number" class="form-control" name="luas" required>
+                  </div>
+                  <div class="col-12">
+                     <label class="form-label">Foto SPPT</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_sppt">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_sppt"></canvas>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card">
+            <div class="card-header">2. Data Pemilik</div>
+            <div class="card-body">
+               <div class="row g-3">
+                  <div class="col-md-4">
+                     <label class="form-label">Nama Pemilik</label>
+                     <input type="text" class="form-control uppercase-input" name="pemilik" required
+                        placeholder="NAMA SESUAI KTP">
+                  </div>
+                  <div class="col-md-4">
+                     <label class="form-label">Foto KTP</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_ktp">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_ktp"></canvas>
+                     </div>
+                  </div>
+                  <div class="col-md-4">
+                     <label class="form-label">Foto KK</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_kk">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_kk"></canvas>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card">
+            <div class="card-header">3. Bukti Kepemilikan</div>
+            <div class="card-body">
+               <div class="mb-3">
+                  <label class="form-label">Nomor Bukti</label>
+                  <input type="text" class="form-control" name="nobukti" required>
+               </div>
+               <div class="row g-3">
+                  <div class="col-md-6">
+                     <label class="form-label">Bukti Hal 1</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b1">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_b1"></canvas>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Bukti Hal 2</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b2">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_b2"></canvas>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Bukti Hal 3</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b3">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_b3"></canvas>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Bukti Hal 4</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b4">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_b4"></canvas>
+                     </div>
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card">
+            <div class="card-header">4. Persetujuan</div>
+            <div class="card-body">
+               <div class="row g-3">
+                  <div class="col-md-6">
+                     <label class="form-label">Nama Persetujuan</label>
+                     <input type="text" class="form-control uppercase-input" name="nm_persetujuan" required>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Sebagai (SBG)</label>
+                     <select class="form-select" name="sbg" required>
+                        <option value="" selected disabled>Pilih Status...</option>
+                        <option value="SUAMI">SUAMI</option>
+                        <option value="ISTRI">ISTRI</option>
+                        <option value="ANAK">ANAK</option>
+                        <option value="SAUDARA">SAUDARA</option>
+                     </select>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Foto KTP Penyetuju</label>
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_ktpagree">
+                     <div class="preview-container">
+                        <div class="loading-overlay">Proses...</div><canvas id="canvas_ktpagree"></canvas>
+                     </div>
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Referensi (Reff)</label>
+                     <input type="text" class="form-control" name="reff">
+                  </div>
+               </div>
+            </div>
+         </div>
+
+         <div class="card border-danger">
+            <div class="card-header bg-danger text-white">Konfirmasi Keamanan</div>
+            <div class="card-body">
+               <div class="mb-3">
+                  <label class="form-label required">Masukkan Kode Akses (Password)</label>
+                  <input type="password" class="form-control" id="securityPass" required
+                     placeholder="Masukkan password untuk menyimpan">
+               </div>
+            </div>
+         </div>
+
+         <div class="d-grid gap-2 mb-5">
+            <button type="submit" class="btn btn-primary btn-lg">Simpan Data</button>
+         </div>
+
+      </form>
+   </div>
+
+   <script>
+      // --- GANTI URL INI DENGAN URL DEPLOY ANDA ---
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbwy5IXU5SY57x4XrLfe9f-4WO-zyGKf0wLnX-SUoiWE7zYN5AWIEAUquWavZIr3I91F/exec";
+
+      // --- 0. URL PARAM & FETCH DATA LOGIC ---
+      document.addEventListener("DOMContentLoaded", function () {
+         const urlParams = new URLSearchParams(window.location.search);
+         const fidValue = urlParams.get('fid');
+         const fidInput = document.getElementById('fidInput');
+         const fidDisplay = document.getElementById('fidDisplay');
+
+         if (fidValue) {
+            fidInput.value = fidValue;
+            fidDisplay.innerText = "FID: " + fidValue + " (Mengecek Data...)";
+            fidDisplay.classList.remove("text-muted");
+            fidDisplay.classList.add("text-primary");
+
+            // Panggil Fungsi Fetch Data
+            fetchData(fidValue);
+         } else {
+            fidDisplay.innerText = "PERINGATAN: Parameter FID tidak ditemukan di URL!";
+            fidDisplay.classList.add("text-danger");
+         }
+      });
+
+      // Fungsi Ambil Data dari Spreadsheet
+      function fetchData(fid) {
+         // Tampilkan loading screen
+         document.getElementById('global-loading').style.display = 'flex';
+         document.querySelector('#global-loading h3').innerText = "Cek datanya dulu ya...";
+
+         fetch(GAS_URL + "?fid=" + fid) // Request GET ke GAS
+            .then(response => response.json())
+            .then(data => {
+               document.getElementById('global-loading').style.display = 'none';
+               document.querySelector('#global-loading h3').innerText = "Mengirim Data ke Server..."; // Reset text
+
+               if (data.status === 'found') {
+                  const d = data.data;
+                  const display = document.getElementById('fidDisplay');
+                  display.innerText = "FID: " + fid + " (MODE EDIT/UPDATE)";
+                  display.classList.remove("text-primary");
+                  display.classList.add("text-success", "fw-bold");
+
+                  // --- ISI FORM OTOMATIS (Populate) ---
+                  document.querySelector('[name="nop"]').value = d.nop;
+                  document.querySelector('[name="nama"]').value = d.nama;
+                  document.querySelector('[name="luas"]').value = d.luas;
+                  document.querySelector('[name="pemilik"]').value = d.pemilik;
+                  document.querySelector('[name="nobukti"]').value = d.nobukti;
+                  document.querySelector('[name="nm_persetujuan"]').value = d.nm_persetujuan;
+                  document.querySelector('[name="sbg"]').value = d.sbg;
+                  document.querySelector('[name="reff"]').value = d.reff;
+
+                  // --- TAMPILKAN LINK FOTO LAMA (VERSI RESPONSIF) ---
+                  const showOldImg = (url, canvasId) => {
+                     if (url && url.length > 5) {
+                        const canvas = document.getElementById(canvasId);
+                        const previewContainer = canvas.parentElement; // Ini kotak garis putus-putus
+                        const wrapper = previewContainer.parentElement; // Ini kolom (col-md-*)
+
+                        // 1. Cek apakah pesan sudah ada (biar tidak duplikat saat klik tombol berkali-kali)
+                        const existingMsg = wrapper.querySelector('.old-file-msg');
+                        if (existingMsg) existingMsg.remove();
+
+                        // 2. Buat elemen pesan dengan styling Bootstrap agar responsif
+                        const info = document.createElement('div');
+                        info.className = 'old-file-msg alert alert-success py-1 px-2 mb-2 mt-2';
+                        info.style.fontSize = '0.8rem';
+                        info.style.lineHeight = '1.2';
+
+                        // 3. Isi HTML (Dibuat turun baris agar aman di HP)
+                        info.innerHTML = `
+                              <div class="d-flex justify-content-between align-items-center">
+                                 <span>✅ <b>Foto Tersimpan</b></span>
+                                 <a href="${url}" target="_blank" class="btn btn-sm btn-outline-success py-0" style="font-size: 0.75rem;">Lihat Foto</a>
+                              </div>
+                              <div class="text-muted mt-1 border-top pt-1" style="font-size: 0.7rem;">
+                                 <i>Upload foto baru jika ingin mengganti.</i>
+                              </div>
+                           `;
+
+                        // 4. Masukkan pesan DI ATAS kotak preview (bukan di dalamnya)
+                        wrapper.insertBefore(info, previewContainer);
+
+                        // Opsional: Beri border hijau pada container preview tanda ada isinya
+                        previewContainer.style.borderColor = '#198754';
+                        previewContainer.style.backgroundColor = '#f8fff9';
+                     }
+                  };
+
+                  showOldImg(d.sppt_url, 'canvas_sppt');
+                  showOldImg(d.ktp_url, 'canvas_ktp');
+                  showOldImg(d.kk_url, 'canvas_kk');
+                  showOldImg(d.bukti1_url, 'canvas_b1');
+                  showOldImg(d.bukti2_url, 'canvas_b2');
+                  showOldImg(d.bukti3_url, 'canvas_b3');
+                  showOldImg(d.bukti4_url, 'canvas_b4');
+                  showOldImg(d.ktpagree_url, 'canvas_ktpagree');
+
+                  alert("Alhamdulillah Data ditemukan! Silakan edit jika diperlukan.");
+
+               } else {
+                  document.getElementById('fidDisplay').innerText = "FID: " + fid + " (DATA BARU)";
+               }
+            })
+            .catch(err => {
+               document.getElementById('global-loading').style.display = 'none';
+               console.error(err);
+            });
+      }
+
+      // --- LOGIKA VALIDASI & OPENCV (TETAP SAMA) ---
+      // 1. Validasi String
+      document.querySelectorAll('.uppercase-input').forEach(input => {
+         input.addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+      });
+
+      // 2. Validasi NOP
+      const nopInput = document.getElementById('nopInput');
+      nopInput.addEventListener('input', function (e) {
+         if (this.value.includes('.')) {
+            document.getElementById('nopError').classList.remove('d-none');
+            this.value = this.value.replace(/\./g, '');
+         } else {
+            document.getElementById('nopError').classList.add('d-none');
+         }
+      });
+
+      // 3. OpenCV Core
+      let cvReady = false;
+      function onOpenCvReady() {
+         cvReady = true;
+         document.getElementById('cv-status').classList.remove('alert-warning');
+         document.getElementById('cv-status').classList.add('alert-success');
+         document.getElementById('cv-status').innerText = "Sistem Pemrosesan Gambar Siap!";
+         setTimeout(() => { document.getElementById('cv-status').style.display = 'none'; }, 2000);
+      }
+
+      // Input File Handler
+      document.querySelectorAll('.img-input').forEach(input => {
+         input.addEventListener('change', function (e) {
+            if (!cvReady) { alert("Tunggu OpenCV..."); return; }
+            if (e.target.files.length === 0) return;
+
+            // Hapus pesan "Foto tersimpan" jika user upload baru
+            const prevInfo = input.parentElement.querySelector('small.text-success');
+            if (prevInfo) prevInfo.style.display = 'none';
+
+            const file = e.target.files[0];
+            const canvasId = e.target.dataset.target;
+            const canvas = document.getElementById(canvasId);
+            const overlay = input.parentElement.querySelector('.loading-overlay');
+
+            overlay.style.display = 'flex';
+            const img = new Image();
+            img.onload = function () {
+               try { processDocument(img, canvas); }
+               catch (err) {
+                  console.error(err);
+                  const ctx = canvas.getContext('2d');
+                  canvas.width = 400;
+                  canvas.height = img.height * (400 / img.width);
+                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+               }
+               overlay.style.display = 'none';
+            };
+            img.src = URL.createObjectURL(file);
+         });
+      });
+
+      // Fungsi OpenCV Process (Sama persis sblmnya)
+      function processDocument(imgElement, canvasOutput) {
+         let src = cv.imread(imgElement);
+         let dst = new cv.Mat();
+         let gray = new cv.Mat();
+         let blurred = new cv.Mat();
+         let edges = new cv.Mat();
+
+         let dsize = new cv.Size(800, 0);
+         let ratio = 800 / src.cols;
+         let newHeight = src.rows * ratio;
+         cv.resize(src, dst, new cv.Size(800, newHeight), 0, 0, cv.INTER_AREA);
+
+         cv.cvtColor(dst, gray, cv.COLOR_RGBA2GRAY, 0);
+         cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
+         cv.Canny(blurred, edges, 75, 200);
+
+         let contours = new cv.MatVector();
+         let hierarchy = new cv.Mat();
+         cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
+
+         let maxArea = 0; let maxContourIndex = -1;
+         for (let i = 0; i < contours.size(); ++i) {
+            let area = cv.contourArea(contours.get(i));
+            if (area > maxArea) { maxArea = area; maxContourIndex = i; }
+         }
+
+         let success = false;
+         if (maxContourIndex !== -1 && maxArea > 10000) {
+            let cnt = contours.get(maxContourIndex);
+            let peri = cv.arcLength(cnt, true);
+            let approx = new cv.Mat();
+            cv.approxPolyDP(cnt, approx, 0.02 * peri, true);
+
+            if (approx.rows === 4) {
+               let docPoints = [];
+               for (let i = 0; i < 4; i++) docPoints.push({ x: approx.data32S[i * 2], y: approx.data32S[i * 2 + 1] });
+               docPoints = sortCorners(docPoints);
+
+               let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [docPoints[0].x, docPoints[0].y, docPoints[1].x, docPoints[1].y, docPoints[2].x, docPoints[2].y, docPoints[3].x, docPoints[3].y]);
+               let widthA = Math.hypot(docPoints[2].x - docPoints[3].x, docPoints[2].y - docPoints[3].y);
+               let widthB = Math.hypot(docPoints[1].x - docPoints[0].x, docPoints[1].y - docPoints[0].y);
+               let maxWidth = Math.max(widthA, widthB);
+               let heightA = Math.hypot(docPoints[1].x - docPoints[2].x, docPoints[1].y - docPoints[2].y);
+               let heightB = Math.hypot(docPoints[0].x - docPoints[3].x, docPoints[0].y - docPoints[3].y);
+               let maxHeight = Math.max(heightA, heightB);
+
+               let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, maxWidth, 0, maxWidth, maxHeight, 0, maxHeight]);
+               let M = cv.getPerspectiveTransform(srcTri, dstTri);
+               let warped = new cv.Mat();
+               cv.warpPerspective(dst, warped, M, new cv.Size(maxWidth, maxHeight));
+
+               cv.imshow(canvasOutput, warped);
+               srcTri.delete(); dstTri.delete(); M.delete(); warped.delete(); approx.delete();
+               success = true;
+            }
+         }
+         if (!success) { cv.imshow(canvasOutput, dst); }
+         src.delete(); dst.delete(); gray.delete(); blurred.delete(); edges.delete(); contours.delete(); hierarchy.delete();
+      }
+
+      function sortCorners(pts) {
+         pts.sort((a, b) => a.y - b.y);
+         let top = pts.slice(0, 2).sort((a, b) => a.x - b.x);
+         let bottom = pts.slice(2, 4).sort((a, b) => a.x - b.x);
+         return [top[0], top[1], bottom[1], bottom[0]];
+      }
+
+      // --- PENGIRIMAN DATA (SUBMIT) ---
+      document.getElementById('rekapForm').addEventListener('submit', function (e) {
+         e.preventDefault();
+
+         if (GAS_URL.includes("URL_GOOGLE_APPS_SCRIPT")) {
+            alert("ERROR: URL Script belum disetting!"); return;
+         }
+
+         const password = document.getElementById('securityPass').value;
+         if (!password) { alert("Masukkan password!"); return; }
+
+         document.getElementById('global-loading').style.display = 'flex';
+
+         const formData = new FormData(this);
+         let dataObj = {};
+         formData.forEach((value, key) => { dataObj[key] = value; });
+         dataObj.password = password;
+
+         // Helper Canvas
+         const getCanvasImage = (id) => {
+            const canvas = document.getElementById(id);
+            // Hanya kirim data gambar jika canvas memiliki konten yang valid (user upload baru)
+            // Cek sederhana: jika user tidak upload file, input file value kosong.
+            // Namun canvas logic kita hanya jalan 'onload' file.
+            // Jadi: Cek apakah input file terkait ada filenya
+            const fileInput = document.querySelector(`input[data-target="${id}"]`);
+            if (fileInput && fileInput.files.length > 0) {
+               return canvas.toDataURL('image/jpeg', 0.8);
+            }
+            return ""; // Kirim string kosong agar backend mempertahankan foto lama
+         };
+
+         dataObj.sppt = getCanvasImage('canvas_sppt');
+         dataObj.ktp = getCanvasImage('canvas_ktp');
+         dataObj.kk = getCanvasImage('canvas_kk');
+         dataObj.bukti_hal_1 = getCanvasImage('canvas_b1');
+         dataObj.bukti_hal_2 = getCanvasImage('canvas_b2');
+         dataObj.bukti_hal_3 = getCanvasImage('canvas_b3');
+         dataObj.bukti_hal_4 = getCanvasImage('canvas_b4');
+         dataObj.ktpagree = getCanvasImage('canvas_ktpagree');
+
+         fetch(GAS_URL, {
+            method: 'POST',
+            body: JSON.stringify(dataObj)
+         })
+            .then(response => response.json())
+            .then(data => {
+               document.getElementById('global-loading').style.display = 'none';
+               if (data.status === 'success') {
+                  alert("SUKSES: " + data.message);
+                  if (data.message.includes("Baru")) {
+                     document.getElementById('rekapForm').reset();
+                     window.scrollTo(0, 0);
+                  } else {
+                     location.reload(); // Reload untuk refresh data edit
+                  }
+               } else {
+                  alert("GAGAL: " + data.message);
+               }
+            })
+            .catch(error => {
+               document.getElementById('global-loading').style.display = 'none';
+               alert("ERROR JARINGAN: " + error);
+            });
+      });
+   </script>
+
+</body>
+
+</html>
