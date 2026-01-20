@@ -551,10 +551,25 @@
 
                         if (data.status === 'success') {
                            // 1. Tampilkan pesan sukses
-                           alert("SUKSES: " + data.message);
+                           // User harus klik OK dulu, baru kode di bawahnya jalan
+                           alert("SUKSES: " + data.message + "\n\nTab ini akan ditutup otomatis.");
 
-                           // 2. Redirect (Pindah) ke halaman utama setelah klik OK
-                           window.location.href = "https://co2n.github.io/tingali";
+                           // 2. Tutup Tab Otomatis
+                           try {
+                              window.close();
+                           } catch (e) {
+                              console.log("Gagal menutup window otomatis", e);
+                           }
+
+                           // 3. Fallback: Jika browser memblokir window.close() (jarang terjadi di target="_blank")
+                           // Kita ganti tampilan body agar user tahu proses selesai
+                           document.body.innerHTML = `
+                    <div style="height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-family:sans-serif;">
+                        <h1 style="color:green;">✅ Data Berhasil Disimpan!</h1>
+                        <p>Anda wajib menutup tab ini setelah proses selesai.</p>
+                        <button onclick="window.close()" style="padding:10px 20px; font-size:16px; cursor:pointer;">Tutup Tab</button>
+                    </div>
+                `;
 
                         } else {
                            // Jika error dari server (misal password salah)
