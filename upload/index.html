@@ -104,8 +104,8 @@
                   <div class="col-md-4">
                      <!-- tambahkan label class required ke label jika wajib diisi dan tambahkan setelah id required -->
                      <label class="form-label">NOP</label>
-                     <input type="text" class="form-control" name="nop" id="nopInput"
-                        placeholder="Contoh: 3208..." inputmode="numeric">
+                     <input type="text" class="form-control" name="nop" id="nopInput" placeholder="Contoh: 3208..."
+                        inputmode="numeric">
                      <small class="text-danger d-none" id="nopError">Tidak boleh mengandung titik!</small>
                   </div>
                   <div class="col-md-4">
@@ -118,7 +118,8 @@
                   </div>
                   <div class="col-12">
                      <label class="form-label">Foto SPPT</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_sppt">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_sppt">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_sppt"></canvas>
                      </div>
@@ -138,14 +139,16 @@
                   </div>
                   <div class="col-md-4">
                      <label class="form-label">Foto KTP</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_ktp">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_ktp">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_ktp"></canvas>
                      </div>
                   </div>
                   <div class="col-md-4">
                      <label class="form-label">Foto KK</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_kk">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_kk">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_kk"></canvas>
                      </div>
@@ -164,28 +167,32 @@
                <div class="row g-3">
                   <div class="col-md-6">
                      <label class="form-label">Bukti Hal 1</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b1">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_b1">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_b1"></canvas>
                      </div>
                   </div>
                   <div class="col-md-6">
                      <label class="form-label">Bukti Hal 2</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b2">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_b2">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_b2"></canvas>
                      </div>
                   </div>
                   <div class="col-md-6">
                      <label class="form-label">Bukti Hal 3</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b3">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_b3">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_b3"></canvas>
                      </div>
                   </div>
                   <div class="col-md-6">
                      <label class="form-label">Bukti Hal 4</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_b4">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_b4">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_b4"></canvas>
                      </div>
@@ -214,7 +221,8 @@
                   </div>
                   <div class="col-md-6">
                      <label class="form-label">Foto KTP Penyetuju</label>
-                     <input type="file" class="form-control img-input" accept="image/*" capture="environment" data-target="canvas_ktpagree">
+                     <input type="file" class="form-control img-input" accept="image/*" capture="environment"
+                        data-target="canvas_ktpagree">
                      <div class="preview-container">
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_ktpagree"></canvas>
                      </div>
@@ -533,13 +541,30 @@
             .then(data => {
                document.getElementById('global-loading').style.display = 'none';
                if (data.status === 'success') {
-                  alert("SUKSES: " + data.message);
-                  if (data.message.includes("Baru")) {
-                     document.getElementById('rekapForm').reset();
-                     window.scrollTo(0, 0);
-                  } else {
-                     location.reload(); // Reload untuk refresh data edit
-                  }
+                  fetch(GAS_URL, {
+                     method: 'POST',
+                     body: JSON.stringify(dataObj)
+                  })
+                     .then(response => response.json())
+                     .then(data => {
+                        document.getElementById('global-loading').style.display = 'none';
+
+                        if (data.status === 'success') {
+                           // 1. Tampilkan pesan sukses
+                           alert("SUKSES: " + data.message);
+
+                           // 2. Redirect (Pindah) ke halaman utama setelah klik OK
+                           window.location.href = "https://co2n.github.io/tingali";
+
+                        } else {
+                           // Jika error dari server (misal password salah)
+                           alert("GAGAL: " + data.message);
+                        }
+                     })
+                     .catch(error => {
+                        document.getElementById('global-loading').style.display = 'none';
+                        alert("ERROR JARINGAN: " + error);
+                     });
                } else {
                   alert("GAGAL: " + data.message);
                }
