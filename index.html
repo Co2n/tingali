@@ -69,7 +69,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.979560687623479,108.68740127795155],[-6.978340676396754,108.69154929088073]]);
+        }).fitBounds([[-6.980489548946206,108.68565434301368],[-6.9780495314328554,108.69395037366213]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -163,18 +163,16 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['jenis'] !== null ? autolinker.link(String(feature.properties['jenis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
-                    </tr>\
-                    <tr>\
-                        <th scope="row">Luas PTSL</th>\
-                        <td class="visible-with-data" id="Luas PTSL">' + (feature.properties['Luas PTSL'] !== null ? autolinker.link(String(feature.properties['Luas PTSL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Luas PTSL" colspan="2"><strong>Luas PTSL</strong><br />' + (feature.properties['Luas PTSL'] !== null ? autolinker.link(String(feature.properties['Luas PTSL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['key2'] !== null ? autolinker.link(String(feature.properties['key2']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">link</th>\
-                        <td class="visible-with-data" id="link">' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="link" colspan="2"><strong>link</strong><br />' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nibornama'] !== null ? autolinker.link(String(feature.properties['nibornama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -340,11 +338,22 @@
             });
             var popupContent = '<table>\
                     <tr>\
+                        <td class="visible-with-data" id="jenis" colspan="2"><strong>jenis</strong><br />' + (feature.properties['jenis'] !== null ? autolinker.link(String(feature.properties['jenis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['validasi'] !== null ? autolinker.link(String(feature.properties['validasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td class="visible-with-data" id="Luas PTSL" colspan="2"><strong>Luas PTSL</strong><br />' + (feature.properties['Luas PTSL'] !== null ? autolinker.link(String(feature.properties['Luas PTSL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
                         <td colspan="2">' + (feature.properties['key2'] !== null ? autolinker.link(String(feature.properties['key2']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">link</th>\
-                        <td class="visible-with-data" id="link">' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="link" colspan="2"><strong>link</strong><br />' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nibornama'] !== null ? autolinker.link(String(feature.properties['nibornama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
@@ -480,17 +489,19 @@
             });
             var popupContent = '<table>\
                     <tr>\
-                        <td colspan="2">' + (feature.properties['jenis'] !== null ? autolinker.link(String(feature.properties['jenis']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="validasi" colspan="2"><strong>Kekurangan</strong><br />' + (feature.properties['validasi'] !== null ? autolinker.link(String(feature.properties['validasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <td class="visible-with-data" id="validasi" colspan="2"><strong>Kekurangan</strong><br />' + (feature.properties['validasi'] !== null ? autolinker.link(String(feature.properties['validasi']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="Luas PTSL" colspan="2"><strong>Luas PTSL</strong><br />' + (feature.properties['Luas PTSL'] !== null ? autolinker.link(String(feature.properties['Luas PTSL']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
                         <td colspan="2">' + (feature.properties['key2'] !== null ? autolinker.link(String(feature.properties['key2']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                     <tr>\
-                        <th scope="row">link</th>\
-                        <td class="visible-with-data" id="link">' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                        <td class="visible-with-data" id="link" colspan="2"><strong>link</strong><br />' + (feature.properties['link'] !== null ? autolinker.link(String(feature.properties['link']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
+                    </tr>\
+                    <tr>\
+                        <td colspan="2">' + (feature.properties['nibornama'] !== null ? autolinker.link(String(feature.properties['nibornama']).replace(/'/g, '\'').toLocaleString()) : '') + '</td>\
                     </tr>\
                 </table>';
             var content = removeEmptyRowsFromPopupContent(popupContent, feature);
