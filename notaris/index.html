@@ -20,7 +20,7 @@
         .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
         .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
         .controls { margin-bottom: 15px; }
-        .controls select, .controls button { padding: 5px; margin-right: 10px; }
+        .controls select, .controls button, .controls input { padding: 5px; margin-right: 10px; }
         .table-container { overflow-x: auto; }
     </style>
     <script>
@@ -34,6 +34,7 @@
         <select id="filterDesa" onchange="filterData()">
             <option value="">Semua Desa</option>
         </select>
+        <input type="text" id="searchInput" placeholder="Cari NIB, Pemilik, Nama..." oninput="filterData()">
         <button onclick="exportToExcel()">Export to Excel</button>
     </div>
     <div class="table-container">
@@ -206,10 +207,18 @@
 
         function filterData() {
             const filterValue = document.getElementById('filterDesa').value;
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
             filteredFeatures = allFeatures.filter(feature => {
                 const p = feature.properties;
                 if (p.validasi !== 'Komplit') return false;
                 if (filterValue && p.desa !== filterValue) return false;
+
+                if (searchValue) {
+                    const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || ''}`.toLowerCase();
+                    if (!searchTarget.includes(searchValue)) return false;
+                }
+
                 return true;
             });
             currentPage = 1;
