@@ -224,6 +224,10 @@
             const validasiValue = document.getElementById('filterValidasi').value;
             const searchValue = document.getElementById('searchInput').value.toLowerCase();
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlReff = urlParams.get('reff');
+            const urlRealisasi = urlParams.get('realisasi');
+
             filteredFeatures = allFeatures.filter(feature => {
                 const p = feature.properties;
                 
@@ -240,6 +244,14 @@
                 if (searchValue) {
                     const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || ''}`.toLowerCase();
                     if (!searchTarget.includes(searchValue)) return false;
+                }
+
+                if (urlReff) {
+                    if (!p.reff || !String(p.reff).toLowerCase().includes(urlReff.toLowerCase())) return false;
+                }
+                
+                if (urlRealisasi) {
+                    if (!p.realisasi || !String(p.realisasi).toLowerCase().includes(urlRealisasi.toLowerCase())) return false;
                 }
 
                 return true;
