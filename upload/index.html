@@ -281,8 +281,17 @@
       document.addEventListener("DOMContentLoaded", function () {
          const urlParams = new URLSearchParams(window.location.search);
          const fidValue = urlParams.get('fid');
+         const nibValue = urlParams.get('nib');
+
          const fidInput = document.getElementById('fidInput');
          const fidDisplay = document.getElementById('fidDisplay');
+         const nibDisplay = document.getElementById('nibDisplay');
+
+         if (nibValue) {
+            nibDisplay.innerText = "NIB: " + nibValue;
+            nibDisplay.classList.remove("text-muted");
+            nibDisplay.classList.add("text-success", "fw-bold");
+         }
 
          if (fidValue) {
             fidInput.value = fidValue;
@@ -319,7 +328,10 @@
 
                   // Tampilkan NIB
                   const nibDisplay = document.getElementById('nibDisplay');
-                  nibDisplay.innerText = "NIB: " + (d.nib || "-");
+                  const urlParams = new URLSearchParams(window.location.search);
+                  if (!urlParams.get('nib')) {
+                     nibDisplay.innerText = "NIB: " + (d.nib || "-");
+                  }
 
                   // --- ISI FORM OTOMATIS (Populate) ---
                   document.querySelector('[name="nop"]').value = d.nop;
