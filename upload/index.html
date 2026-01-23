@@ -99,7 +99,8 @@
 
    <div class="container mt-4">
       <h2 class="text-center mb-2">Form Input Data Tanah (Rekap)</h2>
-      <h4 class="text-center mb-4 text-muted" id="fidDisplay">Memuat FID...</h4>
+      <h6 class="text-center mb-4 text-muted" id="fidDisplay">Memuat FID...</h4>
+      <h4 class="text-center mb-4 text-muted" id="nibDisplay">Memuat NIB...</h4>
 
       <div id="cv-status" class="alert alert-warning text-center">Memuat library pemrosesan gambar...</div>
 
@@ -315,6 +316,10 @@
                   display.innerText = "FID: " + fid + " (MODE EDIT/UPDATE)";
                   display.classList.remove("text-primary");
                   display.classList.add("text-success", "fw-bold");
+
+                  // Tampilkan NIB
+                  const nibDisplay = document.getElementById('nibDisplay');
+                  nibDisplay.innerText = "NIB: " + (d.nib || "-");
 
                   // --- ISI FORM OTOMATIS (Populate) ---
                   document.querySelector('[name="nop"]').value = d.nop;
