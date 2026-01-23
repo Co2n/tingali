@@ -48,6 +48,7 @@
         <thead>
             <tr>
                 <th>No</th>
+                <th onclick="sortData('fid')">FID</th>
                 <th onclick="sortData('desa')">Desa</th>
                 <th onclick="sortData('nib')">NIB</th>
                 <th onclick="sortData('pemilik')">Pemilik</th>
@@ -136,6 +137,7 @@
                 tableHTML += `
                     <tr>
                         <td>${no}</td>
+                        <td>${p.fid || ''}</td>
                         <td>${p.desa.toUpperCase() || ''}</td>
                         <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
@@ -213,7 +215,7 @@
         } else {
             console.error("Data variable json_UPDATE_19_01_2026_2107_0 is not defined.");
             const row = document.createElement('tr');
-            row.innerHTML = '<td colspan="20" style="text-align:center; color:red;">Gagal memuat data. Pastikan file data tersedia.</td>';
+            row.innerHTML = '<td colspan="21" style="text-align:center; color:red;">Gagal memuat data. Pastikan file data tersedia.</td>';
             tableBody.appendChild(row);
         }
 
@@ -343,6 +345,7 @@
                     const row = document.createElement('tr');
                     row.innerHTML = `
                         <td>${no++}</td>
+                        <td>${p.fid || ''}</td>
                         <td>${p.desa.toUpperCase() || ''}</td>
                         <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
@@ -367,7 +370,7 @@
                 });
             } else {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="20" style="text-align:center;">Tidak ada data dengan validasi "Komplit"</td>';
+                row.innerHTML = '<td colspan="21" style="text-align:center;">Tidak ada data dengan validasi "Komplit"</td>';
                 tableBody.appendChild(row);
             }
         }
