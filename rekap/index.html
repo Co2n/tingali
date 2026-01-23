@@ -77,7 +77,8 @@
 
     <script>
         // Muat file data dengan timestamp untuk mencegah caching oleh browser
-        document.write(`<script src="../data/UPDATE_19_01_2026_2107_0.js?v=${new Date().getTime()}"><\/script>`);
+        var timestamp = new Date().getTime();
+        document.write(`<script src="../data/UPDATE_19_01_2026_2107_0.js?v=${timestamp}"><\/script>`);
     </script>
     <script>
         const tableBody = document.querySelector('#data-table tbody');
