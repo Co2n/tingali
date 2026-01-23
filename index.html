@@ -11,13 +11,6 @@
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
-        <link rel="stylesheet" href="css/leaflet.css">
-        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
-        <link rel="stylesheet" href="css/qgis2web.css">
-        <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-search.css">
-        <link rel="stylesheet" href="css/leaflet.photon.css">
-        <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         html, body, #map {
             width: 100%;
@@ -28,7 +21,22 @@
         </style>
 
         <script>
-            document.write('<style>/* ' + new Date().getTime() + ' */</style>');
+            // Skrip untuk memaksa browser memuat versi baru dari file CSS
+            (function() {
+                const timestamp = new Date().getTime();
+                const styles = [
+                    'css/leaflet.css',
+                    'css/L.Control.Layers.Tree.css',
+                    'css/qgis2web.css',
+                    'css/fontawesome-all.min.css',
+                    'css/leaflet-search.css',
+                    'css/leaflet.photon.css',
+                    'css/leaflet-measure.css',
+                ];
+                styles.forEach(url => {
+                    document.write(`<link rel="stylesheet" href="${url}?v=${timestamp}" />`);
+                });
+            })();
         </script>
 
         <title></title>
@@ -36,26 +44,36 @@
     <body>
         <div id="map">
         </div>
-        <script src="js/qgis2web_expressions.js"></script>
-        <script src="js/leaflet.js"></script>
-        <script src="js/L.Control.Layers.Tree.min.js"></script>
-        <script src="js/multi-style-layer.js"></script>
-        <script src="js/leaflet.rotatedMarker.js"></script>
-        <script src="js/leaflet.pattern.js"></script>
-        <script src="js/leaflet-hash.js"></script>
-        <script src="js/Autolinker.min.js"></script>
-        <script src="js/rbush.min.js"></script>
-        <script src="js/labelgun.min.js"></script>
-        <script src="js/labels.js"></script>
-        <script src="js/leaflet.photon.js"></script>
-        <script src="js/leaflet-measure.js"></script>
-        <script src="js/proj4.js"></script>
-        <script src="js/proj4leaflet.js"></script>
-        <script src="js/leaflet-search.js"></script>
-        <script src="data/UPDATE_19_01_2026_2107_0.js"></script>
-        <script src="data/Floating_1.js"></script>
-        <script src="data/Kurang_2.js"></script>
         <script>
+            // Skrip untuk memaksa browser memuat versi baru dari file JS
+            (function() {
+                const timestamp = new Date().getTime();
+                const scripts = [
+                    'js/qgis2web_expressions.js',
+                    'js/leaflet.js',
+                    'js/L.Control.Layers.Tree.min.js',
+                    'js/multi-style-layer.js',
+                    'js/leaflet.rotatedMarker.js',
+                    'js/leaflet.pattern.js',
+                    'js/leaflet-hash.js',
+                    'js/Autolinker.min.js',
+                    'js/rbush.min.js',
+                    'js/labelgun.min.js',
+                    'js/labels.js',
+                    'js/leaflet.photon.js',
+                    'js/leaflet-measure.js',
+                    'js/proj4.js',
+                    'js/proj4leaflet.js',
+                    'js/leaflet-search.js',
+                    'data/UPDATE_19_01_2026_2107_0.js',
+                    'data/Floating_1.js',
+                    'data/Kurang_2.js'
+                ];
+                scripts.forEach(url => {
+                    document.write(`<script src="${url}?v=${timestamp}"><\/script>`);
+                });
+            })();
+
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;

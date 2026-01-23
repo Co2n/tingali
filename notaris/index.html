@@ -24,9 +24,6 @@
         .align-right { text-align: right; }
         .table-container { overflow-x: auto; }
     </style>
-    <script>
-        document.write('<style>/* ' + new Date().getTime() + ' */</style>');
-    </script>
 </head>
 <body>
     <h1>Data Desa Validasi</h1>
@@ -89,7 +86,10 @@
         <img class="modal-content" id="img01">
     </div>
 
-    <script src="../data/UPDATE_19_01_2026_2107_0.js"></script>
+    <script>
+        // Muat file data dengan timestamp untuk mencegah caching oleh browser
+        document.write(`<script src="../data/UPDATE_19_01_2026_2107_0.js?v=${new Date().getTime()}"><\/script>`);
+    </script>
     <script>
         const tableBody = document.querySelector('#data-table tbody');
         const persib = "*";
