@@ -55,9 +55,10 @@
                 <th onclick="sortData('nib')">NIB</th>
                 <th onclick="sortData('pemilik')">Pemilik</th>
                 <th onclick="sortData('nop')">NOP</th>
-                <th onclick="sortData('nama')">Nama</th>
-                <th onclick="sortData('luas')">Luas</th>
+                <th onclick="sortData('nama')">Nama SPPT</th>
+                <th onclick="sortData('luas')">Luas SPPT</th>
                 <th onclick="sortData('ptsl')">PTSL</th>
+                <th onclick="sortData('validasi')">Kekurangan</th>
             </tr>
         </thead>
         <tbody>
@@ -130,6 +131,7 @@
                         <td>${p.nama || ''}</td>
                         <td style="text-align: right;">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
+                        <td>${p.validasi || ''}</td>
                     </tr>`;
             });
             tableHTML += '</tbody></table>';
@@ -325,6 +327,7 @@
                         <td>${p.nama || ''}</td>
                         <td class="align-right">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
+                        <td>${p.validasi || ''}</td>
                     `;
                     tableBody.appendChild(row);
                 });
