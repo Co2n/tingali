@@ -10,7 +10,7 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
         <link rel="stylesheet" href="css/leaflet.css">
-        <!-- <link rel="stylesheet" href="css/L.Control.Layers.Tree.css"> -->
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
         <link rel="stylesheet" href="css/leaflet-search.css">
@@ -31,7 +31,7 @@
         </div>
         <script src="js/qgis2web_expressions.js"></script>
         <script src="js/leaflet.js"></script>
-        <!-- <script src="js/L.Control.Layers.Tree.min.js"></script> -->
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
         <script src="js/multi-style-layer.js"></script>
         <script src="js/leaflet.rotatedMarker.js"></script>
         <script src="js/leaflet.pattern.js"></script>
@@ -550,20 +550,6 @@
         });
         bounds_group.addLayer(layer_Kurang_2);
         map.addLayer(layer_Kurang_2);
-        var overlaysTree = [
-            {label: '<img src="legend/Kurang_2.png" /> Kurang', layer: layer_Kurang_2},
-            {label: 'Floating<br /><table><tr><td style="text-align: center;"><img src="legend/Floating_1_SUKAJAYA0.png" /></td><td>SUKAJAYA</td></tr><tr><td style="text-align: center;"><img src="legend/Floating_1_MULYAJAYA1.png" /></td><td>MULYAJAYA</td></tr><tr><td style="text-align: center;"><img src="legend/Floating_1_CIKEUSAL2.png" /></td><td>CIKEUSAL</td></tr><tr><td style="text-align: center;"><img src="legend/Floating_1_KANANGA3.png" /></td><td>KANANGA</td></tr><tr><td style="text-align: center;"><img src="legend/Floating_1_CIMAHI4.png" /></td><td>CIMAHI</td></tr><tr><td style="text-align: center;"><img src="legend/Floating_1_LEGOK5.png" /></td><td>LEGOK</td></tr></table>', layer: layer_Floating_1},
-            {label: 'UPDATE_19_01_2026_2107<br /><table><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_SUKAJAYA0.png" /></td><td>SUKAJAYA</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_MULYAJAYA1.png" /></td><td>MULYAJAYA</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_CIKEUSAL2.png" /></td><td>CIKEUSAL</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_KANANGA3.png" /></td><td>KANANGA</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_CIMAHI4.png" /></td><td>CIMAHI</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_LEGOK5.png" /></td><td>LEGOK</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_BTS6.png" /></td><td>BTS</td></tr><tr><td style="text-align: center;"><img src="legend/UPDATE_19_01_2026_2107_0_PERHUTANI7.png" /></td><td>PERHUTANI</td></tr></table>', layer: layer_UPDATE_19_01_2026_2107_0},]
-        var lay = L.control.layers.tree(null, overlaysTree,{
-            //namedToggle: true,
-            //selectorBack: false,
-            //closedSymbol: '&#8862; &#x1f5c0;',
-            //openedSymbol: '&#8863; &#x1f5c1;',
-            //collapseAll: 'Collapse all',
-            //expandAll: 'Expand all',
-            collapsed: true,
-        });
-        lay.addTo(map);
         setBounds();
         var i = 0;
         layer_UPDATE_19_01_2026_2107_0.eachLayer(function(layer) {
