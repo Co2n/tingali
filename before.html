@@ -13,11 +13,8 @@
         <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
         <link rel="stylesheet" href="css/qgis2web.css">
         <link rel="stylesheet" href="css/fontawesome-all.min.css">
-        <link rel="stylesheet" href="css/leaflet-search.css">
         <link rel="stylesheet" href="css/leaflet.photon.css">
         <link rel="stylesheet" href="css/leaflet-measure.css">
-
-        
         <style>
         html, body, #map {
             width: 100%;
@@ -46,7 +43,6 @@
         <script src="js/leaflet-measure.js"></script>
         <script src="js/proj4.js"></script>
         <script src="js/proj4leaflet.js"></script>
-        <script src="js/leaflet-search.js"></script>
         <script src="data/UPDATE_19_01_2026_2107_0.js"></script>
         <script src="data/Floating_1.js"></script>
         <script src="data/Kurang_2.js"></script>
@@ -74,7 +70,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.983828206987602,108.6803292808397],[-6.963977518100445,108.7101632355393]]);
+        }).fitBounds([[-6.983830319806953,108.67906684205161],[-6.963975328430977,108.71142563114397]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -566,16 +562,6 @@
               addLabel(layer, i);
               i++;
         });
-        map.addControl(new L.Control.Search({
-            layer: layer_UPDATE_19_01_2026_2107_0,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            propertyName: 'key2'}));
-        if (typeof url === 'undefined') {
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
-        } else {
-            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
-        }
         resetLabels([layer_UPDATE_19_01_2026_2107_0]);
         map.on("zoomend", function(){
             resetLabels([layer_UPDATE_19_01_2026_2107_0]);
