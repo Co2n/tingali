@@ -2,15 +2,19 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        
         <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
         <meta http-equiv="Pragma" content="no-cache">
         <meta http-equiv="Expires" content="0">
-
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
+        <link rel="stylesheet" href="css/leaflet.css">
+        <link rel="stylesheet" href="css/L.Control.Layers.Tree.css">
+        <link rel="stylesheet" href="css/qgis2web.css">
+        <link rel="stylesheet" href="css/fontawesome-all.min.css">
+        <link rel="stylesheet" href="css/leaflet.photon.css">
+        <link rel="stylesheet" href="css/leaflet-measure.css">
         <style>
         html, body, #map {
             width: 100%;
@@ -19,61 +23,30 @@
             margin: 0;
         }
         </style>
-
-        <script>
-            // Skrip untuk memaksa browser memuat versi baru dari file CSS
-            (function() {
-                const timestamp = new Date().getTime();
-                const styles = [
-                    'css/leaflet.css',
-                    'css/L.Control.Layers.Tree.css',
-                    'css/qgis2web.css',
-                    'css/fontawesome-all.min.css',
-                    'css/leaflet-search.css',
-                    'css/leaflet.photon.css',
-                    'css/leaflet-measure.css',
-                ];
-                styles.forEach(url => {
-                    document.write(`<link rel="stylesheet" href="${url}?v=${timestamp}" />`);
-                });
-            })();
-        </script>
-
         <title></title>
     </head>
     <body>
         <div id="map">
         </div>
+        <script src="js/qgis2web_expressions.js"></script>
+        <script src="js/leaflet.js"></script>
+        <script src="js/L.Control.Layers.Tree.min.js"></script>
+        <script src="js/multi-style-layer.js"></script>
+        <script src="js/leaflet.rotatedMarker.js"></script>
+        <script src="js/leaflet.pattern.js"></script>
+        <script src="js/leaflet-hash.js"></script>
+        <script src="js/Autolinker.min.js"></script>
+        <script src="js/rbush.min.js"></script>
+        <script src="js/labelgun.min.js"></script>
+        <script src="js/labels.js"></script>
+        <script src="js/leaflet.photon.js"></script>
+        <script src="js/leaflet-measure.js"></script>
+        <script src="js/proj4.js"></script>
+        <script src="js/proj4leaflet.js"></script>
+        <script src="data/UPDATE_19_01_2026_2107_0.js"></script>
+        <script src="data/Floating_1.js"></script>
+        <script src="data/Kurang_2.js"></script>
         <script>
-            // Skrip untuk memaksa browser memuat versi baru dari file JS
-            (function() {
-                const timestamp = new Date().getTime();
-                const scripts = [
-                    'js/qgis2web_expressions.js',
-                    'js/leaflet.js',
-                    'js/L.Control.Layers.Tree.min.js',
-                    'js/multi-style-layer.js',
-                    'js/leaflet.rotatedMarker.js',
-                    'js/leaflet.pattern.js',
-                    'js/leaflet-hash.js',
-                    'js/Autolinker.min.js',
-                    'js/rbush.min.js',
-                    'js/labelgun.min.js',
-                    'js/labels.js',
-                    'js/leaflet.photon.js',
-                    'js/leaflet-measure.js',
-                    'js/proj4.js',
-                    'js/proj4leaflet.js',
-                    'js/leaflet-search.js',
-                    'data/UPDATE_19_01_2026_2107_0.js',
-                    'data/Floating_1.js',
-                    'data/Kurang_2.js'
-                ];
-                scripts.forEach(url => {
-                    document.write(`<script src="${url}?v=${timestamp}"><\/script>`);
-                });
-            })();
-
         var highlightLayer;
         function highlightFeature(e) {
             highlightLayer = e.target;
@@ -97,7 +70,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.979551608153989,108.67952759971983],[-6.965733079719043,108.70214662542688]]);
+        }).fitBounds([[-6.983830319806953,108.67906684205161],[-6.963975328430977,108.71142563114397]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -589,16 +562,6 @@
               addLabel(layer, i);
               i++;
         });
-        map.addControl(new L.Control.Search({
-            layer: layer_UPDATE_19_01_2026_2107_0,
-            initial: false,
-            hideMarkerOnCollapse: true,
-            propertyName: 'key2'}));
-        if (typeof url === 'undefined') {
-            document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
-        } else {
-            document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
-        }
         resetLabels([layer_UPDATE_19_01_2026_2107_0]);
         map.on("zoomend", function(){
             resetLabels([layer_UPDATE_19_01_2026_2107_0]);
