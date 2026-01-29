@@ -72,6 +72,7 @@
             loadJS('js/proj4.js');
             loadJS('js/proj4leaflet.js');
             loadJS('js/leaflet-search.js');
+            loadJS('js/pinbyurl.js');
             
             // DATA LAYERS
             loadJS('data/UPDATE_19_01_2026_2107_0.js');
@@ -471,6 +472,26 @@
             map.on("layerremove", function(){
                 resetLabels([layer_UPDATE_19_01_2026_2107_0]);
             });
+
+            // --- FITUR PENCARIAN VIA URL ---
+            // Mencari di layer 'layer_UPDATE_19_01_2026_2107_0'
+            // Menggunakan parameter URL 'fid' untuk mencocokkan properti 'fid' di data
+            if (typeof searchAndHighlightByUrl === 'function') {
+                // searchAndHighlightByUrl(map, layer_UPDATE_19_01_2026_2107_0, 'fid', 'fid');
+                searchAndHighlightByUrl(map, layer_UPDATE_19_01_2026_2107_0, 'fid', 'fid', {
+                    marker: {
+                        icon: false,
+                        animate: true,
+                        circle: {
+                            radius: 10,
+                            weight: 3,
+                            color: "#e03",
+                            stroke: true,
+                            fill: false
+                        }
+                    }
+                });
+            }
         
         }); // End Window Load
         </script>        
