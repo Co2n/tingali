@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Properties Table</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; vertical-align: top; }
+        th { background-color: #f2f2f2; font-weight: bold; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+    </style>
+</head>
+<body>
+
+    <h1>Daftar Properties Features</h1>
+    <div id="table-container">Memuat data...</div>
+
+    <!-- Memuat data dari file JS -->
+    <script src="data/UPDATE_19_01_2026_2107_0.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Cek apakah variabel data sudah terload
+            if (typeof json_UPDATE_19_01_2026_2107_0 === 'undefined') {
+                document.getElementById('table-container').innerHTML = '<p style="color:red;">Gagal memuat data. Pastikan file <b>data/UPDATE_19_01_2026_2107_0.js</b> tersedia.</p>';
+                return;
+            }
+
+            const features = json_UPDATE_19_01_2026_2107_0.features;
+            
+            if (!features || features.length === 0) {
+                document.getElementById('table-container').innerHTML = '<p>Tidak ada data features.</p>';
+                return;
+            }
+
+            // Ambil header dari keys properti item pertama
+            const headers = Object.keys(features[0].properties);
+
+            // Buat tabel
+            let html = '<table><thead><tr>';
+            headers.forEach(h => html += `<th>${h}</th>`);
+            html += '</tr></thead><tbody>';
+
+            features.forEach(f => {
+                html += '<tr>';
+                headers.forEach(h => {
+                    let val = f.properties[h];
+                    // Render null sebagai string kosong, dan biarkan HTML tag (seperti di kolom link/label) ter-render
+                    html += `<td>${val === null ? '' : val}</td>`;
+                });
+                html += '</tr>';
+            });
+
+            html += '</tbody></table>';
+            document.getElementById('table-container').innerHTML = html;
+        });
+    </script>
+</body>
+</html>
