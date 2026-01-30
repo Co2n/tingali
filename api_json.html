@@ -10,6 +10,8 @@
     <script src="data/UPDATE_19_01_2026_2107_0.js"></script>
     <script>
         document.getElementById('json-output').textContent = JSON.stringify(json_UPDATE_19_01_2026_2107_0, null, 2);
+        const propertiesList = json_UPDATE_19_01_2026_2107_0.features.map(feature => feature.properties);
+        document.getElementById('json-output').textContent = JSON.stringify(propertiesList, null, 2);
     </script>
 </body>
 </html>
