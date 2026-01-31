@@ -238,8 +238,20 @@
                         <div class="loading-overlay">Proses...</div><canvas id="canvas_ktpagree"></canvas>
                      </div>
                   </div>
+               </div>
+            </div>
+         </div>
+         
+         <div class="card">
+            <div class="card-header">5. Harga dan Referensi</div>
+            <div class="card-body">
+               <div class="row g-3">
                   <div class="col-md-6">
-                     <label class="form-label">Referensi (Reff)</label>
+                     <label class="form-label">Harga Kesepakatan</label>
+                     <input type="text" class="form-control" name="harga" id="hargaInput" placeholder="Rp. 0">
+                  </div>
+                  <div class="col-md-6">
+                     <label class="form-label">Referensi (tulis nama singkat petugas perekap data)</label>
                      <input type="text" class="form-control uppercase-input" name="reff">
                   </div>
                </div>
@@ -342,6 +354,7 @@
                   document.querySelector('[name="nm_persetujuan"]').value = d.nm_persetujuan;
                   document.querySelector('[name="sbg"]').value = d.sbg;
                   document.querySelector('[name="reff"]').value = d.reff;
+                  document.querySelector('[name="harga"]').value = d.harga ? formatRupiah(d.harga.toString(), 'Rp. ') : '';
 
                   // --- TAMPILKAN LINK FOTO LAMA (VERSI RESPONSIF) ---
                   const showOldImg = (url, canvasId) => {
@@ -417,6 +430,30 @@
             document.getElementById('nopError').classList.add('d-none');
          }
       });
+
+      // 4. Format Rupiah
+      const hargaInput = document.getElementById('hargaInput');
+      if (hargaInput) {
+         hargaInput.addEventListener('keyup', function (e) {
+            this.value = formatRupiah(this.value, 'Rp. ');
+         });
+      }
+
+      function formatRupiah(angka, prefix) {
+         var number_string = angka.replace(/[^,\d]/g, '').toString(),
+            split = number_string.split(','),
+            sisa = split[0].length % 3,
+            rupiah = split[0].substr(0, sisa),
+            ribuan = split[0].substr(sisa).match(/\d{3}/gi);
+
+         if (ribuan) {
+            separator = sisa ? '.' : '';
+            rupiah += separator + ribuan.join('.');
+         }
+
+         rupiah = split[1] != undefined ? rupiah + ',' + split[1] : rupiah;
+         return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
+      }
 
       // 3. OpenCV Core
       let cvReady = false;
@@ -544,6 +581,12 @@
          const formData = new FormData(this);
          let dataObj = {};
          formData.forEach((value, key) => { dataObj[key] = value; });
+
+         // FIX: Hapus format Rupiah (Rp. dan titik) agar yang terkirim ke server hanya angka murni
+         if (dataObj.harga) {
+            dataObj.harga = dataObj.harga.replace(/[^0-9]/g, '');
+         }
+
          dataObj.password = password;
 
          // Helper Canvas
@@ -576,30 +619,22 @@
             .then(response => response.json())
             .then(data => {
                document.getElementById('global-loading').style.display = 'none';
+
                if (data.status === 'success') {
-                  fetch(GAS_URL, {
-                     method: 'POST',
-                     body: JSON.stringify(dataObj)
-                  })
-                     .then(response => response.json())
-                     .then(data => {
-                        document.getElementById('global-loading').style.display = 'none';
+                  // 1. Tampilkan pesan sukses
+                  // User harus klik OK dulu, baru kode di bawahnya jalan
+                  alert("SUKSES: " + data.message + "\n\nTab ini akan ditutup otomatis.");
 
-                        if (data.status === 'success') {
-                           // 1. Tampilkan pesan sukses
-                           // User harus klik OK dulu, baru kode di bawahnya jalan
-                           alert("SUKSES: " + data.message + "\n\nTab ini akan ditutup otomatis.");
+                  // 2. Tutup Tab Otomatis
+                  try {
+                     window.close();
+                  } catch (e) {
+                     console.log("Gagal menutup window otomatis", e);
+                  }
 
-                           // 2. Tutup Tab Otomatis
-                           try {
-                              window.close();
-                           } catch (e) {
-                              console.log("Gagal menutup window otomatis", e);
-                           }
-
-                           // 3. Fallback: Jika browser memblokir window.close() (jarang terjadi di target="_blank")
-                           // Kita ganti tampilan body agar user tahu proses selesai
-                           document.body.innerHTML = `
+                  // 3. Fallback: Jika browser memblokir window.close() (jarang terjadi di target="_blank")
+                  // Kita ganti tampilan body agar user tahu proses selesai
+                  document.body.innerHTML = `
                     <div style="height:100vh; display:flex; flex-direction:column; justify-content:center; align-items:center; text-align:center; font-family:sans-serif;">
                         <h1 style="color:green;">✅ Data Berhasil Disimpan!</h1>
                         <p>Anda wajib menutup tab ini setelah proses selesai.</p>
@@ -607,16 +642,8 @@
                     </div>
                 `;
 
-                        } else {
-                           // Jika error dari server (misal password salah)
-                           alert("GAGAL: " + data.message);
-                        }
-                     })
-                     .catch(error => {
-                        document.getElementById('global-loading').style.display = 'none';
-                        alert("ERROR JARINGAN: " + error);
-                     });
                } else {
+                  // Jika error dari server (misal password salah)
                   alert("GAGAL: " + data.message);
                }
             })
