@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
@@ -8,28 +9,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REKAP</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; cursor: pointer; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tr:hover { background-color: #f1f1f1; }
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
         /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; margin-top: 50px; }
-        .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
-        .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
-        .controls { margin-bottom: 15px; }
-        .controls select, .controls button, .controls input { padding: 5px; margin-right: 10px; }
-        .align-right { text-align: right; }
-        .table-container { overflow-x: auto; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 50px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+        }
+
+        .controls select,
+        .controls button,
+        .controls input {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
     </style>
 </head>
+
 <body>
     <h1>Data REKAP</h1>
     <p id="totalRows">Jumlah Baris : </p>
     <p id="totalPTSL">Total PTSL : m2 / ha</p>
-    
+
     <div class="controls">
         <label for="filterDesa">Filter :</label>
         <select id="filterValidasi" onchange="filterData()">
@@ -44,25 +119,25 @@
         <button onclick="exportToExcel()">Export to Excel</button>
     </div>
     <div class="table-container">
-    <table id="data-table">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th onclick="sortData('fid')">FID</th>
-                <th onclick="sortData('desa')">Desa</th>
-                <th onclick="sortData('nib')">NIB</th>
-                <th onclick="sortData('pemilik')">Pemilik</th>
-                <th onclick="sortData('nop')">NOP</th>
-                <th onclick="sortData('nama')">Nama SPPT</th>
-                <!--<th onclick="sortData('luas')">Luas SPPT</th>-->
-                <th onclick="sortData('ptsl')">PTSL</th>
-                <th onclick="sortData('validasi')">Kekurangan</th>
-                <th onclick="sortData('validasi')">Aksi</th>
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th onclick="sortData('fid')">FID</th>
+                    <th onclick="sortData('desa')">Desa</th>
+                    <th onclick="sortData('nib')">NIB</th>
+                    <th onclick="sortData('pemilik')">Pemilik</th>
+                    <th onclick="sortData('nop')">NOP</th>
+                    <th onclick="sortData('nama')">Nama SPPT</th>
+                    <th onclick="sortData('ptsl')">PTSL</th>
+                    <th onclick="sortData('harga')">Harga</th>
+                    <th onclick="sortData('validasi')">Kekurangan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
     <p style="font-style: italic">* Klik pada No NIB untuk melihat peta lokasi bidang tanah.</p>
     <div id="pagination" class="controls" style="text-align: center; margin-top: 10px;">
@@ -89,7 +164,7 @@
         function checkPersib() {
             return prompt("Masukkan Kode:") === persib;
         }
-        
+
         function formatFileLink(path) {
             if (!path) return '';
             const fileName = path.split('/').pop();
@@ -108,7 +183,7 @@
         }
 
         // Tutup modal jika klik di luar gambar
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('imageModal');
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -117,26 +192,24 @@
 
         function exportToExcel() {
             // Generate table HTML for all filtered data
-            let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
-            
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th></tr></thead><tbody>';
+
             filteredFeatures.forEach((feature, index) => {
                 const p = feature.properties;
                 const mapUrl = getMapUrl(feature);
                 const no = index + 1;
-                
+
                 tableHTML += `
                     <tr>
                         <td>${no}</td>
                         <td>${p.fid || ''}</td>
-                        <td>${p.desa.toUpperCase() || ''}</td>
-                        <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
+                        <td>${p.desa ? p.desa.toUpperCase() : ''}</td>
+                        <td><a href="${mapUrl}" target="_blank">'${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <!--<td style="text-align: right;">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
-                        <td>${p.validasi || ''}</td>
-                        <td>${p.link || ''}</td>
+                        <td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
                     </tr>`;
             });
             tableHTML += '</tbody></table>';
@@ -150,7 +223,10 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "data_desa.xls";
+            const d = new Date();
+            const dateStr = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear();
+            const timeStr = d.getHours().toString().padStart(2, '0') + '_' + d.getMinutes().toString().padStart(2, '0');
+            a.download = `data_desa_${dateStr}_${timeStr}.xls`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -180,7 +256,7 @@
 
         if (typeof json_UPDATE_19_01_2026_2107_0 !== 'undefined') {
             allFeatures = json_UPDATE_19_01_2026_2107_0.features;
-            
+
             // Populate Filter
             const desas = [...new Set(allFeatures.map(f => f.properties.desa).filter(d => d))].sort();
             const filterSelect = document.getElementById('filterDesa');
@@ -210,7 +286,7 @@
 
             filteredFeatures = allFeatures.filter(feature => {
                 const p = feature.properties;
-                
+
                 if (validasiValue === 'Komplit') {
                     if (p.validasi !== 'Komplit') return false;
                 } else if (validasiValue === 'Progres') {
@@ -229,7 +305,7 @@
                 if (urlReff) {
                     if (!p.reff || !String(p.reff).toLowerCase().includes(urlReff.toLowerCase())) return false;
                 }
-                
+
                 if (urlRealisasi) {
                     if (!p.realisasi || !String(p.realisasi).toLowerCase().includes(urlRealisasi.toLowerCase())) return false;
                 }
@@ -239,10 +315,10 @@
 
             const totalRows = filteredFeatures.length;
             const totalPTSL = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.ptsl) || 0), 0);
-            
+
             document.getElementById('totalRows').textContent = `Jumlah Baris : ${totalRows}`;
-            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', {maximumFractionDigits: 4})} ha`;
-            
+            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} ha`;
+
             if (currentSort.column) {
                 applySort();
             }
@@ -266,7 +342,7 @@
         function applySort() {
             const column = currentSort.column;
             const direction = currentSort.direction;
-            
+
             filteredFeatures.sort((a, b) => {
                 let valA = a.properties[column];
                 let valB = b.properties[column];
@@ -318,7 +394,7 @@
             tableBody.innerHTML = '';
             const totalRows = filteredFeatures.length;
             const totalPages = Math.ceil(totalRows / rowsPerPage);
-            
+
             // Update controls
             document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages || 1}`;
             document.getElementById('btn-prev').disabled = currentPage === 1;
@@ -343,8 +419,8 @@
                         <td>${p.pemilik || ''}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <!--<td class="align-right">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
+                        <td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
                         <td>${p.validasi || ''}</td>
                         <td>${p.link || ''}</td>
                     `;
@@ -358,4 +434,5 @@
         }
     </script>
 </body>
+
 </html>

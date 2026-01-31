@@ -59,8 +59,8 @@
                 <th>KTP Agree</th>
                 <th onclick="sortData('nop')">NOP</th>
                 <th onclick="sortData('nama')">Nama SPPT</th>
-                <!-- <th onclick="sortData('luas')">Luas SPPT</th> -->
                 <th onclick="sortData('ptsl')">PTSL</th>
+                <th onclick="sortData('harga')">Harga</th>
                 <th>SPPT</th>
                 <th>No Bukti</th>
                 <th>Bukti</th>
@@ -127,8 +127,9 @@
 
         function exportToExcel() {
             // Generate table HTML for all filtered data
-            let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
-            
+            //let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>Nm Persetujuan</th><th>Sbg</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th><th>No Bukti</th><th>BU</th><th>BS</th><th>BB</th><th>BT</th></tr></thead><tbody>';
+                
             filteredFeatures.forEach((feature, index) => {
                 const p = feature.properties;
                 const mapUrl = getMapUrl(feature);
@@ -139,20 +140,15 @@
                         <td>${no}</td>
                         <td>${p.fid || ''}</td>
                         <td>${p.desa.toUpperCase() || ''}</td>
-                        <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
+                        <td><a href="${mapUrl}" target="_blank">'${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
-                        <td>${formatFileLink(p.ktp)}</td>
-                        <td>${formatFileLink(p.kk)}</td>
                         <td>${p.nm_persetujuan || ''}</td>
                         <td>${p.sbg || ''}</td>
-                        <td>${formatFileLink(p.ktpagree)}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <!--<td style="text-align: right;">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
-                        <td>${formatFileLink(p.sppt)}</td>
+                        <td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
                         <td>${p.nobukti || ''}</td>
-                        <td>${formatFileLink(p.bukti)}</td>
                         <td>${p.bu || ''}</td>
                         <td>${p.bs || ''}</td>
                         <td>${p.bb || ''}</td>
@@ -170,7 +166,10 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "data_desa.xls";
+            const d = new Date();
+            const dateStr = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear();
+            const timeStr = d.getHours().toString().padStart(2, '0') + '_' + d.getMinutes().toString().padStart(2, '0');
+            a.download = `data_desa_notaris_${dateStr}_${timeStr}.xls`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -368,8 +367,8 @@
                         <td>${formatFileLink(p.ktpagree)}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <!--<td class="align-right">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
+                        <td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
                         <td>${formatFileLink(p.sppt)}</td>
                         <td>${p.nobukti || ''}</td>
                         <td>${formatFileLink(p.bukti)}</td>
