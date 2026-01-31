@@ -59,7 +59,7 @@
                 <th>KTP Agree</th>
                 <th onclick="sortData('nop')">NOP</th>
                 <th onclick="sortData('nama')">Nama SPPT</th>
-                <th onclick="sortData('luas')">Luas SPPT</th>
+                <!-- <th onclick="sortData('luas')">Luas SPPT</th> -->
                 <th onclick="sortData('ptsl')">PTSL</th>
                 <th>SPPT</th>
                 <th>No Bukti</th>
@@ -148,7 +148,7 @@
                         <td>${formatFileLink(p.ktpagree)}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <td style="text-align: right;">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>
+                        <!--<td style="text-align: right;">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
                         <td>${formatFileLink(p.sppt)}</td>
                         <td>${p.nobukti || ''}</td>
@@ -368,7 +368,7 @@
                         <td>${formatFileLink(p.ktpagree)}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <td class="align-right">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>
+                        <!--<td class="align-right">${p.luas != null ? Number(p.luas).toLocaleString('id-ID') : ''}</td>-->
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
                         <td>${formatFileLink(p.sppt)}</td>
                         <td>${p.nobukti || ''}</td>
