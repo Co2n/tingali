@@ -130,7 +130,7 @@
                     <th onclick="sortData('nop')">NOP</th>
                     <th onclick="sortData('nama')">Nama SPPT</th>
                     <th onclick="sortData('ptsl')">PTSL</th>
-                    <th onclick="sortData('harga')">Harga</th>
+                    <th id="header-harga" onclick="sortData('harga')">Harga</th>
                     <th onclick="sortData('validasi')">Kekurangan</th>
                     <th>Aksi</th>
                 </tr>
@@ -160,6 +160,15 @@
     <script>
         const tableBody = document.querySelector('#data-table tbody');
         const persib = "*";
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const showHarga = urlParams.get('reff') === 'ato';
+
+        if (!showHarga) {
+            const thHarga = document.getElementById('header-harga');
+            if (thHarga) thHarga.style.display = 'none';
+        }
+
 
         function checkPersib() {
             return prompt("Masukkan Kode:") === persib;
@@ -192,7 +201,13 @@
 
         function exportToExcel() {
             // Generate table HTML for all filtered data
-            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th></tr></thead><tbody>';
+            
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th>';
+            if (showHarga) {
+                tableHTML += '<th>Harga</th>';
+            }
+            tableHTML += '<th>Kekurangan</th>';
+            tableHTML += '</tr></thead><tbody>';
 
             filteredFeatures.forEach((feature, index) => {
                 const p = feature.properties;
@@ -209,8 +224,13 @@
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
-                        <td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
-                    </tr>`;
+                    `;
+                if (showHarga) {
+                    tableHTML += `<td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>`;
+                }
+                tableHTML += `<td>${p.validasi || ''}</td>`;
+                tableHTML += `</tr>`;
+
             });
             tableHTML += '</tbody></table>';
 
@@ -225,7 +245,7 @@
             a.href = url;
             const d = new Date();
             const dateStr = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear();
-            const timeStr = d.getHours().toString().padStart(2, '0') + '_' + d.getMinutes().toString().padStart(2, '0');
+            const timeStr = d.getHours().toString().padStart(2, '0') + '-' + d.getMinutes().toString().padStart(2, '0');
             a.download = `data_desa_${dateStr}_${timeStr}.xls`;
             a.click();
             URL.revokeObjectURL(url);
@@ -420,7 +440,7 @@
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
-                        <td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
+                        ${showHarga ? `<td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>` : ''}
                         <td>${p.validasi || ''}</td>
                         <td>${p.link || ''}</td>
                     `;
