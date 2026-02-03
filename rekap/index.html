@@ -372,12 +372,16 @@
 
             const elTotalHarga = document.getElementById('totalHarga');
             const elTotalHargaTerbilang = document.getElementById('totalHargaTerbilang');
+            const elfilterValidasi = document.getElementById('filterValidasi');
+            const elfilterDesa = document.getElementById('filterDesa');
 
             if (showHarga) {
                 elTotalHarga.textContent = `Total Harga : Rp ${Math.round(totalHarga).toLocaleString('id-ID')},- (${countHarga.toLocaleString('id-ID')} Bidang / ${Math.round(totalPTSLHarga).toLocaleString('id-ID')} m² / ${(totalPTSLHarga / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} Ha)`;
                 elTotalHargaTerbilang.textContent = `Terbilang : ${terbilang(Math.round(totalHarga))} Rupiah`;
                 elTotalHarga.style.display = 'block';
                 elTotalHargaTerbilang.style.display = 'block';
+                elfilterValidasi.style.display = 'none';
+                elfilterDesa.style.display = 'none';
             } else {
                 elTotalHarga.style.display = 'none';
                 elTotalHargaTerbilang.style.display = 'none';
