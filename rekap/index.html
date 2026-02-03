@@ -104,6 +104,8 @@
     <h1>Data REKAP</h1>
     <p id="totalRows">Jumlah Baris : </p>
     <p id="totalPTSL">Total PTSL : m2 / ha</p>
+    <p id="totalHarga" style="display: none;">Total Harga : </p>
+    <p id="totalHargaTerbilang" style="display: none;"></p>
 
     <div class="controls">
         <label for="filterDesa">Filter :</label>
@@ -162,7 +164,7 @@
         const persib = "*";
 
         const urlParams = new URLSearchParams(window.location.search);
-        const showHarga = urlParams.get('reff') === 'ato';
+        const showHarga = urlParams.has('reff');
 
         if (!showHarga) {
             const thHarga = document.getElementById('header-harga');
@@ -295,6 +297,32 @@
             tableBody.appendChild(row);
         }
 
+        function terbilang(angka) {
+            var bilne = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            if (angka < 12) {
+                return bilne[angka];
+            } else if (angka < 20) {
+                return terbilang(angka - 10) + " Belas";
+            } else if (angka < 100) {
+                return terbilang(Math.floor(angka / 10)) + " Puluh " + terbilang(angka % 10);
+            } else if (angka < 200) {
+                return "Seratus " + terbilang(angka - 100);
+            } else if (angka < 1000) {
+                return terbilang(Math.floor(angka / 100)) + " Ratus " + terbilang(angka % 100);
+            } else if (angka < 2000) {
+                return "Seribu " + terbilang(angka - 1000);
+            } else if (angka < 1000000) {
+                return terbilang(Math.floor(angka / 1000)) + " Ribu " + terbilang(angka % 1000);
+            } else if (angka < 1000000000) {
+                return terbilang(Math.floor(angka / 1000000)) + " Juta " + terbilang(angka % 1000000);
+            } else if (angka < 1000000000000) {
+                return terbilang(Math.floor(angka / 1000000000)) + " Milyar " + terbilang(angka % 1000000000);
+            } else if (angka < 1000000000000000) {
+                return terbilang(Math.floor(angka / 1000000000000)) + " Triliun " + terbilang(angka % 1000000000000);
+            }
+            return "";
+        }
+
         function filterData() {
             const filterValue = document.getElementById('filterDesa').value;
             const validasiValue = document.getElementById('filterValidasi').value;
@@ -334,10 +362,26 @@
             });
 
             const totalRows = filteredFeatures.length;
+            const countHarga = filteredFeatures.filter(f => parseFloat(f.properties.harga) > 0).length;
             const totalPTSL = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.ptsl) || 0), 0);
+            const totalHarga = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.harga) || 0), 0);
+            const totalPTSLHarga = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.harga) ? (parseFloat(f.properties.ptsl) || 0) : 0), 0);
 
             document.getElementById('totalRows').textContent = `Jumlah Baris : ${totalRows}`;
-            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} ha`;
+            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} Ha`;
+
+            const elTotalHarga = document.getElementById('totalHarga');
+            const elTotalHargaTerbilang = document.getElementById('totalHargaTerbilang');
+
+            if (showHarga) {
+                elTotalHarga.textContent = `Total Harga : Rp ${Math.round(totalHarga).toLocaleString('id-ID')},- (${countHarga.toLocaleString('id-ID')} Bidang / ${Math.round(totalPTSLHarga).toLocaleString('id-ID')} m² / ${(totalPTSLHarga / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} Ha)`;
+                elTotalHargaTerbilang.textContent = `Terbilang : ${terbilang(Math.round(totalHarga))} Rupiah`;
+                elTotalHarga.style.display = 'block';
+                elTotalHargaTerbilang.style.display = 'block';
+            } else {
+                elTotalHarga.style.display = 'none';
+                elTotalHargaTerbilang.style.display = 'none';
+            }
 
             if (currentSort.column) {
                 applySort();
