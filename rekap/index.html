@@ -157,7 +157,7 @@
     <script>
         // Muat file data dengan timestamp untuk mencegah caching oleh browser
         var timestamp = new Date().getTime();
-        document.write(`<script src="../data/UPDATE_19_01_2026_2107_0.js?v=${timestamp}"><\/script>`);
+        document.write(`<script src="../data/UPDATE_19_01_2026_2107_2.js?v=${timestamp}"><\/script>`);
     </script>
     <script>
         const tableBody = document.querySelector('#data-table tbody');
@@ -276,8 +276,8 @@
             return `https://co2n.github.io/tingali/?fid=${feature.properties.fid}#14/${lat.toFixed(4)}/${lng.toFixed(4)}`;
         }
 
-        if (typeof json_UPDATE_19_01_2026_2107_0 !== 'undefined') {
-            allFeatures = json_UPDATE_19_01_2026_2107_0.features;
+        if (typeof json_UPDATE_19_01_2026_2107_2 !== 'undefined') {
+            allFeatures = json_UPDATE_19_01_2026_2107_2.features;
 
             // Populate Filter
             const desas = [...new Set(allFeatures.map(f => f.properties.desa).filter(d => d))].sort();
