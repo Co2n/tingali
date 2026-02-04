@@ -62,6 +62,7 @@
             loadJS('../js/proj4.js');
             loadJS('../js/proj4leaflet.js');
             loadJS('../js/leaflet-search.js');
+            loadJS('../js/pinbyurl.js');
             loadJS('../data/ZONAMASUK_0.js');
             loadJS('../data/PERHUTANI_1.js');
             loadJS('../data/KANANGA_8.js');
@@ -486,6 +487,18 @@
         } else {
             document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
         }
+
+        // Fitur pencarian via URL parameter ?fid=...
+        searchAndHighlightByUrl(map, layer_SUKAJAYA_2, 'fid', 'fid', {
+            marker: {
+                circle: {
+                    radius: 50,
+                    color: '#e03',
+                    weight: 3,
+                    fill: false
+                }
+            }
+        });
         </script>        
     </body>
 </html>
