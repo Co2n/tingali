@@ -42,7 +42,10 @@
                 // 1. Zoom ke lokasi fitur
                 if (layer.getBounds) {
                     // Untuk Polygon/Line
-                    mapObj.fitBounds(layer.getBounds());
+                    var bounds = layer.getBounds();
+                    if (bounds.isValid()) {
+                        mapObj.fitBounds(bounds);
+                    }
                 } else if (layer.getLatLng) {
                     // Untuk Point
                     mapObj.setView(layer.getLatLng(), 19);
