@@ -25,12 +25,12 @@
     <script>
         document.addEventListener("DOMContentLoaded", function() {
             // Cek apakah variabel data sudah terload
-            if (typeof json_UPDATE_19_01_2026_2107_0 === 'undefined') {
+            if (typeof json_UPDATE_19_01_2026_2107_2 === 'undefined') {
                 document.getElementById('table-container').innerHTML = '<p style="color:red;">Gagal memuat data. Pastikan file <b>data/UPDATE_19_01_2026_2107_0.js</b> tersedia.</p>';
                 return;
             }
 
-            const features = json_UPDATE_19_01_2026_2107_0.features;
+            const features = json_UPDATE_19_01_2026_2107_2.features;
             
             if (!features || features.length === 0) {
                 document.getElementById('table-container').innerHTML = '<p>Tidak ada data features.</p>';
