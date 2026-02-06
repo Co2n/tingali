@@ -487,6 +487,32 @@
         } else {
             document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
         }
+
+        // Add Labels
+        var i = 0;
+        layer_SUKAJAYA_2.eachLayer(function(layer) {
+            var context = {
+                feature: layer.feature,
+                variables: {}
+            };
+            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_SUKAJAYA_2'});
+            labels.push(layer);
+            totalMarkers += 1;
+              layer.added = true;
+              addLabel(layer, i);
+              i++;
+        });
+        resetLabels([layer_SUKAJAYA_2]);
+        map.on("zoomend", function(){
+            resetLabels([layer_SUKAJAYA_2]);
+        });
+        map.on("layeradd", function(){
+            resetLabels([layer_SUKAJAYA_2]);
+        });
+        map.on("layerremove", function(){
+            resetLabels([layer_SUKAJAYA_2]);
+        });
+
         </script>        
     </body>
 </html>
