@@ -81,9 +81,6 @@
       }
    </style>
 
-   <script async src="https://docs.opencv.org/4.5.4/opencv.js" onload="onOpenCvReady();"
-      type="text/javascript"></script>
-
    <script>
       document.write('<style>/* ' + new Date().getTime() + ' */</style>');
    </script>
@@ -101,8 +98,6 @@
       <h2 class="text-center mb-2">Form Input Data Tanah (Rekap)</h2>
       <h6 class="text-center mb-4 text-muted" id="fidDisplay">Memuat FID...</h4>
       <h4 class="text-center mb-4 text-muted" id="nibDisplay">Memuat NIB...</h4>
-
-      <div id="cv-status" class="alert alert-warning text-center">Memuat library pemrosesan gambar...</div>
 
       <form id="rekapForm">
 
@@ -456,115 +451,44 @@
          return prefix == undefined ? rupiah : (rupiah ? 'Rp. ' + rupiah : '');
       }
 
-      // 3. OpenCV Core
-      let cvReady = false;
-      function onOpenCvReady() {
-         cvReady = true;
-         document.getElementById('cv-status').classList.remove('alert-warning');
-         document.getElementById('cv-status').classList.add('alert-success');
-         document.getElementById('cv-status').innerText = "Sistem Pemrosesan Gambar Siap!";
-         setTimeout(() => { document.getElementById('cv-status').style.display = 'none'; }, 2000);
-      }
-
       // Input File Handler
       document.querySelectorAll('.img-input').forEach(input => {
          input.addEventListener('change', function (e) {
-            if (!cvReady) { alert("Tunggu OpenCV..."); return; }
             if (e.target.files.length === 0) return;
 
             // Hapus pesan "Foto tersimpan" jika user upload baru
-            const prevInfo = input.parentElement.querySelector('small.text-success');
-            if (prevInfo) prevInfo.style.display = 'none';
+            const wrapper = input.parentElement;
+            const prevInfo = wrapper.querySelector('.old-file-msg');
+            if (prevInfo) prevInfo.remove();
 
             const file = e.target.files[0];
             const canvasId = e.target.dataset.target;
             const canvas = document.getElementById(canvasId);
-            const overlay = input.parentElement.querySelector('.loading-overlay');
+            const overlay = wrapper.querySelector('.loading-overlay');
 
             overlay.style.display = 'flex';
             const img = new Image();
             img.onload = function () {
-               try { processDocument(img, canvas); }
-               catch (err) {
-                  console.error(err);
-                  const ctx = canvas.getContext('2d');
-                  canvas.width = 400;
-                  canvas.height = img.height * (400 / img.width);
-                  ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+               const ctx = canvas.getContext('2d');
+               // Resize agar tidak terlalu besar (max width 800px)
+               const maxWidth = 800;
+               let newWidth = img.width;
+               let newHeight = img.height;
+
+               if (img.width > maxWidth) {
+                  newWidth = maxWidth;
+                  newHeight = img.height * (maxWidth / img.width);
                }
+
+               canvas.width = newWidth;
+               canvas.height = newHeight;
+               ctx.drawImage(img, 0, 0, newWidth, newHeight);
+               
                overlay.style.display = 'none';
             };
             img.src = URL.createObjectURL(file);
          });
       });
-
-      // Fungsi OpenCV Process (Sama persis sblmnya)
-      function processDocument(imgElement, canvasOutput) {
-         let src = cv.imread(imgElement);
-         let dst = new cv.Mat();
-         let gray = new cv.Mat();
-         let blurred = new cv.Mat();
-         let edges = new cv.Mat();
-
-         let dsize = new cv.Size(800, 0);
-         let ratio = 800 / src.cols;
-         let newHeight = src.rows * ratio;
-         cv.resize(src, dst, new cv.Size(800, newHeight), 0, 0, cv.INTER_AREA);
-
-         cv.cvtColor(dst, gray, cv.COLOR_RGBA2GRAY, 0);
-         cv.GaussianBlur(gray, blurred, new cv.Size(5, 5), 0);
-         cv.Canny(blurred, edges, 75, 200);
-
-         let contours = new cv.MatVector();
-         let hierarchy = new cv.Mat();
-         cv.findContours(edges, contours, hierarchy, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE);
-
-         let maxArea = 0; let maxContourIndex = -1;
-         for (let i = 0; i < contours.size(); ++i) {
-            let area = cv.contourArea(contours.get(i));
-            if (area > maxArea) { maxArea = area; maxContourIndex = i; }
-         }
-
-         let success = false;
-         if (maxContourIndex !== -1 && maxArea > 10000) {
-            let cnt = contours.get(maxContourIndex);
-            let peri = cv.arcLength(cnt, true);
-            let approx = new cv.Mat();
-            cv.approxPolyDP(cnt, approx, 0.02 * peri, true);
-
-            if (approx.rows === 4) {
-               let docPoints = [];
-               for (let i = 0; i < 4; i++) docPoints.push({ x: approx.data32S[i * 2], y: approx.data32S[i * 2 + 1] });
-               docPoints = sortCorners(docPoints);
-
-               let srcTri = cv.matFromArray(4, 1, cv.CV_32FC2, [docPoints[0].x, docPoints[0].y, docPoints[1].x, docPoints[1].y, docPoints[2].x, docPoints[2].y, docPoints[3].x, docPoints[3].y]);
-               let widthA = Math.hypot(docPoints[2].x - docPoints[3].x, docPoints[2].y - docPoints[3].y);
-               let widthB = Math.hypot(docPoints[1].x - docPoints[0].x, docPoints[1].y - docPoints[0].y);
-               let maxWidth = Math.max(widthA, widthB);
-               let heightA = Math.hypot(docPoints[1].x - docPoints[2].x, docPoints[1].y - docPoints[2].y);
-               let heightB = Math.hypot(docPoints[0].x - docPoints[3].x, docPoints[0].y - docPoints[3].y);
-               let maxHeight = Math.max(heightA, heightB);
-
-               let dstTri = cv.matFromArray(4, 1, cv.CV_32FC2, [0, 0, maxWidth, 0, maxWidth, maxHeight, 0, maxHeight]);
-               let M = cv.getPerspectiveTransform(srcTri, dstTri);
-               let warped = new cv.Mat();
-               cv.warpPerspective(dst, warped, M, new cv.Size(maxWidth, maxHeight));
-
-               cv.imshow(canvasOutput, warped);
-               srcTri.delete(); dstTri.delete(); M.delete(); warped.delete(); approx.delete();
-               success = true;
-            }
-         }
-         if (!success) { cv.imshow(canvasOutput, dst); }
-         src.delete(); dst.delete(); gray.delete(); blurred.delete(); edges.delete(); contours.delete(); hierarchy.delete();
-      }
-
-      function sortCorners(pts) {
-         pts.sort((a, b) => a.y - b.y);
-         let top = pts.slice(0, 2).sort((a, b) => a.x - b.x);
-         let bottom = pts.slice(2, 4).sort((a, b) => a.x - b.x);
-         return [top[0], top[1], bottom[1], bottom[0]];
-      }
 
       // --- PENGIRIMAN DATA (SUBMIT) ---
       document.getElementById('rekapForm').addEventListener('submit', function (e) {
@@ -599,7 +523,16 @@
             // Jadi: Cek apakah input file terkait ada filenya
             const fileInput = document.querySelector(`input[data-target="${id}"]`);
             if (fileInput && fileInput.files.length > 0) {
-               return canvas.toDataURL('image/jpeg', 0.8);
+               // Kompresi agar di bawah 100KB
+               let quality = 0.7;
+               let dataUrl = canvas.toDataURL('image/jpeg', quality);
+               const maxBytes = 100 * 1024; // 100KB
+
+               while (dataUrl.length * 0.75 > maxBytes && quality > 0.1) {
+                  quality -= 0.1;
+                  dataUrl = canvas.toDataURL('image/jpeg', quality);
+               }
+               return dataUrl;
             }
             return ""; // Kirim string kosong agar backend mempertahankan foto lama
          };
