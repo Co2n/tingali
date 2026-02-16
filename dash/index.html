@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report Realisasi</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background-color: #f4f4f4; cursor: pointer; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        tr:hover { background-color: #f1f1f1; }
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); }
+        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; margin-top: 50px; }
+        .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
+        .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
+        .controls { margin-bottom: 15px; }
+        .controls select, .controls button, .controls input { padding: 5px; margin-right: 10px; }
+        .align-right { text-align: right; }
+        .table-container { overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Data Report Realisasi</h1>
+    <p id="totalRows">Jumlah Baris : </p>
+    <p id="totalPTSL">Total PTSL : m2 / ha</p>
+    
+    <div class="controls">
+        <label for="filterDesa">Filter :</label>
+        <select id="filterValidasi" onchange="filterData()">
+            <option value="Komplit">Komplit</option>
+            <option value="Progres">On Progres</option>
+            <option value="Semua">Semua</option>
+        </select>
+        <select id="filterDesa" onchange="filterData()">
+            <option value="">Semua Desa</option>
+        </select>
+        <input type="text" id="searchInput" placeholder="Cari NIB, Pemilik, Nama..." oninput="filterData()">
+        <button onclick="exportToExcel()">Export to Excel</button>
+    </div>
+    <div class="table-container">
+    <table id="data-table">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th onclick="sortData('fid')">FID</th>
+                <th onclick="sortData('desa')">Desa</th>
+                <th onclick="sortData('nib')">NIB</th>
+                <th onclick="sortData('pemilik')">Pemilik</th>
+                <th>Nomor Rekening</th>
+                <th>Bukti Transaski</th>
+                <th>Dokumentasi Penyerahan</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+    </div>
+    <p style="font-style: italic">* Klik pada No NIB untuk melihat peta lokasi bidang tanah.</p>
+    <div id="pagination" class="controls" style="text-align: center; margin-top: 10px;">
+        <button id="btn-prev" onclick="prevPage()">Previous</button>
+        <span id="page-info">Page 1 of 1</span>
+        <button id="btn-next" onclick="nextPage()">Next</button>
+    </div>
+
+    <!-- Modal untuk menampilkan gambar -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="document.getElementById('imageModal').style.display='none'">&times;</span>
+        <img class="modal-content" id="img01">
+    </div>
+
+    <script>
+        // Muat file data dengan timestamp untuk mencegah caching oleh browser
+        var timestamp = new Date().getTime();
+        document.write(`<script src="../data/UPDATE_19_01_2026_2107_2.js?v=${timestamp}"><\/script>`);
+    </script>
+    <script>
+        const tableBody = document.querySelector('#data-table tbody');
+        const persib = "*";
+
+        function checkPersib() {
+            return prompt("Masukkan Kode:") === persib;
+        }
+        
+        function formatFileLink(path) {
+            if (!path) return '';
+            const fileName = path.split('/').pop();
+            // Mengganti : dan / dengan _ lalu menambahkan prefix ../images/
+            const webPath = '../images/' + path.replace(/:/g, '_').replace(/\//g, '_');
+            return `<a href="#" onclick="showImage('${webPath}'); return false;">${fileName}</a>`;
+        }
+
+        function showImage(src) {
+            if (checkPersib()) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('img01');
+                modal.style.display = "block";
+                modalImg.src = src;
+            }
+        }
+
+        // Tutup modal jika klik di luar gambar
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+
+        function exportToExcel() {
+            // Generate table HTML for all filtered data
+            //let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>Nm Persetujuan</th><th>Sbg</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th><th>No Bukti</th><th>BU</th><th>BS</th><th>BB</th><th>BT</th></tr></thead><tbody>';
+                
+            filteredFeatures.forEach((feature, index) => {
+                const p = feature.properties;
+                const mapUrl = getMapUrl(feature);
+                const no = index + 1;
+                
+                tableHTML += `
+                    <tr>
+                        <td>${no}</td>
+                        <td>${p.fid || ''}</td>
+                        <td>${p.desa.toUpperCase() || ''}</td>
+                        <td><a href="${mapUrl}" target="_blank">'${p.nib || ''}</a></td>
+                        <td>${p.pemilik || ''}</td>
+                        <td>${p.nomor_rekening || ''}</td>
+                        <td>${formatFileLink(p.bukti_transaksi)}</td>
+                        <td>${formatFileLink(p.dokumentasi_penyerahan)}</td >
+                    </tr>`;
+            });
+            tableHTML += '</tbody></table>';
+
+            const html = `
+                <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40">
+                <head><meta charset="UTF-8"></head><body>
+                ${tableHTML}
+                <\/body><\/html>`;
+            const blob = new Blob([html], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            const d = new Date();
+            const dateStr = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear();
+            const timeStr = d.getHours().toString().padStart(2, '0') + '-' + d.getMinutes().toString().padStart(2, '0');
+            a.download = `data_desa_notaris_${dateStr}_${timeStr}.xls`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        let allFeatures = [];
+        let filteredFeatures = [];
+        let currentPage = 1;
+        const rowsPerPage = 20;
+        let currentSort = { column: null, direction: 'asc' };
+
+        function getMapUrl(feature) {
+            let lat = 0, lng = 0;
+            if (feature.geometry && feature.geometry.coordinates) {
+                const ring = feature.geometry.type === 'MultiPolygon' ? feature.geometry.coordinates[0][0] : feature.geometry.coordinates[0];
+                if (ring && ring.length > 0) {
+                    let sumLat = 0, sumLng = 0;
+                    for (let i = 0; i < ring.length; i++) {
+                        sumLng += ring[i][0];
+                        sumLat += ring[i][1];
+                    }
+                    lat = sumLat / ring.length;
+                    lng = sumLng / ring.length;
+                }
+            }
+            return `https://co2n.github.io/tingali/${feature.properties.desa}/?fid=${feature.properties.fid}#14/${lat.toFixed(4)}/${lng.toFixed(4)}`;
+        }
+
+        if (typeof json_UPDATE_19_01_2026_2107_2 !== 'undefined') {
+            allFeatures = json_UPDATE_19_01_2026_2107_2.features;
+            
+            // Populate Filter
+            const desas = [...new Set(allFeatures.map(f => f.properties.desa).filter(d => d))].sort();
+            const filterSelect = document.getElementById('filterDesa');
+            desas.forEach(d => {
+                const opt = document.createElement('option');
+                opt.value = d;
+                opt.textContent = d.toUpperCase();
+                filterSelect.appendChild(opt);
+            });
+
+            filterData();
+        } else {
+            console.error("Data variable json_UPDATE_19_01_2026_2107_0 is not defined.");
+            const row = document.createElement('tr');
+            row.innerHTML = '<td colspan="21" style="text-align:center; color:red;">Gagal memuat data. Pastikan file data tersedia.</td>';
+            tableBody.appendChild(row);
+        }
+
+        function filterData() {
+            const filterValue = document.getElementById('filterDesa').value;
+            const validasiValue = document.getElementById('filterValidasi').value;
+            const searchValue = document.getElementById('searchInput').value.toLowerCase();
+
+            const urlParams = new URLSearchParams(window.location.search);
+            const urlReff = urlParams.get('reff');
+            const urlRealisasi = urlParams.get('realisasi');
+
+            filteredFeatures = allFeatures.filter(feature => {
+                const p = feature.properties;
+                
+                if (validasiValue === 'Komplit') {
+                    if (p.validasi !== 'Komplit') return false;
+                } else if (validasiValue === 'Progres') {
+                    if (!p.validasi || p.validasi.length <= 3 || p.validasi === 'Komplit') return false;
+                } else if (validasiValue === 'Semua') {
+                    if (!p.validasi || p.validasi.length <= 3) return false;
+                }
+
+                if (filterValue && p.desa !== filterValue) return false;
+
+                if (searchValue) {
+                    const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || ''}`.toLowerCase();
+                    if (!searchTarget.includes(searchValue)) return false;
+                }
+
+                if (urlReff) {
+                    if (!p.reff || !String(p.reff).toLowerCase().includes(urlReff.toLowerCase())) return false;
+                }
+                
+                if (urlRealisasi) {
+                    if (!p.realisasi || !String(p.realisasi).toLowerCase().includes(urlRealisasi.toLowerCase())) return false;
+                }
+
+                return true;
+            });
+
+            const totalRows = filteredFeatures.length;
+            const totalPTSL = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.ptsl) || 0), 0);
+            
+            document.getElementById('totalRows').textContent = `Jumlah Baris : ${totalRows}`;
+            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', {maximumFractionDigits: 4})} ha`;
+            
+            if (currentSort.column) {
+                applySort();
+            }
+
+            currentPage = 1;
+            renderPage();
+        }
+
+        function sortData(column) {
+            if (currentSort.column === column) {
+                currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.column = column;
+                currentSort.direction = 'asc';
+            }
+            applySort();
+            renderPage();
+            updateSortIcons();
+        }
+
+        function applySort() {
+            const column = currentSort.column;
+            const direction = currentSort.direction;
+            
+            filteredFeatures.sort((a, b) => {
+                let valA = a.properties[column];
+                let valB = b.properties[column];
+
+                if (valA == null) valA = "";
+                if (valB == null) valB = "";
+
+                if (column === 'luas' || column === 'ptsl') {
+                    valA = parseFloat(valA) || 0;
+                    valB = parseFloat(valB) || 0;
+                } else {
+                    valA = valA.toString().toLowerCase();
+                    valB = valB.toString().toLowerCase();
+                }
+
+                if (valA < valB) return direction === 'asc' ? -1 : 1;
+                if (valA > valB) return direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        function updateSortIcons() {
+            const headers = document.querySelectorAll('#data-table th[onclick]');
+            headers.forEach(th => {
+                let text = th.innerText.replace(' ▲', '').replace(' ▼', '');
+                th.innerText = text;
+                if (th.getAttribute('onclick').includes(`'${currentSort.column}'`)) {
+                    th.innerText += currentSort.direction === 'asc' ? ' ▲' : ' ▼';
+                }
+            });
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPage();
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredFeatures.length / rowsPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                renderPage();
+            }
+        }
+
+        function renderPage() {
+            tableBody.innerHTML = '';
+            const totalRows = filteredFeatures.length;
+            const totalPages = Math.ceil(totalRows / rowsPerPage);
+            
+            // Update controls
+            document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages || 1}`;
+            document.getElementById('btn-prev').disabled = currentPage === 1;
+            document.getElementById('btn-next').disabled = currentPage === totalPages || totalPages === 0;
+
+            const startIndex = (currentPage - 1) * rowsPerPage;
+            const endIndex = startIndex + rowsPerPage;
+            const featuresToRender = filteredFeatures.slice(startIndex, endIndex);
+            let no = startIndex + 1;
+
+            if (featuresToRender.length > 0) {
+                featuresToRender.forEach(feature => {
+                    const p = feature.properties;
+                    const mapUrl = getMapUrl(feature);
+
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${no++}</td>
+                        <td>${p.fid || ''}</td>
+                        <td>${p.desa.toUpperCase() || ''}</td>
+                        <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
+                        <td>${p.pemilik || ''}</td>
+                        <td>${p.nomor_rekening || ''}</td>
+                        <td>${formatFileLink(p.bukti_transaksi)}</td>
+                        <td>${formatFileLink(p.dokumentasi_penyerahan)}</td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                const row = document.createElement('tr');
+                row.innerHTML = '<td colspan="21" style="text-align:center;">Tidak ada data dengan validasi "Komplit"</td>';
+                tableBody.appendChild(row);
+            }
+        }
+    </script>
+</body>
+</html>
