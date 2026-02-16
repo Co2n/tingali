@@ -10,10 +10,12 @@
         <meta name="mobile-web-app-capable" content="yes">
         <meta name="apple-mobile-web-app-capable" content="yes">
 
+        <!-- Force the browser to load a new version of the page -->
         <script>
             (function() {
                 try {
                     localStorage.clear();
+
                     sessionStorage.clear();
                 } catch(e) { console.log("Storage clear blocked"); }
                 
@@ -31,6 +33,7 @@
             }
         </script>
 
+        <!-- Load CSS files with version parameter -->
         <script>
             loadCSS('css/leaflet.css');
             loadCSS('css/L.Control.Layers.Tree.css');
@@ -41,6 +44,7 @@
             loadCSS('css/leaflet-measure.css');
         </script>
         
+        <!-- Basic styling for the map -->
         <style>
         html, body, #map {
             width: 100%;
@@ -55,6 +59,7 @@
         <div id="map">
         </div>
 
+        <!-- Load JavaScript files with version parameter -->
         <script>
             loadJS('js/qgis2web_expressions.js');
             loadJS('js/leaflet.js');
