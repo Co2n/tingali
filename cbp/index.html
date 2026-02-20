@@ -64,10 +64,10 @@
                 <th>SPPT</th>
                 <th>No Bukti</th>
                 <th>Bukti</th>
-                <th>BU</th>
+                <!--<th>BU</th>
                 <th>BS</th>
                 <th>BB</th>
-                <th>BT</th>
+                <th>BT</th>-->
             </tr>
         </thead>
         <tbody>
@@ -128,7 +128,7 @@
         function exportToExcel() {
             // Generate table HTML for all filtered data
             //let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
-            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>Nm Persetujuan</th><th>Sbg</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th><th>No Bukti</th><th>BU</th><th>BS</th><th>BB</th><th>BT</th></tr></thead><tbody>';
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>Nm Persetujuan</th><th>Sbg</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th><th>No Bukti</th><!--<th>BU</th><th>BS</th><th>BB</th><th>BT</th>--></tr></thead><tbody>';
                 
             filteredFeatures.forEach((feature, index) => {
                 const p = feature.properties;
@@ -149,10 +149,10 @@
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
                         <td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
                         <td>${p.nobukti || ''}</td>
-                        <td>${p.bu || ''}</td>
-                        <td>${p.bs || ''}</td>
-                        <td>${p.bb || ''}</td>
-                        <td>${p.bt || ''}</td>
+                        <!--<td>${p.bu || ''}</td>-->
+                        <!--<td>${p.bs || ''}</td>-->
+                        <!--<td>${p.bb || ''}</td>-->
+                        <!--<td>${p.bt || ''}</td>-->
                     </tr>`;
             });
             tableHTML += '</tbody></table>';
@@ -372,10 +372,10 @@
                         <td>${formatFileLink(p.sppt)}</td>
                         <td>${p.nobukti || ''}</td>
                         <td>${formatFileLink(p.bukti)}</td>
-                        <td>${p.bu || ''}</td>
-                        <td>${p.bs || ''}</td>
-                        <td>${p.bb || ''}</td>
-                        <td>${p.bt || ''}</td>
+                        <!--<td>${p.bu || ''}</td>-->
+                        <!--<td>${p.bs || ''}</td>-->
+                        <!--<td>${p.bb || ''}</td>-->
+                        <!--<td>${p.bt || ''}</td>-->
                     `;
                     tableBody.appendChild(row);
                 });
