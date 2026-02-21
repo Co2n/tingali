@@ -40,7 +40,7 @@
             margin: 0;
         }
         </style>
-        <title>Kananga</title>
+        <title>Mekarjaya</title>
     </head>
     <body>
         <div id="map">
@@ -65,9 +65,9 @@
             loadJS('../js/pinbyurl.js');
             loadJS('../data/ZONAMASUK_1.js');
             loadJS('../data/PERHUTANI_1.js');
-            loadJS('../data/KANANGA_8.js');
-            loadJS('../data/KNAFLoting_9.js');
-            loadJS('../data/KNAKurang_10.js');
+            loadJS('../data/MULYAJAYA_17.js');
+            loadJS('../data/MLJFLoting_18.js');
+            loadJS('../data/MLJKurang_19.js');
         </script>
         <script>
         var highlightLayer;
@@ -93,7 +93,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.9816946962899005,108.67811559217711],[-6.9710414558222915,108.69107084670125]]);
+        }).fitBounds([[-6.9753064712071495,108.69205825779173],[-6.964653593190247,108.70501305059555]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -277,7 +277,7 @@
         });
         bounds_group.addLayer(layer_PERHUTANI_1);
         map.addLayer(layer_PERHUTANI_1);
-        function pop_KANANGA_2(feature, layer) {
+        function pop_MULYAJAYA_2(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -306,9 +306,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_KANANGA_2_0() {
+        function style_MULYAJAYA_2_0() {
             return {
-                pane: 'pane_KANANGA_2',
+                pane: 'pane_MULYAJAYA_2',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -317,25 +317,25 @@
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(255,228,202,1.0)',
+                fillColor: 'rgba(202,236,255,1.0)',
                 interactive: true,
             }
         }
-        map.createPane('pane_KANANGA_2');
-        map.getPane('pane_KANANGA_2').style.zIndex = 402;
-        map.getPane('pane_KANANGA_2').style['mix-blend-mode'] = 'normal';
-        var layer_KANANGA_2 = new L.geoJson(json_KANANGA_8, {
+        map.createPane('pane_MULYAJAYA_2');
+        map.getPane('pane_MULYAJAYA_2').style.zIndex = 402;
+        map.getPane('pane_MULYAJAYA_2').style['mix-blend-mode'] = 'normal';
+        var layer_MULYAJAYA_2 = new L.geoJson(json_MULYAJAYA_17, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_KANANGA_2',
-            layerName: 'layer_KANANGA_2',
-            pane: 'pane_KANANGA_2',
-            onEachFeature: pop_KANANGA_2,
-            style: style_KANANGA_2_0,
+            dataVar: 'json_MULYAJAYA_2',
+            layerName: 'layer_MULYAJAYA_2',
+            pane: 'pane_MULYAJAYA_2',
+            onEachFeature: pop_MULYAJAYA_2,
+            style: style_MULYAJAYA_2_0,
         });
-        bounds_group.addLayer(layer_KANANGA_2);
-        map.addLayer(layer_KANANGA_2);
-        function pop_KNAFLoting_3(feature, layer) {
+        bounds_group.addLayer(layer_MULYAJAYA_2);
+        map.addLayer(layer_MULYAJAYA_2);
+        function pop_MLJFLoting_3(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -370,9 +370,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_KNAFLoting_3_0() {
+        function style_MLJFLoting_3_0() {
             return {
-                pane: 'pane_KNAFLoting_3',
+                pane: 'pane_MLJFLoting_3',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -381,25 +381,25 @@
                 weight: 1.0, 
                 fill: true,
                 fillOpacity: 1,
-                fillColor: 'rgba(222,167,114,1.0)',
+                fillColor: 'rgba(93,184,235,1.0)',
                 interactive: true,
             }
         }
-        map.createPane('pane_KNAFLoting_3');
-        map.getPane('pane_KNAFLoting_3').style.zIndex = 403;
-        map.getPane('pane_KNAFLoting_3').style['mix-blend-mode'] = 'normal';
-        var layer_KNAFLoting_3 = new L.geoJson(json_KNAFLoting_9, {
+        map.createPane('pane_MLJFLoting_3');
+        map.getPane('pane_MLJFLoting_3').style.zIndex = 403;
+        map.getPane('pane_MLJFLoting_3').style['mix-blend-mode'] = 'normal';
+        var layer_MLJFLoting_3 = new L.geoJson(json_MLJFLoting_18, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_KNAFLoting_3',
-            layerName: 'layer_KNAFLoting_3',
-            pane: 'pane_KNAFLoting_3',
-            onEachFeature: pop_KNAFLoting_3,
-            style: style_KNAFLoting_3_0,
+            dataVar: 'json_MLJFLoting_3',
+            layerName: 'layer_MLJFLoting_3',
+            pane: 'pane_MLJFLoting_3',
+            onEachFeature: pop_MLJFLoting_3,
+            style: style_MLJFLoting_3_0,
         });
-        bounds_group.addLayer(layer_KNAFLoting_3);
-        map.addLayer(layer_KNAFLoting_3);
-        function pop_KNAKurang_4(feature, layer) {
+        bounds_group.addLayer(layer_MLJFLoting_3);
+        map.addLayer(layer_MLJFLoting_3);
+        function pop_MLJKurang_4(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -431,7 +431,7 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        var pattern_KNAKurang_4_0 = new L.StripePattern({
+        var pattern_MLJKurang_4_0 = new L.StripePattern({
             weight: 0.3,
             spaceWeight: 2.0,
             color: '#000000',
@@ -439,19 +439,19 @@
             spaceOpacity: 0,
             angle: 315
         });
-        pattern_KNAKurang_4_0.addTo(map);
-        function style_KNAKurang_4_0() {
+        pattern_MLJKurang_4_0.addTo(map);
+        function style_MLJKurang_4_0() {
             return {
-                pane: 'pane_KNAKurang_4',
+                pane: 'pane_MLJKurang_4',
                 stroke: false,
                 fillOpacity: 1,
-                fillPattern: pattern_KNAKurang_4_0,
+                fillPattern: pattern_MLJKurang_4_0,
                 interactive: true,
             }
         }
-        function style_KNAKurang_4_1() {
+        function style_MLJKurang_4_1() {
             return {
-                pane: 'pane_KNAKurang_4',
+                pane: 'pane_MLJKurang_4',
                 opacity: 1,
                 color: 'rgba(0,0,0,1.0)',
                 dashArray: '',
@@ -462,23 +462,23 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_KNAKurang_4');
-        map.getPane('pane_KNAKurang_4').style.zIndex = 404;
-        map.getPane('pane_KNAKurang_4').style['mix-blend-mode'] = 'normal';
-        var layer_KNAKurang_4 = new L.geoJson.multiStyle(json_KNAKurang_10, {
+        map.createPane('pane_MLJKurang_4');
+        map.getPane('pane_MLJKurang_4').style.zIndex = 404;
+        map.getPane('pane_MLJKurang_4').style['mix-blend-mode'] = 'normal';
+        var layer_MLJKurang_4 = new L.geoJson.multiStyle(json_MLJKurang_19, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_KNAKurang_4',
-            layerName: 'layer_KNAKurang_4',
-            pane: 'pane_KNAKurang_4',
-            onEachFeature: pop_KNAKurang_4,
-            styles: [style_KNAKurang_4_0,style_KNAKurang_4_1,]
+            dataVar: 'json_MLJKurang_4',
+            layerName: 'layer_MLJKurang_4',
+            pane: 'pane_MLJKurang_4',
+            onEachFeature: pop_MLJKurang_4,
+            styles: [style_MLJKurang_4_0,style_MLJKurang_4_1,]
         });
-        bounds_group.addLayer(layer_KNAKurang_4);
-        map.addLayer(layer_KNAKurang_4);
+        bounds_group.addLayer(layer_MLJKurang_4);
+        map.addLayer(layer_MLJKurang_4);
         setBounds();
         map.addControl(new L.Control.Search({
-            layer: layer_KANANGA_2,
+            layer: layer_MULYAJAYA_2,
             initial: false,
             hideMarkerOnCollapse: true,
             propertyName: 'key2'}));
@@ -490,27 +490,27 @@
 
         // Add Labels
         var i = 0;
-        layer_KANANGA_2.eachLayer(function(layer) {
+        layer_MULYAJAYA_2.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_KANANGA_2'});
+            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_MULYAJAYA_2'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_KANANGA_2]);
+        resetLabels([layer_MULYAJAYA_2]);
         map.on("zoomend", function(){
-            resetLabels([layer_KANANGA_2]);
+            resetLabels([layer_MULYAJAYA_2]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_KANANGA_2]);
+            resetLabels([layer_MULYAJAYA_2]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_KANANGA_2]);
+            resetLabels([layer_MULYAJAYA_2]);
         });
 
         </script>        

@@ -1,78 +1,145 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBPi</title>
+    <title>REKAP MULYAJAYA</title>
     <style>
-        body { font-family: sans-serif; margin: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 14px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
-        th { background-color: #f4f4f4; cursor: pointer; }
-        tr:nth-child(even) { background-color: #f9f9f9; }
-        tr:hover { background-color: #f1f1f1; }
+        body {
+            font-family: sans-serif;
+            margin: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            cursor: pointer;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
         /* Modal Styles */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.9); }
-        .modal-content { margin: auto; display: block; max-width: 90%; max-height: 90%; margin-top: 50px; }
-        .close { position: absolute; top: 15px; right: 35px; color: #f1f1f1; font-size: 40px; font-weight: bold; cursor: pointer; }
-        .close:hover, .close:focus { color: #bbb; text-decoration: none; cursor: pointer; }
-        .controls { margin-bottom: 15px; }
-        .controls select, .controls button, .controls input { padding: 5px; margin-right: 10px; }
-        .align-right { text-align: right; }
-        .table-container { overflow-x: auto; }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90%;
+            margin-top: 50px;
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .controls {
+            margin-bottom: 15px;
+        }
+
+        .controls select,
+        .controls button,
+        .controls input {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .align-right {
+            text-align: right;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
     </style>
 </head>
+
 <body>
-    <h1>Data Desa Validasi</h1>
+    <h1>Data REKAP MULYAJAYA</h1>
     <p id="totalRows">Jumlah Baris : </p>
     <p id="totalPTSL">Total PTSL : m2 / ha</p>
-    
+    <p id="totalHarga" style="display: none;">Total Harga : </p>
+    <p id="totalHargaTerbilang" style="display: none;"></p>
+
     <div class="controls">
         <label for="filterDesa">Filter :</label>
         <select id="filterValidasi" onchange="filterData()">
+            <option value="Semua">Semua</option>
             <option value="Komplit">Komplit</option>
             <option value="Progres">On Progres</option>
-            <option value="Semua">Semua</option>
         </select>
-        <select id="filterDesa" onchange="filterData()">
-            <option value="">Semua Desa</option>
+        <select id="filterDesa" style="display: none;">
+            <option value="mulyajaya">MULYAJAYA</option>
         </select>
         <input type="text" id="searchInput" placeholder="Cari NIB, Pemilik, Nama..." oninput="filterData()">
         <button onclick="exportToExcel()">Export to Excel</button>
     </div>
     <div class="table-container">
-    <table id="data-table">
-        <thead>
-            <tr>
-                <th>No</th>
-                <th onclick="sortData('fid')">FID</th>
-                <th onclick="sortData('desa')">Desa</th>
-                <th onclick="sortData('nib')">NIB</th>
-                <th onclick="sortData('pemilik')">Pemilik</th>
-                <th>KTP</th>
-                <th>KK</th>
-                <th>Nm Persetujuan</th>
-                <th>Sbg</th>
-                <th>KTP Agree</th>
-                <th onclick="sortData('nop')">NOP</th>
-                <th onclick="sortData('nama')">Nama SPPT</th>
-                <th onclick="sortData('ptsl')">PTSL</th>
-                <th onclick="sortData('harga')">Harga</th>
-                <th>SPPT</th>
-                <th>No Bukti</th>
-                <th>Bukti</th>
-                <!--<th>BU</th>
-                <th>BS</th>
-                <th>BB</th>
-                <th>BT</th>-->
-            </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
+        <table id="data-table">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th onclick="sortData('fid')">FID</th>
+                    <th onclick="sortData('desa')">Desa</th>
+                    <th onclick="sortData('nib')">NIB</th>
+                    <th onclick="sortData('pemilik')">Pemilik</th>
+                    <th onclick="sortData('nop')">NOP</th>
+                    <th onclick="sortData('nama')">Nama SPPT</th>
+                    <th onclick="sortData('ptsl')">PTSL</th>
+                    <th id="header-harga" onclick="sortData('harga')">Harga</th>
+                    <th onclick="sortData('validasi')">Kekurangan</th>
+                    <th>Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
     </div>
     <p style="font-style: italic">* Klik pada No NIB untuk melihat peta lokasi bidang tanah.</p>
     <div id="pagination" class="controls" style="text-align: center; margin-top: 10px;">
@@ -90,16 +157,25 @@
     <script>
         // Muat file data dengan timestamp untuk mencegah caching oleh browser
         var timestamp = new Date().getTime();
-        document.write(`<script src="../data/UPDATE_19_01_2026_2107_2.js?v=${timestamp}"><\/script>`);
+        document.write(`<script src="../../data/UPDATE_19_01_2026_2107_2.js?v=${timestamp}"><\/script>`);
     </script>
     <script>
         const tableBody = document.querySelector('#data-table tbody');
         const persib = "*";
 
+        const urlParams = new URLSearchParams(window.location.search);
+        const showHarga = urlParams.has('reff');
+
+        if (!showHarga) {
+            const thHarga = document.getElementById('header-harga');
+            if (thHarga) thHarga.style.display = 'none';
+        }
+
+
         function checkPersib() {
             return prompt("Masukkan Kode:") === persib;
         }
-        
+
         function formatFileLink(path) {
             if (!path) return '';
             const fileName = path.split('/').pop();
@@ -118,7 +194,7 @@
         }
 
         // Tutup modal jika klik di luar gambar
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             const modal = document.getElementById('imageModal');
             if (event.target == modal) {
                 modal.style.display = "none";
@@ -127,34 +203,36 @@
 
         function exportToExcel() {
             // Generate table HTML for all filtered data
-            //let tableHTML = '<table><thead>' + document.querySelector('#data-table thead').innerHTML + '</thead><tbody>';
-            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>Nm Persetujuan</th><th>Sbg</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th><th>Harga</th><th>No Bukti</th><!--<th>BU</th><th>BS</th><th>BB</th><th>BT</th>--></tr></thead><tbody>';
-                
+            
+            let tableHTML = '<table><thead><tr><th>No</th><th>FID</th><th>Desa</th><th>NIB</th><th>Pemilik</th><th>NOP</th><th>Nama SPPT</th><th>PTSL</th>';
+            if (showHarga) {
+                tableHTML += '<th>Harga</th>';
+            }
+            tableHTML += '<th>Kekurangan</th>';
+            tableHTML += '</tr></thead><tbody>';
+
             filteredFeatures.forEach((feature, index) => {
                 const p = feature.properties;
                 const mapUrl = getMapUrl(feature);
                 const no = index + 1;
-                
+
                 tableHTML += `
                     <tr>
                         <td>${no}</td>
                         <td>${p.fid || ''}</td>
-                        <td>${p.desa.toUpperCase() || ''}</td>
+                        <td>${p.desa ? p.desa.toUpperCase() : ''}</td>
                         <td><a href="${mapUrl}" target="_blank">'${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
-                        <td>${p.nm_persetujuan || ''}</td>
-                        <td>${p.sbg || ''}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
-                        <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl) : ''}</td>
-                        <!--<td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>-->
-                        <td style="text-align: right;">${p.harga != null ? Math.round(p.harga) : ''}</td>
-                        <td>${p.nobukti || ''}</td>
-                        <!--<td>${p.bu || ''}</td>-->
-                        <!--<td>${p.bs || ''}</td>-->
-                        <!--<td>${p.bb || ''}</td>-->
-                        <!--<td>${p.bt || ''}</td>-->
-                    </tr>`;
+                        <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
+                    `;
+                if (showHarga) {
+                    tableHTML += `<td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>`;
+                }
+                tableHTML += `<td>${p.validasi || ''}</td>`;
+                tableHTML += `</tr>`;
+
             });
             tableHTML += '</tbody></table>';
 
@@ -170,7 +248,7 @@
             const d = new Date();
             const dateStr = d.getDate().toString().padStart(2, '0') + '-' + (d.getMonth() + 1).toString().padStart(2, '0') + '-' + d.getFullYear();
             const timeStr = d.getHours().toString().padStart(2, '0') + '-' + d.getMinutes().toString().padStart(2, '0');
-            a.download = `data_desa_notaris_${dateStr}_${timeStr}.xls`;
+            a.download = `data_desa_${dateStr}_${timeStr}.xls`;
             a.click();
             URL.revokeObjectURL(url);
         }
@@ -182,25 +260,46 @@
         let currentSort = { column: null, direction: 'asc' };
 
         function getMapUrl(feature) {
-            let lat = 0, lng = 0;
-            if (feature.geometry && feature.geometry.coordinates) {
-                const ring = feature.geometry.type === 'MultiPolygon' ? feature.geometry.coordinates[0][0] : feature.geometry.coordinates[0];
-                if (ring && ring.length > 0) {
-                    let sumLat = 0, sumLng = 0;
-                    for (let i = 0; i < ring.length; i++) {
-                        sumLng += ring[i][0];
-                        sumLat += ring[i][1];
+            let lat = 0,
+                lng = 0;
+            if (feature.geometry && feature.geometry.coordinates && feature.geometry.coordinates.length > 0) {
+                let allPoints = [];
+                if (feature.geometry.type === 'MultiPolygon') {
+                    // Ambil hanya ring terluar dari poligon pertama untuk simplifikasi
+                    if (feature.geometry.coordinates[0] && feature.geometry.coordinates[0][0]) {
+                        allPoints = feature.geometry.coordinates[0][0];
                     }
-                    lat = sumLat / ring.length;
-                    lng = sumLng / ring.length;
+                } else if (feature.geometry.type === 'Polygon') {
+                    if (feature.geometry.coordinates[0]) {
+                        allPoints = feature.geometry.coordinates[0];
+                    }
                 }
+
+                if (allPoints.length > 0) {
+                    let minLng = 181, maxLng = -181, minLat = 91, maxLat = -91;
+                    allPoints.forEach(p => {
+                        if (p && p.length === 2) {
+                            minLng = Math.min(minLng, p[0]);
+                            maxLng = Math.max(maxLng, p[0]);
+                            minLat = Math.min(minLat, p[1]);
+                            maxLat = Math.max(maxLat, p[1]);
+                        }
+                    });
+                    lat = (minLat + maxLat) / 2;
+                    lng = (minLng + maxLng) / 2;
+                }
+            }
+            // Cegah koordinat 0,0 (invalid geometry)
+            if (lat === 0 && lng === 0) {
+                return 'javascript:alert("Lokasi peta tidak tersedia untuk data ini.");';
             }
             return `https://kokondao.com/${feature.properties.desa}/?fid=${feature.properties.fid}#14/${lat.toFixed(4)}/${lng.toFixed(4)}`;
         }
 
+
         if (typeof json_UPDATE_19_01_2026_2107_2 !== 'undefined') {
             allFeatures = json_UPDATE_19_01_2026_2107_2.features;
-            
+
             // Populate Filter
             const desas = [...new Set(allFeatures.map(f => f.properties.desa).filter(d => d))].sort();
             const filterSelect = document.getElementById('filterDesa');
@@ -215,8 +314,34 @@
         } else {
             console.error("Data variable json_UPDATE_19_01_2026_2107_0 is not defined.");
             const row = document.createElement('tr');
-            row.innerHTML = '<td colspan="21" style="text-align:center; color:red;">Gagal memuat data. Pastikan file data tersedia.</td>';
+            row.innerHTML = '<td colspan="10" style="text-align:center; color:red;">Gagal memuat data. Pastikan file data tersedia.</td>';
             tableBody.appendChild(row);
+        }
+
+        function terbilang(angka) {
+            var bilne = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            if (angka < 12) {
+                return bilne[angka];
+            } else if (angka < 20) {
+                return terbilang(angka - 10) + " Belas";
+            } else if (angka < 100) {
+                return terbilang(Math.floor(angka / 10)) + " Puluh " + terbilang(angka % 10);
+            } else if (angka < 200) {
+                return "Seratus " + terbilang(angka - 100);
+            } else if (angka < 1000) {
+                return terbilang(Math.floor(angka / 100)) + " Ratus " + terbilang(angka % 100);
+            } else if (angka < 2000) {
+                return "Seribu " + terbilang(angka - 1000);
+            } else if (angka < 1000000) {
+                return terbilang(Math.floor(angka / 1000)) + " Ribu " + terbilang(angka % 1000);
+            } else if (angka < 1000000000) {
+                return terbilang(Math.floor(angka / 1000000)) + " Juta " + terbilang(angka % 1000000);
+            } else if (angka < 1000000000000) {
+                return terbilang(Math.floor(angka / 1000000000)) + " Milyar " + terbilang(angka % 1000000000);
+            } else if (angka < 1000000000000000) {
+                return terbilang(Math.floor(angka / 1000000000000)) + " Triliun " + terbilang(angka % 1000000000000);
+            }
+            return "";
         }
 
         function filterData() {
@@ -230,7 +355,7 @@
 
             filteredFeatures = allFeatures.filter(feature => {
                 const p = feature.properties;
-                
+
                 if (validasiValue === 'Komplit') {
                     if (p.validasi !== 'Komplit') return false;
                 } else if (validasiValue === 'Progres') {
@@ -249,7 +374,7 @@
                 if (urlReff) {
                     if (!p.reff || !String(p.reff).toLowerCase().includes(urlReff.toLowerCase())) return false;
                 }
-                
+
                 if (urlRealisasi) {
                     if (!p.realisasi || !String(p.realisasi).toLowerCase().includes(urlRealisasi.toLowerCase())) return false;
                 }
@@ -258,11 +383,31 @@
             });
 
             const totalRows = filteredFeatures.length;
+            const countHarga = filteredFeatures.filter(f => parseFloat(f.properties.harga) > 0).length;
             const totalPTSL = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.ptsl) || 0), 0);
-            
+            const totalHarga = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.harga) || 0), 0);
+            const totalPTSLHarga = filteredFeatures.reduce((sum, f) => sum + (parseFloat(f.properties.harga) ? (parseFloat(f.properties.ptsl) || 0) : 0), 0);
+
             document.getElementById('totalRows').textContent = `Jumlah Baris : ${totalRows}`;
-            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', {maximumFractionDigits: 4})} ha`;
-            
+            document.getElementById('totalPTSL').textContent = `Total PTSL : ${Math.round(totalPTSL).toLocaleString('id-ID')} m² / ${(totalPTSL / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} Ha`;
+
+            const elTotalHarga = document.getElementById('totalHarga');
+            const elTotalHargaTerbilang = document.getElementById('totalHargaTerbilang');
+            const elfilterValidasi = document.getElementById('filterValidasi');
+            const elfilterDesa = document.getElementById('filterDesa');
+
+            if (showHarga) {
+                elTotalHarga.textContent = `Total Harga : Rp ${Math.round(totalHarga).toLocaleString('id-ID')},- (${countHarga.toLocaleString('id-ID')} Bidang / ${Math.round(totalPTSLHarga).toLocaleString('id-ID')} m² / ${(totalPTSLHarga / 10000).toLocaleString('id-ID', { maximumFractionDigits: 4 })} Ha)`;
+                elTotalHargaTerbilang.textContent = `Terbilang : ${terbilang(Math.round(totalHarga))} Rupiah`;
+                elTotalHarga.style.display = 'block';
+                elTotalHargaTerbilang.style.display = 'block';
+                elfilterValidasi.style.display = 'none';
+                elfilterDesa.style.display = 'none';
+            } else {
+                elTotalHarga.style.display = 'none';
+                elTotalHargaTerbilang.style.display = 'none';
+            }
+
             if (currentSort.column) {
                 applySort();
             }
@@ -286,7 +431,7 @@
         function applySort() {
             const column = currentSort.column;
             const direction = currentSort.direction;
-            
+
             filteredFeatures.sort((a, b) => {
                 let valA = a.properties[column];
                 let valB = b.properties[column];
@@ -338,7 +483,7 @@
             tableBody.innerHTML = '';
             const totalRows = filteredFeatures.length;
             const totalPages = Math.ceil(totalRows / rowsPerPage);
-            
+
             // Update controls
             document.getElementById('page-info').textContent = `Page ${currentPage} of ${totalPages || 1}`;
             document.getElementById('btn-prev').disabled = currentPage === 1;
@@ -361,31 +506,22 @@
                         <td>${p.desa.toUpperCase() || ''}</td>
                         <td><a href="${mapUrl}" target="_blank">${p.nib || ''}</a></td>
                         <td>${p.pemilik || ''}</td>
-                        <td>${formatFileLink(p.ktp)}</td>
-                        <td>${formatFileLink(p.kk)}</td>
-                        <td>${p.nm_persetujuan || ''}</td>
-                        <td>${p.sbg || ''}</td>
-                        <td>${formatFileLink(p.ktpagree)}</td>
                         <td>${p.nop || ''}</td>
                         <td>${p.nama || ''}</td>
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
-                        <td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
-                        <td>${formatFileLink(p.sppt)}</td>
-                        <td>${p.nobukti || ''}</td>
-                        <td>${formatFileLink(p.bukti)}</td>
-                        <!--<td>${p.bu || ''}</td>-->
-                        <!--<td>${p.bs || ''}</td>-->
-                        <!--<td>${p.bb || ''}</td>-->
-                        <!--<td>${p.bt || ''}</td>-->
+                        ${showHarga ? `<td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>` : ''}
+                        <td>${p.validasi || ''}</td>
+                        <td>${p.link || ''}</td>
                     `;
                     tableBody.appendChild(row);
                 });
             } else {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="21" style="text-align:center;">Tidak ada data dengan validasi "Komplit"</td>';
+                row.innerHTML = '<td colspan="10" style="text-align:center;">Tidak ada data dengan validasi "Komplit"</td>';
                 tableBody.appendChild(row);
             }
         }
     </script>
 </body>
+
 </html>
