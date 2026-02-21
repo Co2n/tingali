@@ -65,9 +65,9 @@
             loadJS('../js/pinbyurl.js');
             loadJS('../data/ZONAMASUK_1.js');
             loadJS('../data/PERHUTANI_1.js');
-            loadJS('../data/MULYAJAYA_17.js');
-            loadJS('../data/MLJFLoting_18.js');
-            loadJS('../data/MLJKurang_19.js');
+            loadJS('../data/MEKARJAYA_23.js');
+            loadJS('../data/MRJFLoting_24.js');
+            loadJS('../data/MRJKurang_25.js');
         </script>
         <script>
         var highlightLayer;
@@ -93,7 +93,7 @@
             continuousWorld: false,
             worldCopyJump: false, 
             zoomControl:false, maxZoom:28, minZoom:1
-        }).fitBounds([[-6.9753064712071495,108.69205825779173],[-6.964653593190247,108.70501305059555]]);
+        }).fitBounds([[-6.973993052834443,108.70925322278251],[-6.960970925498242,108.73015740824704]]);
         var hash = new L.Hash(map);
         map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a> &middot; <a href="https://qgis.org">QGIS</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -324,7 +324,7 @@
         map.createPane('pane_MULYAJAYA_2');
         map.getPane('pane_MULYAJAYA_2').style.zIndex = 402;
         map.getPane('pane_MULYAJAYA_2').style['mix-blend-mode'] = 'normal';
-        var layer_MULYAJAYA_2 = new L.geoJson(json_MULYAJAYA_17, {
+        var layer_MULYAJAYA_2 = new L.geoJson(json_MEKARJAYA_23, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MULYAJAYA_2',
@@ -388,7 +388,7 @@
         map.createPane('pane_MLJFLoting_3');
         map.getPane('pane_MLJFLoting_3').style.zIndex = 403;
         map.getPane('pane_MLJFLoting_3').style['mix-blend-mode'] = 'normal';
-        var layer_MLJFLoting_3 = new L.geoJson(json_MLJFLoting_18, {
+        var layer_MLJFLoting_3 = new L.geoJson(json_MRJFLoting_24, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MLJFLoting_3',
@@ -465,7 +465,7 @@
         map.createPane('pane_MLJKurang_4');
         map.getPane('pane_MLJKurang_4').style.zIndex = 404;
         map.getPane('pane_MLJKurang_4').style['mix-blend-mode'] = 'normal';
-        var layer_MLJKurang_4 = new L.geoJson.multiStyle(json_MLJKurang_19, {
+        var layer_MLJKurang_4 = new L.geoJson.multiStyle(json_MRJKurang_25, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MLJKurang_4',
