@@ -1,0 +1,1 @@
+var json_MRJFLoting_24 = {"type":"FeatureCollection","name":"MRJFLoting_24","crs":{"type":"name","properties":{"name":"urn:ogc:def:crs:OGC:1.3:CRS84"}},"xy_coordinate_resolution":1e-06,"features":[]}
