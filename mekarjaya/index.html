@@ -64,10 +64,10 @@
             loadJS('../js/leaflet-search.js');
             loadJS('../js/pinbyurl.js');
             loadJS('../data/ZONAMASUK_1.js');
-            loadJS('../data/PERHUTANI_1.js');
-            loadJS('../data/MEKARJAYA_23.js');
-            loadJS('../data/MRJFLoting_24.js');
-            loadJS('../data/MRJKurang_25.js');
+            loadJS('../data/PERHUTANI_0.js');
+            loadJS('../data/MEKARJAYA_20.js');
+            loadJS('../data/MRJFLoting_21.js');
+            loadJS('../data/MRJKurang_22.js');
         </script>
         <script>
         var highlightLayer;
@@ -228,7 +228,7 @@
         });
         bounds_group.addLayer(layer_ZONAMASUK_1);
         map.addLayer(layer_ZONAMASUK_1);
-        function pop_PERHUTANI_1(feature, layer) {
+        function pop_PERHUTANI_0(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -248,9 +248,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_PERHUTANI_1_0() {
+        function style_PERHUTANI_0_0() {
             return {
-                pane: 'pane_PERHUTANI_1',
+                pane: 'pane_PERHUTANI_0',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -263,21 +263,21 @@
                 interactive: false,
             }
         }
-        map.createPane('pane_PERHUTANI_1');
-        map.getPane('pane_PERHUTANI_1').style.zIndex = 401;
-        map.getPane('pane_PERHUTANI_1').style['mix-blend-mode'] = 'normal';
-        var layer_PERHUTANI_1 = new L.geoJson(json_PERHUTANI_1, {
+        map.createPane('pane_PERHUTANI_0');
+        map.getPane('pane_PERHUTANI_0').style.zIndex = 401;
+        map.getPane('pane_PERHUTANI_0').style['mix-blend-mode'] = 'normal';
+        var layer_PERHUTANI_0 = new L.geoJson(json_PERHUTANI_0, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_PERHUTANI_1',
-            layerName: 'layer_PERHUTANI_1',
-            pane: 'pane_PERHUTANI_1',
-            onEachFeature: pop_PERHUTANI_1,
-            style: style_PERHUTANI_1_0,
+            dataVar: 'json_PERHUTANI_0',
+            layerName: 'layer_PERHUTANI_0',
+            pane: 'pane_PERHUTANI_0',
+            onEachFeature: pop_PERHUTANI_0,
+            style: style_PERHUTANI_0_0,
         });
-        bounds_group.addLayer(layer_PERHUTANI_1);
-        map.addLayer(layer_PERHUTANI_1);
-        function pop_MEKARJAYA_23(feature, layer) {
+        bounds_group.addLayer(layer_PERHUTANI_0);
+        map.addLayer(layer_PERHUTANI_0);
+        function pop_MEKARJAYA_20(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -306,9 +306,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_MEKARJAYA_23_0() {
+        function style_MEKARJAYA_20_0() {
             return {
-                pane: 'pane_MEKARJAYA_23',
+                pane: 'pane_MEKARJAYA_20',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -321,21 +321,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_MEKARJAYA_23');
-        map.getPane('pane_MEKARJAYA_23').style.zIndex = 402;
-        map.getPane('pane_MEKARJAYA_23').style['mix-blend-mode'] = 'normal';
-        var layer_MEKARJAYA_23 = new L.geoJson(json_MEKARJAYA_23, {
+        map.createPane('pane_MEKARJAYA_20');
+        map.getPane('pane_MEKARJAYA_20').style.zIndex = 402;
+        map.getPane('pane_MEKARJAYA_20').style['mix-blend-mode'] = 'normal';
+        var layer_MEKARJAYA_20 = new L.geoJson(json_MEKARJAYA_20, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_MEKARJAYA_23',
-            layerName: 'layer_MEKARJAYA_23',
-            pane: 'pane_MEKARJAYA_23',
-            onEachFeature: pop_MEKARJAYA_23,
-            style: style_MEKARJAYA_23_0,
+            dataVar: 'json_MEKARJAYA_20',
+            layerName: 'layer_MEKARJAYA_20',
+            pane: 'pane_MEKARJAYA_20',
+            onEachFeature: pop_MEKARJAYA_20,
+            style: style_MEKARJAYA_20_0,
         });
-        bounds_group.addLayer(layer_MEKARJAYA_23);
-        map.addLayer(layer_MEKARJAYA_23);
-        function pop_MRJFLoting_24(feature, layer) {
+        bounds_group.addLayer(layer_MEKARJAYA_20);
+        map.addLayer(layer_MEKARJAYA_20);
+        function pop_MRJFLoting_21(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -370,9 +370,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_MRJFLoting_24_0() {
+        function style_MRJFLoting_21_0() {
             return {
-                pane: 'pane_MRJFLoting_24',
+                pane: 'pane_MRJFLoting_21',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -385,21 +385,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_MRJFLoting_24');
-        map.getPane('pane_MRJFLoting_24').style.zIndex = 403;
-        map.getPane('pane_MRJFLoting_24').style['mix-blend-mode'] = 'normal';
-        var layer_MRJFLoting_24 = new L.geoJson(json_MRJFLoting_24, {
+        map.createPane('pane_MRJFLoting_21');
+        map.getPane('pane_MRJFLoting_21').style.zIndex = 403;
+        map.getPane('pane_MRJFLoting_21').style['mix-blend-mode'] = 'normal';
+        var layer_MRJFLoting_21 = new L.geoJson(json_MRJFLoting_21, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_MRJFLoting_24',
-            layerName: 'layer_MRJFLoting_24',
-            pane: 'pane_MRJFLoting_24',
-            onEachFeature: pop_MRJFLoting_24,
-            style: style_MRJFLoting_24_0,
+            dataVar: 'json_MRJFLoting_21',
+            layerName: 'layer_MRJFLoting_21',
+            pane: 'pane_MRJFLoting_21',
+            onEachFeature: pop_MRJFLoting_21,
+            style: style_MRJFLoting_21_0,
         });
-        bounds_group.addLayer(layer_MRJFLoting_24);
-        map.addLayer(layer_MRJFLoting_24);
-        function pop_MRJKurang_25(feature, layer) {
+        bounds_group.addLayer(layer_MRJFLoting_21);
+        map.addLayer(layer_MRJFLoting_21);
+        function pop_MRJKurang_22(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -431,7 +431,7 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        var pattern_MRJKurang_25_0 = new L.StripePattern({
+        var pattern_MRJKurang_22_0 = new L.StripePattern({
             weight: 0.3,
             spaceWeight: 2.0,
             color: '#000000',
@@ -439,19 +439,19 @@
             spaceOpacity: 0,
             angle: 315
         });
-        pattern_MRJKurang_25_0.addTo(map);
-        function style_MRJKurang_25_0() {
+        pattern_MRJKurang_22_0.addTo(map);
+        function style_MRJKurang_22_0() {
             return {
-                pane: 'pane_MRJKurang_25',
+                pane: 'pane_MRJKurang_22',
                 stroke: false,
                 fillOpacity: 1,
-                fillPattern: pattern_MRJKurang_25_0,
+                fillPattern: pattern_MRJKurang_22_0,
                 interactive: true,
             }
         }
-        function style_MRJKurang_25_1() {
+        function style_MRJKurang_22_1() {
             return {
-                pane: 'pane_MRJKurang_25',
+                pane: 'pane_MRJKurang_22',
                 opacity: 1,
                 color: 'rgba(0,0,0,1.0)',
                 dashArray: '',
@@ -462,23 +462,23 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_MRJKurang_25');
-        map.getPane('pane_MRJKurang_25').style.zIndex = 404;
-        map.getPane('pane_MRJKurang_25').style['mix-blend-mode'] = 'normal';
-        var layer_MRJKurang_25 = new L.geoJson.multiStyle(json_MRJKurang_25, {
+        map.createPane('pane_MRJKurang_22');
+        map.getPane('pane_MRJKurang_22').style.zIndex = 404;
+        map.getPane('pane_MRJKurang_22').style['mix-blend-mode'] = 'normal';
+        var layer_MRJKurang_22 = new L.geoJson.multiStyle(json_MRJKurang_22, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_MRJKurang_25',
-            layerName: 'layer_MRJKurang_25',
-            pane: 'pane_MRJKurang_25',
-            onEachFeature: pop_MRJKurang_25,
-            styles: [style_MRJKurang_25_0,style_MRJKurang_25_1,]
+            dataVar: 'json_MRJKurang_22',
+            layerName: 'layer_MRJKurang_22',
+            pane: 'pane_MRJKurang_22',
+            onEachFeature: pop_MRJKurang_22,
+            styles: [style_MRJKurang_22_0,style_MRJKurang_22_1,]
         });
-        bounds_group.addLayer(layer_MRJKurang_25);
-        map.addLayer(layer_MRJKurang_25);
+        bounds_group.addLayer(layer_MRJKurang_22);
+        map.addLayer(layer_MRJKurang_22);
         setBounds();
         map.addControl(new L.Control.Search({
-            layer: layer_MEKARJAYA_23,
+            layer: layer_MEKARJAYA_20,
             initial: false,
             hideMarkerOnCollapse: true,
             propertyName: 'key2'}));
@@ -490,27 +490,27 @@
 
         // Add Labels
         var i = 0;
-        layer_MEKARJAYA_23.eachLayer(function(layer) {
+        layer_MEKARJAYA_20.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_MEKARJAYA_23'});
+            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_MEKARJAYA_20'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_MEKARJAYA_23]);
+        resetLabels([layer_MEKARJAYA_20]);
         map.on("zoomend", function(){
-            resetLabels([layer_MEKARJAYA_23]);
+            resetLabels([layer_MEKARJAYA_20]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_MEKARJAYA_23]);
+            resetLabels([layer_MEKARJAYA_20]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_MEKARJAYA_23]);
+            resetLabels([layer_MEKARJAYA_20]);
         });
 
         </script>        

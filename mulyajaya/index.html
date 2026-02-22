@@ -64,10 +64,10 @@
             loadJS('../js/leaflet-search.js');
             loadJS('../js/pinbyurl.js');
             loadJS('../data/ZONAMASUK_1.js');
-            loadJS('../data/PERHUTANI_1.js');
-            loadJS('../data/MULYAJAYA_17.js');
-            loadJS('../data/MLJFLoting_18.js');
-            loadJS('../data/MLJKurang_19.js');
+            loadJS('../data/PERHUTANI_0.js');
+            loadJS('../data/MULYAJAYA_14.js');
+            loadJS('../data/MLJFLoting_15.js');
+            loadJS('../data/MLJKurang_16.js');
         </script>
         <script>
         var highlightLayer;
@@ -228,7 +228,7 @@
         });
         bounds_group.addLayer(layer_ZONAMASUK_1);
         map.addLayer(layer_ZONAMASUK_1);
-        function pop_PERHUTANI_1(feature, layer) {
+        function pop_PERHUTANI_0(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -248,9 +248,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_PERHUTANI_1_0() {
+        function style_PERHUTANI_0_0() {
             return {
-                pane: 'pane_PERHUTANI_1',
+                pane: 'pane_PERHUTANI_0',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -263,20 +263,20 @@
                 interactive: false,
             }
         }
-        map.createPane('pane_PERHUTANI_1');
-        map.getPane('pane_PERHUTANI_1').style.zIndex = 401;
-        map.getPane('pane_PERHUTANI_1').style['mix-blend-mode'] = 'normal';
-        var layer_PERHUTANI_1 = new L.geoJson(json_PERHUTANI_1, {
+        map.createPane('pane_PERHUTANI_0');
+        map.getPane('pane_PERHUTANI_0').style.zIndex = 401;
+        map.getPane('pane_PERHUTANI_0').style['mix-blend-mode'] = 'normal';
+        var layer_PERHUTANI_0 = new L.geoJson(json_PERHUTANI_0, {
             attribution: '',
             interactive: false,
-            dataVar: 'json_PERHUTANI_1',
-            layerName: 'layer_PERHUTANI_1',
-            pane: 'pane_PERHUTANI_1',
-            onEachFeature: pop_PERHUTANI_1,
-            style: style_PERHUTANI_1_0,
+            dataVar: 'json_PERHUTANI_0',
+            layerName: 'layer_PERHUTANI_0',
+            pane: 'pane_PERHUTANI_0',
+            onEachFeature: pop_PERHUTANI_0,
+            style: style_PERHUTANI_0_0,
         });
-        bounds_group.addLayer(layer_PERHUTANI_1);
-        map.addLayer(layer_PERHUTANI_1);
+        bounds_group.addLayer(layer_PERHUTANI_0);
+        map.addLayer(layer_PERHUTANI_0);
         function pop_MULYAJAYA_2(feature, layer) {
             layer.on({
                 mouseout: function(e) {
@@ -324,7 +324,7 @@
         map.createPane('pane_MULYAJAYA_2');
         map.getPane('pane_MULYAJAYA_2').style.zIndex = 402;
         map.getPane('pane_MULYAJAYA_2').style['mix-blend-mode'] = 'normal';
-        var layer_MULYAJAYA_2 = new L.geoJson(json_MULYAJAYA_17, {
+        var layer_MULYAJAYA_2 = new L.geoJson(json_MULYAJAYA_14, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MULYAJAYA_2',
@@ -388,7 +388,7 @@
         map.createPane('pane_MLJFLoting_3');
         map.getPane('pane_MLJFLoting_3').style.zIndex = 403;
         map.getPane('pane_MLJFLoting_3').style['mix-blend-mode'] = 'normal';
-        var layer_MLJFLoting_3 = new L.geoJson(json_MLJFLoting_18, {
+        var layer_MLJFLoting_3 = new L.geoJson(json_MLJFLoting_15, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MLJFLoting_3',
@@ -465,7 +465,7 @@
         map.createPane('pane_MLJKurang_4');
         map.getPane('pane_MLJKurang_4').style.zIndex = 404;
         map.getPane('pane_MLJKurang_4').style['mix-blend-mode'] = 'normal';
-        var layer_MLJKurang_4 = new L.geoJson.multiStyle(json_MLJKurang_19, {
+        var layer_MLJKurang_4 = new L.geoJson.multiStyle(json_MLJKurang_16, {
             attribution: '',
             interactive: true,
             dataVar: 'json_MLJKurang_4',
