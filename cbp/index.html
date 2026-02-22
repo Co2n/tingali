@@ -60,7 +60,8 @@
                 <th onclick="sortData('nop')">NOP</th>
                 <th onclick="sortData('nama')">Nama SPPT</th>
                 <th onclick="sortData('ptsl')">PTSL</th>
-                <th onclick="sortData('harga')">Harga</th>
+                <th onclick="sortData('kontrak')">Harga</th>
+                <th onclick="sortData('kontrak')">Kontrak</th>
                 <th>SPPT</th>
                 <th>No Bukti</th>
                 <th>Bukti</th>
@@ -149,6 +150,7 @@
                         <td style="text-align: right;">${p.ptsl != null ? Math.round(p.ptsl) : ''}</td>
                         <!--<td style="text-align: right;">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>-->
                         <td style="text-align: right;">${p.harga != null ? Math.round(p.harga) : ''}</td>
+                        <td style="text-align: right;">${p.kontrak != null ? Math.round(p.kontrak) : ''}</td>
                         <td>${p.nobukti || ''}</td>
                         <!--<td>${p.bu || ''}</td>-->
                         <!--<td>${p.bs || ''}</td>-->
@@ -370,6 +372,7 @@
                         <td>${p.nama || ''}</td>
                         <td class="align-right">${p.ptsl != null ? Math.round(p.ptsl).toLocaleString('id-ID') : ''}</td>
                         <td class="align-right">${p.harga != null ? Math.round(p.harga).toLocaleString('id-ID') : ''}</td>
+                        <td class="align-right">${p.kontrak != null ? Math.round(p.kontrak).toLocaleString('id-ID') : ''}</td>
                         <td>${formatFileLink(p.sppt)}</td>
                         <td>${p.nobukti || ''}</td>
                         <td>${formatFileLink(p.bukti)}</td>
