@@ -67,7 +67,7 @@
             loadJS('../data/PERHUTANI_0.js');
             loadJS('../data/CIKEUSAL_11.js');
             loadJS('../data/CKSLFLoting_12.js');
-            loadJS('../data/CKSLFLoting_13.js');
+            loadJS('../data/CKSLKurang_13.js');
         </script>
         <script>
         var highlightLayer;
@@ -277,7 +277,7 @@
         });
         bounds_group.addLayer(layer_PERHUTANI_0);
         map.addLayer(layer_PERHUTANI_0);
-        function pop_CIKEUSAL_2(feature, layer) {
+        function pop_CIKEUSAL_11(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -306,9 +306,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_CIKEUSAL_2_0() {
+        function style_CIKEUSAL_11_0() {
             return {
-                pane: 'pane_CIKEUSAL_2',
+                pane: 'pane_CIKEUSAL_11',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -321,21 +321,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_CIKEUSAL_2');
-        map.getPane('pane_CIKEUSAL_2').style.zIndex = 402;
-        map.getPane('pane_CIKEUSAL_2').style['mix-blend-mode'] = 'normal';
-        var layer_CIKEUSAL_2 = new L.geoJson(json_CIKEUSAL_11, {
+        map.createPane('pane_CIKEUSAL_11');
+        map.getPane('pane_CIKEUSAL_11').style.zIndex = 402;
+        map.getPane('pane_CIKEUSAL_11').style['mix-blend-mode'] = 'normal';
+        var layer_CIKEUSAL_11 = new L.geoJson(json_CIKEUSAL_11, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CIKEUSAL_2',
-            layerName: 'layer_CIKEUSAL_2',
-            pane: 'pane_CIKEUSAL_2',
-            onEachFeature: pop_CIKEUSAL_2,
-            style: style_CIKEUSAL_2_0,
+            dataVar: 'json_CIKEUSAL_11',
+            layerName: 'layer_CIKEUSAL_11',
+            pane: 'pane_CIKEUSAL_11',
+            onEachFeature: pop_CIKEUSAL_11,
+            style: style_CIKEUSAL_11_0,
         });
-        bounds_group.addLayer(layer_CIKEUSAL_2);
-        map.addLayer(layer_CIKEUSAL_2);
-        function pop_CKSLFLoting_3(feature, layer) {
+        bounds_group.addLayer(layer_CIKEUSAL_11);
+        map.addLayer(layer_CIKEUSAL_11);
+        function pop_CKSLFLoting_12(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -370,9 +370,9 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        function style_CKSLFLoting_3_0() {
+        function style_CKSLFLoting_12_0() {
             return {
-                pane: 'pane_CKSLFLoting_3',
+                pane: 'pane_CKSLFLoting_12',
                 opacity: 1,
                 color: 'rgba(35,35,35,1.0)',
                 dashArray: '',
@@ -385,21 +385,21 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_CKSLFLoting_3');
-        map.getPane('pane_CKSLFLoting_3').style.zIndex = 403;
-        map.getPane('pane_CKSLFLoting_3').style['mix-blend-mode'] = 'normal';
-        var layer_CKSLFLoting_3 = new L.geoJson(json_CKSLFLoting_12, {
+        map.createPane('pane_CKSLFLoting_12');
+        map.getPane('pane_CKSLFLoting_12').style.zIndex = 403;
+        map.getPane('pane_CKSLFLoting_12').style['mix-blend-mode'] = 'normal';
+        var layer_CKSLFLoting_12 = new L.geoJson(json_CKSLFLoting_12, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CKSLFLoting_3',
-            layerName: 'layer_CKSLFLoting_3',
-            pane: 'pane_CKSLFLoting_3',
-            onEachFeature: pop_CKSLFLoting_3,
-            style: style_CKSLFLoting_3_0,
+            dataVar: 'json_CKSLFLoting_12',
+            layerName: 'layer_CKSLFLoting_12',
+            pane: 'pane_CKSLFLoting_12',
+            onEachFeature: pop_CKSLFLoting_12,
+            style: style_CKSLFLoting_12_0,
         });
-        bounds_group.addLayer(layer_CKSLFLoting_3);
-        map.addLayer(layer_CKSLFLoting_3);
-        function pop_CKSLKurang_4(feature, layer) {
+        bounds_group.addLayer(layer_CKSLFLoting_12);
+        map.addLayer(layer_CKSLFLoting_12);
+        function pop_CKSLKurang_13(feature, layer) {
             layer.on({
                 mouseout: function(e) {
                     for (var i in e.target._eventParents) {
@@ -431,7 +431,7 @@
 			layer.bindPopup(content, { maxHeight: 400 });
         }
 
-        var pattern_CKSLKurang_4_0 = new L.StripePattern({
+        var pattern_CKSLKurang_13_0 = new L.StripePattern({
             weight: 0.3,
             spaceWeight: 2.0,
             color: '#000000',
@@ -439,19 +439,19 @@
             spaceOpacity: 0,
             angle: 315
         });
-        pattern_CKSLKurang_4_0.addTo(map);
-        function style_CKSLKurang_4_0() {
+        pattern_CKSLKurang_13_0.addTo(map);
+        function style_CKSLKurang_13_0() {
             return {
-                pane: 'pane_CKSLKurang_4',
+                pane: 'pane_CKSLKurang_13',
                 stroke: false,
                 fillOpacity: 1,
-                fillPattern: pattern_CKSLKurang_4_0,
+                fillPattern: pattern_CKSLKurang_13_0,
                 interactive: true,
             }
         }
-        function style_CKSLKurang_4_1() {
+        function style_CKSLKurang_13_1() {
             return {
-                pane: 'pane_CKSLKurang_4',
+                pane: 'pane_CKSLKurang_13',
                 opacity: 1,
                 color: 'rgba(0,0,0,1.0)',
                 dashArray: '',
@@ -462,23 +462,23 @@
                 interactive: true,
             }
         }
-        map.createPane('pane_CKSLKurang_4');
-        map.getPane('pane_CKSLKurang_4').style.zIndex = 404;
-        map.getPane('pane_CKSLKurang_4').style['mix-blend-mode'] = 'normal';
-        var layer_CKSLKurang_4 = new L.geoJson.multiStyle(json_CKSLFLoting_13, {
+        map.createPane('pane_CKSLKurang_13');
+        map.getPane('pane_CKSLKurang_13').style.zIndex = 404;
+        map.getPane('pane_CKSLKurang_13').style['mix-blend-mode'] = 'normal';
+        var layer_CKSLKurang_13 = new L.geoJson.multiStyle(json_CKSLFLoting_12, {
             attribution: '',
             interactive: true,
-            dataVar: 'json_CKSLKurang_4',
-            layerName: 'layer_CKSLKurang_4',
-            pane: 'pane_CKSLKurang_4',
-            onEachFeature: pop_CKSLKurang_4,
-            styles: [style_CKSLKurang_4_0,style_CKSLKurang_4_1,]
+            dataVar: 'json_CKSLKurang_13',
+            layerName: 'layer_CKSLKurang_13',
+            pane: 'pane_CKSLKurang_13',
+            onEachFeature: pop_CKSLKurang_13,
+            styles: [style_CKSLKurang_13_0,style_CKSLKurang_13_1,]
         });
-        bounds_group.addLayer(layer_CKSLKurang_4);
-        map.addLayer(layer_CKSLKurang_4);
+        bounds_group.addLayer(layer_CKSLKurang_13);
+        map.addLayer(layer_CKSLKurang_13);
         setBounds();
         map.addControl(new L.Control.Search({
-            layer: layer_CIKEUSAL_2,
+            layer: layer_CIKEUSAL_11,
             initial: false,
             hideMarkerOnCollapse: true,
             propertyName: 'key2'}));
@@ -490,27 +490,27 @@
 
         // Add Labels
         var i = 0;
-        layer_CIKEUSAL_2.eachLayer(function(layer) {
+        layer_CIKEUSAL_11.eachLayer(function(layer) {
             var context = {
                 feature: layer.feature,
                 variables: {}
             };
-            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_CIKEUSAL_2'});
+            layer.bindTooltip((layer.feature.properties['label'] !== null?String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>':''), {permanent: true, offset: [-0, -16], className: 'css_CIKEUSAL_11'});
             labels.push(layer);
             totalMarkers += 1;
               layer.added = true;
               addLabel(layer, i);
               i++;
         });
-        resetLabels([layer_CIKEUSAL_2]);
+        resetLabels([layer_CIKEUSAL_11]);
         map.on("zoomend", function(){
-            resetLabels([layer_CIKEUSAL_2]);
+            resetLabels([layer_CIKEUSAL_11]);
         });
         map.on("layeradd", function(){
-            resetLabels([layer_CIKEUSAL_2]);
+            resetLabels([layer_CIKEUSAL_11]);
         });
         map.on("layerremove", function(){
-            resetLabels([layer_CIKEUSAL_2]);
+            resetLabels([layer_CIKEUSAL_11]);
         });
 
         </script>        
