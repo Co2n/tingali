@@ -346,7 +346,8 @@
                 if (filterValue && p.desa !== filterValue) return false;
 
                 if (searchValue) {
-                    const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || ''}`.toLowerCase();
+                    const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || '' }`.toLowerCase();
+                    //const searchTarget = `${p.nib || ''} ${p.pemilik || ''} ${p.nama || ''} ${p.nop || '' } ${p.validasi || '' }`.toLowerCase();
                     if (!searchTarget.includes(searchValue)) return false;
                 }
 
