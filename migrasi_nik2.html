@@ -3,16 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Alat Migrasi Data NIK (Mode CSV)</title>
+    <title>Alat Migrasi Data NIK (Auto-Load CSV)</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
         .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
         h2 { text-align: center; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        
-        /* Area Kontrol CSV */
-        .csv-box { background: #e9ecef; padding: 15px; border-radius: 6px; text-align: center; margin-bottom: 20px; border: 2px dashed #007bff; }
-        .csv-box input[type="file"] { font-size: 16px; margin-bottom: 10px; }
         
         table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 12px; text-align: center; vertical-align: middle; }
@@ -23,21 +19,22 @@
         button { padding: 8px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; width: 100%; }
         button:hover { background: #218838; }
         .success-bg { background-color: #e6ffed !important; }
+        
+        #pesanError { display: none; background: #ffebee; color: #c62828; padding: 15px; border-radius: 5px; border: 1px solid #ef9a9a; text-align: center; margin-bottom: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h2>🛠️ Panel Entry Data NIK (Filter via CSV)</h2>
-        
-        <div class="csv-box">
-            <p style="margin-top:0; font-weight:bold; color:#555;">1. Pilih file <code>fid.csv</code> Anda:</p>
-            <input type="file" id="csvFile" accept=".csv">
-            <br>
-            <button onclick="prosesCSV()" style="width: auto; padding: 10px 20px; background:#007bff;">🚀 Muat Data dari CSV</button>
+        <h2>🛠️ Panel Entry Data NIK (Auto-Load)</h2>
+        <p style="text-align:center; color:#555;">Membaca data dari <b>fid.csv</b> secara otomatis...</p>
+
+        <div id="pesanError">
+            ❌ Gagal membaca fid.csv otomatis!<br><br>
+            <span style="font-weight:normal; font-size:14px;">Pastikan file <b>fid.csv</b> berada di folder yang sama. Jika Anda membuka file ini dengan cara <i>double-click</i> (file:///...), browser memblokirnya. Anda harus membukanya lewat Local Server (Live Server / XAMPP).</span>
         </div>
 
-        <div id="loading" style="text-align:center; font-weight:bold; color:blue; display:none;">⏳ Mengambil data dari Supabase (ini mungkin butuh beberapa detik)...</div>
+        <div id="loading" style="text-align:center; font-weight:bold; color:blue;">⏳ Membaca file CSV dan menarik data dari Supabase...</div>
 
         <table id="tabelMigrasi" style="display:none;">
             <thead>
@@ -58,53 +55,51 @@
         const supabaseKey = 'sb_publishable_iGscw6ePzAq4ty_PFp20SQ_aR2HsxP9';
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // --- 1. PROSES BACA FILE CSV ---
-        function prosesCSV() {
-            const fileInput = document.getElementById('csvFile');
-            if (fileInput.files.length === 0) {
-                alert("Pilih dulu file fid.csv nya, bro!");
+        // --- 1. OTOMATIS JALAN SAAT WEB DIBUKA ---
+        window.onload = async function() {
+            try {
+                // Mencoba "mendownload" file CSV yang ada di folder yang sama
+                const response = await fetch('fid.csv');
+                
+                if (!response.ok) {
+                    throw new Error("File fid.csv tidak ditemukan atau diblokir.");
+                }
+                
+                const textCSV = await response.text();
+                prosesTeksCSV(textCSV);
+
+            } catch (error) {
+                console.error(error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('pesanError').style.display = 'block';
+            }
+        };
+
+        // --- 2. PECAH TEKS CSV MENJADI ARRAY ---
+        function prosesTeksCSV(text) {
+            const baris = text.split(/\r?\n/);
+            let arrayFid = [];
+
+            for (let i = 0; i < baris.length; i++) {
+                let val = baris[i].replace(/['"]/g, '').split(',')[0].trim();
+                if (val && val.toLowerCase() !== 'fid') {
+                    arrayFid.push(val);
+                }
+            }
+
+            if (arrayFid.length === 0) {
+                document.getElementById('loading').innerHTML = "❌ CSV kosong atau format salah.";
                 return;
             }
 
-            const file = fileInput.files[0];
-            const reader = new FileReader();
-
-            reader.onload = function(e) {
-                const text = e.target.result;
-                // Pecah berdasarkan baris (enter)
-                const baris = text.split(/\r?\n/);
-                let arrayFid = [];
-
-                for (let i = 0; i < baris.length; i++) {
-                    // Ambil kolom pertama, hapus tanda kutip (jika ada), dan spasi
-                    let val = baris[i].replace(/['"]/g, '').split(',')[0].trim();
-                    
-                    // Abaikan baris kosong dan baris judul (Header)
-                    if (val && val.toLowerCase() !== 'fid') {
-                        arrayFid.push(val);
-                    }
-                }
-
-                if (arrayFid.length === 0) {
-                    alert("Tidak ada data FID yang valid di dalam CSV.");
-                    return;
-                }
-
-                console.log("Ditemukan " + arrayFid.length + " FID di CSV. Memulai penarikan data...");
-                tarikDataSupabaseBatch(arrayFid);
-            };
-
-            reader.readAsText(file);
+            console.log("Ditemukan " + arrayFid.length + " FID di CSV. Memulai penarikan data...");
+            tarikDataSupabaseBatch(arrayFid);
         }
 
-        // --- 2. TARIK DATA DARI SUPABASE DENGAN SISTEM BATCH (CICIL) ---
+        // --- 3. TARIK DATA DARI SUPABASE DENGAN SISTEM BATCH ---
         async function tarikDataSupabaseBatch(semuaFid) {
-            document.getElementById('loading').style.display = 'block';
-            document.getElementById('tabelMigrasi').style.display = 'none';
-            document.getElementById('isiTabel').innerHTML = ""; // Bersihkan tabel lama
-
             let dataTerkumpul = [];
-            let ukuranBatch = 200; // Tarik per 200 data agar Supabase tidak kepanasan
+            let ukuranBatch = 200; 
 
             for (let i = 0; i < semuaFid.length; i += ukuranBatch) {
                 let batchFid = semuaFid.slice(i, i + ukuranBatch);
@@ -112,24 +107,17 @@
                 const { data, error } = await supabaseClient
                     .from('ONLINE_09_03_2026_2000')
                     .select('fid, pemilik, ktp, ktpagree, nik1, nik2')
-                    .in('fid', batchFid); // "Tolong cari data yang FID-nya ada di daftar ini"
+                    .in('fid', batchFid);
 
-                if (error) {
-                    console.error("Error pada batch " + i + ":", error);
-                    continue; // Jika satu kelompok gagal, lanjut ke kelompok berikutnya
-                }
-
-                if (data) {
+                if (!error && data) {
                     dataTerkumpul = dataTerkumpul.concat(data);
                 }
             }
-
             renderTabel(dataTerkumpul);
         }
 
-        // --- 3. TAMPILKAN KE TABEL ---
+        // --- 4. TAMPILKAN KE TABEL ---
         function renderTabel(data) {
-            // Filter: Hanya tampilkan yang ada fotonya
             let dataTampil = data.filter(d => 
                 (d.ktp && d.ktp.trim() !== '') || (d.ktpagree && d.ktpagree.trim() !== '')
             );
@@ -139,7 +127,6 @@
                 let ktpHtml = "-";
                 let ktpagreeHtml = "-";
 
-                // Jika ada KTP, buat form NIK1
                 if (d.ktp && d.ktp.trim() !== '') {
                     ktpHtml = `
                         <a href="${d.ktp}" target="_blank"><img src="${d.ktp}" title="Klik untuk perbesar"></a><br>
@@ -148,7 +135,6 @@
                     `;
                 }
 
-                // Jika ada KTP Agree, buat form NIK2
                 if (d.ktpagree && d.ktpagree.trim() !== '') {
                     ktpagreeHtml = `
                         <a href="${d.ktpagree}" target="_blank"><img src="${d.ktpagree}" title="Klik untuk perbesar"></a><br>
@@ -157,7 +143,6 @@
                     `;
                 }
 
-                // Warnai hijau jika dua-duanya (atau salah satu yang ada) sudah terisi NIK
                 let isNik1Isi = (d.ktp ? (d.nik1 && d.nik1 !== '') : true);
                 let isNik2Isi = (d.ktpagree ? (d.nik2 && d.nik2 !== '') : true);
                 let rowClass = (isNik1Isi && isNik2Isi) ? "success-bg" : "";
@@ -175,13 +160,13 @@
             document.getElementById('tabelMigrasi').style.display = 'table';
             
             if(dataTampil.length === 0) {
-                document.getElementById('isiTabel').innerHTML = "<tr><td colspan='3'>Dari daftar CSV tersebut, tidak ada satupun bidang yang memiliki foto KTP/KTP Agree.</td></tr>";
+                document.getElementById('isiTabel').innerHTML = "<tr><td colspan='3'>Dari CSV tersebut, tidak ada bidang yang memiliki foto KTP/KTP Agree.</td></tr>";
             } else {
                 document.getElementById('isiTabel').innerHTML = html;
             }
         }
 
-        // --- 4. FUNGSI SIMPAN KE SUPABASE (Sama seperti sebelumnya) ---
+        // --- 5. FUNGSI SIMPAN KE SUPABASE ---
         window.simpanNIK = async function(fid, kolomTarget) {
             let inputId = `${kolomTarget}_${fid}`;
             let btnId = (kolomTarget === 'nik1') ? `btn1_${fid}` : `btn2_${fid}`;
@@ -198,7 +183,6 @@
             btn.style.background = "#ffc107";
             btn.style.color = "black";
 
-            // Tembak ke database
             const { error } = await supabaseClient
                 .from('ONLINE_09_03_2026_2000')
                 .update({ [kolomTarget]: nilaiNik })
