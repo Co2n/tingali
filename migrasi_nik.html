@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alat Migrasi Data NIK</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #333; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; vertical-align: middle; }
+        th { background-color: #007bff; color: white; }
+        img { max-height: 120px; border-radius: 5px; cursor: pointer; border: 1px solid #ccc; transition: 0.3s; }
+        img:hover { transform: scale(1.05); }
+        input[type="text"] { padding: 8px; width: 160px; text-align: center; font-weight: bold; font-family: monospace; border: 2px solid #ccc; border-radius: 4px; }
+        button { padding: 8px 12px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-top: 5px; width: 100%; }
+        button:hover { background: #218838; }
+        .success-bg { background-color: #e6ffed !important; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>🛠️ Panel Entry Data NIK (KTP & KTP Agree)</h2>
+        <p style="text-align:center; color:#555;">Hanya menampilkan bidang yang sudah memiliki foto KTP atau KTP Agree.</p>
+        
+        <div id="loading" style="text-align:center; font-weight:bold; color:blue;">⏳ Memuat data dari Supabase...</div>
+
+        <table id="tabelMigrasi" style="display:none;">
+            <thead>
+                <tr>
+                    <th>FID & Pemilik</th>
+                    <th>Foto KTP -> NIK 1</th>
+                    <th>Foto KTP Agree -> NIK 2</th>
+                </tr>
+            </thead>
+            <tbody id="isiTabel">
+                </tbody>
+        </table>
+    </div>
+
+    <script>
+        // --- KONEKSI SUPABASE ---
+        const supabaseUrl = 'https://ftlzqrwrlivgszomwhhb.supabase.co';
+        const supabaseKey = 'sb_publishable_iGscw6ePzAq4ty_PFp20SQ_aR2HsxP9';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function muatData() {
+            // Tarik data yang KTP atau KTPAgree-nya ada isinya
+            const { data, error } = await supabaseClient
+                .from('ONLINE_09_03_2026_2000')
+                .select('fid, pemilik, ktp, ktpagree, nik1, nik2')
+                .order('fid', { ascending: true });
+
+            if (error) {
+                alert("Gagal memuat data: " + error.message);
+                return;
+            }
+
+            // Filter manual: Hanya tampilkan yang KTP atau KTPAgree-nya BUKAN kosong/null
+            let dataTampil = data.filter(d => 
+                (d.ktp && d.ktp.trim() !== '') || (d.ktpagree && d.ktpagree.trim() !== '')
+            );
+
+            let html = "";
+            dataTampil.forEach(d => {
+                let ktpHtml = "-";
+                let ktpagreeHtml = "-";
+
+                // Jika ada KTP, buat form NIK1
+                if (d.ktp && d.ktp.trim() !== '') {
+                    ktpHtml = `
+                        <a href="${d.ktp}" target="_blank"><img src="${d.ktp}" title="Klik untuk perbesar"></a><br>
+                        <input type="text" id="nik1_${d.fid}" value="${d.nik1 || ''}" placeholder="Ketik NIK 1" maxlength="16">
+                        <button id="btn1_${d.fid}" onclick="simpanNIK('${d.fid}', 'nik1')">💾 Simpan NIK 1</button>
+                    `;
+                }
+
+                // Jika ada KTP Agree, buat form NIK2
+                if (d.ktpagree && d.ktpagree.trim() !== '') {
+                    ktpagreeHtml = `
+                        <a href="${d.ktpagree}" target="_blank"><img src="${d.ktpagree}" title="Klik untuk perbesar"></a><br>
+                        <input type="text" id="nik2_${d.fid}" value="${d.nik2 || ''}" placeholder="Ketik NIK 2" maxlength="16">
+                        <button id="btn2_${d.fid}" onclick="simpanNIK('${d.fid}', 'nik2')">💾 Simpan NIK 2</button>
+                    `;
+                }
+
+                // Warnai hijau jika dua-duanya (atau salah satu yang ada) sudah terisi NIK
+                let isNik1Isi = (d.ktp ? (d.nik1 && d.nik1 !== '') : true);
+                let isNik2Isi = (d.ktpagree ? (d.nik2 && d.nik2 !== '') : true);
+                let rowClass = (isNik1Isi && isNik2Isi) ? "success-bg" : "";
+
+                html += `
+                    <tr id="row_${d.fid}" class="${rowClass}">
+                        <td><b>FID: ${d.fid}</b><br><br>${d.pemilik || 'Tidak ada nama'}</td>
+                        <td>${ktpHtml}</td>
+                        <td>${ktpagreeHtml}</td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('tabelMigrasi').style.display = 'table';
+            document.getElementById('isiTabel').innerHTML = html;
+        }
+
+        // FUNGSI SIMPAN KE SUPABASE
+        window.simpanNIK = async function(fid, kolomTarget) {
+            let inputId = `${kolomTarget}_${fid}`;
+            let btnId = (kolomTarget === 'nik1') ? `btn1_${fid}` : `btn2_${fid}`;
+            
+            let nilaiNik = document.getElementById(inputId).value.trim();
+            let btn = document.getElementById(btnId);
+
+            if (nilaiNik.length < 16 && nilaiNik.length > 0) {
+                let konfirmasi = confirm("⚠️ NIK biasanya 16 digit. Yakin ingin menyimpan?");
+                if(!konfirmasi) return;
+            }
+
+            btn.innerText = "⏳...";
+            btn.style.background = "#ffc107";
+            btn.style.color = "black";
+
+            // Tembak ke database
+            const { error } = await supabaseClient
+                .from('ONLINE_09_03_2026_2000')
+                .update({ [kolomTarget]: nilaiNik })
+                .eq('fid', fid);
+
+            if (error) {
+                alert("❌ Gagal menyimpan: " + error.message);
+                btn.innerText = "💾 Coba Lagi";
+                btn.style.background = "red";
+                btn.style.color = "white";
+            } else {
+                btn.innerText = "✅ Tersimpan";
+                btn.style.background = "#28a745";
+                btn.style.color = "white";
+                
+                // Cek apakah baris ini boleh diwarnai hijau (selesai)
+                cekBarisSelesai(fid);
+            }
+        };
+
+        function cekBarisSelesai(fid) {
+            let input1 = document.getElementById(`nik1_${fid}`);
+            let input2 = document.getElementById(`nik2_${fid}`);
+            
+            let ok1 = input1 ? (input1.value.trim() !== '') : true;
+            let ok2 = input2 ? (input2.value.trim() !== '') : true;
+
+            if (ok1 && ok2) {
+                document.getElementById(`row_${fid}`).classList.add('success-bg');
+            } else {
+                document.getElementById(`row_${fid}`).classList.remove('success-bg');
+            }
+        }
+
+        // Jalankan
+        muatData();
+    </script>
+</body>
+</html>
