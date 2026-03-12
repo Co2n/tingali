@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>WebGIS Peta Wetan Bersih</title>
+
+   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+   <style>
+      /* Pengaturan Layout Belah (Split) Fleksibel */
+      body,
+      html {
+         margin: 0;
+         padding: 0;
+         height: 100vh;
+         display: flex;
+         flex-direction: column;
+         font-family: sans-serif;
+         overflow: hidden;
+      }
+
+      /* Peta: Set tinggi awal 60vh, fleksibel diubah oleh JS */
+      #map {
+         flex: none;
+         height: 60vh;
+         width: 100vw;
+      }
+
+      /* TUAS GESER (RESIZER) BARU */
+      #resizer {
+         background-color: #e0e0e0;
+         height: 12px;
+         cursor: ns-resize;
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1), 0 2px 5px rgba(0, 0, 0, 0.1);
+         z-index: 1000;
+      }
+
+      /* Garis-garis kecil di tengah tuas agar terlihat bisa ditarik */
+      #resizer::after {
+         content: "=====";
+         color: #888;
+         font-size: 10px;
+         letter-spacing: 2px;
+      }
+
+      /* Panel Tabel: Mengisi sisa ruang kosong secara otomatis */
+      #bottomPanel {
+         flex: 1;
+         width: 100vw;
+         background: #fff;
+         display: flex;
+         flex-direction: column;
+         overflow: hidden;
+      }
+
+      /* Area Kontrol & Pencarian */
+      #tableControls {
+         padding: 10px;
+         background: #f8f9fa;
+         border-bottom: 1px solid #ddd;
+         display: flex;
+         justify-content: space-between;
+         align-items: center;
+         gap: 10px;
+         flex-wrap: wrap;
+      }
+
+      #inputCari {
+         flex: 1;
+         padding: 8px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         min-width: 250px;
+         font-family: monospace;
+      }
+
+      /* Area Tabel */
+      #tableWrapper {
+         flex: 1;
+         overflow-y: auto;
+         overflow-x: auto;
+      }
+
+      #tabelData {
+         width: 100%;
+         border-collapse: collapse;
+         text-align: left;
+         font-size: 14px;
+      }
+
+      #tabelData th,
+      td {
+         border: 1px solid #ccc;
+         padding: 8px;
+         text-align: left;
+         vertical-align: top;
+      }
+
+      #tabelData th {
+         background-color: #f2f2f2;
+         font-weight: bold;
+         position: sticky;
+         top: 0;
+         z-index: 1;
+      }
+
+      #tabelData th:hover {
+         background: #5c5c5c;
+         color: white;
+         cursor: pointer;
+      }
+
+      #tabelData tr:hover {
+         background-color: #f1f1f1;
+      }
+   </style>
+   <style>
+      /* Pengaturan Khusus untuk Layar HP (Lebar maksimal 600px) */
+      @media (max-width: 600px) {
+         #dashboardPanel {
+            top: 10px !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            /* Posisikan ke tengah layar HP */
+            width: 95% !important;
+            /* Lebar panel 95% dari layar HP */
+            padding: 10px !important;
+         }
+
+         #dashboardPanel h3 {
+            font-size: 14px !important;
+            /* Perkecil judul di HP */
+         }
+
+         #tabelDashboard th,
+         #tabelDashboard td {
+            padding: 5px !important;
+            /* Perkecil jarak sel tabel di HP */
+            font-size: 11px !important;
+         }
+      }
+   </style>
+
+</head>
+
+<body>
+
+   <div id="map"></div>
+
+   <div id="resizer"></div>
+
+   <div id="bottomPanel">
+      <div id="tableControls">
+         <div style="flex:1;">
+            <input type="text" id="inputCari" placeholder="desa:mulyajaya,cimahi; pemilik:rasti"
+               onkeyup="filterTabel()">
+            <!-- <small style="display:block; color:#666; margin-top:3px;">*Pemisah kolom pakai (;), pemisah ganda pakai
+               (,)</small> -->
+         </div>
+         <button onclick="exportKeExcel()"
+            style="padding:10px 15px; background:#28a745; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">
+            📥 Export Excel
+         </button>
+      </div>
+      <div id="tableWrapper" style="margin: 0 10px;">
+         <table id="tabelData">
+            <thead>
+               <tr>
+                  <th>No</th>
+                  <th onclick="sortTabel('fid')" title="Klik untuk mengurutkan 1-10 / 10-1">FID</th>
+                  <th>Desa</th>
+                  <th onclick="sortTabel('pemilik')" title="Klik untuk mengurutkan A-Z / Z-A">Pemilik</th>
+                  <th>NOP</th>
+                  <th onclick="sortTabel('nama')" title="Klik untuk mengurutkan A-Z / Z-A">Nama</th>
+                  <th>PTSL</th>
+                  <th id="headerStatus" style="display:none;">Status</th>
+                  <th id="headerHarga" style="display:none;">Harga</th>
+                  <th onclick="sortTabel('validasi')" title="Klik untuk mengurutkan A-Z / Z-A">Kekurangan</th>
+                  <th id="headerAksi" style="display:none;">Aksi</th>
+               </tr>
+            </thead>
+            <tbody id="isiTabelData">
+            </tbody>
+         </table>
+      </div>
+   </div>
+
+   <div id="editorModal"
+      style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; z-index:9999; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:10px; text-align:center; width: 90%; max-width: 400px;">
+      <h3 style="margin-top:0;">SPPT Bidang: <span id="fidTarget" style="color:red;"></span></h3>
+
+      <input type="file" id="fileInput" accept="image/*" capture="environment" style="margin-bottom:15px; width: 100%;">
+
+      <canvas id="canvasPreview"
+         style="max-width:100%; max-height:40vh; border:1px dashed #ccc; margin-bottom:15px; display:none;"></canvas>
+
+      <div id="pdfPreview"
+         style="display:none; padding:20px; background:#f8f9fa; border:1px dashed #007bff; border-radius:8px; margin-bottom:15px; font-weight:bold; color:#007bff;">
+         📄 File PDF Siap Diunggah
+      </div>
+
+      <br>
+      <input type="password" id="kodeUpload" placeholder="Masukkan Kode Petugas"
+         style="display:none; width: 80%; padding: 8px; margin-bottom: 15px; text-align: center; font-weight: bold;">
+      <br>
+
+      <button id="btnPutar" style="display:none; padding:8px 15px; cursor:pointer;">🔄 Putar</button>
+      <button id="btnUpload"
+         style="display:none; padding:8px 15px; background:green; color:white; border:none; cursor:pointer;">☁️
+         Upload</button>
+      <button onclick="tutupEditor()"
+         style="padding:8px 15px; background:red; color:white; border:none; cursor:pointer;">❌ Batal</button>
+
+      <p id="statusUpload" style="color:blue; font-size:13px; font-weight:bold;"></p>
+   </div>
+
+   <div id="detailModal"
+      style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; z-index:9998; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:10px; width: 95%; max-width: 500px; max-height: 90vh; overflow-y: auto; font-family: sans-serif;">
+      <div
+         style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #007bff; padding-bottom:10px; margin-bottom: 15px;">
+         <h3 style="margin:0;">📋 Detail Bidang: <span id="detailFidTarget" style="color:red;"></span></h3>
+         <button onclick="document.getElementById('detailModal').style.display='none'"
+            style="background:red; color:white; border:none; border-radius:3px; cursor:pointer; padding:5px 10px; font-weight:bold;">✖
+            Tutup</button>
+      </div>
+      <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+         <tbody id="detailIsiTabel">
+         </tbody>
+      </table>
+
+      <div style="margin-top:20px; text-align:center;">
+         <button onclick="location.reload()"
+            style="padding:10px 20px; background:red; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; width:100%;">🚪
+            Keluar & Refresh Halaman</button>
+      </div>
+   </div>
+
+   <div id="dashboardPanel"
+      style="display:none; position:fixed; top:60px; right:10px; background:white; padding:15px; z-index:9999; box-shadow:0 0 15px rgba(0,0,0,0.3); border-radius:8px; max-height:80vh; overflow-y:auto; font-family:sans-serif; font-size:12px; max-width: 600px;">
+
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+         <h3 style="margin:0; color:#333;">📊 Dashboard Progres PTSL</h3>
+         <button onclick="document.getElementById('dashboardPanel').style.display='none'"
+            style="background:red; color:white; border:none; border-radius:3px; cursor:pointer; padding:5px 10px;">✖
+            Tutup</button>
+      </div>
+
+      <div style="overflow-x: auto; width: 100%;">
+         <table id="tabelDashboard" style="width:100%; min-width: 450px; border-collapse: collapse; text-align:center;">
+            <thead>
+               <tr style="background:#007bff; color:white;">
+                  <th style="padding:8px; border:1px solid #ccc;">Desa</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Bidang</th>
+                  <th style="padding:8px; border:1px solid #ccc;">On Progres</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Komplit</th>
+                  <th style="padding:8px; border:1px solid #ccc;">Realisasi</th>
+               </tr>
+            </thead>
+            <tbody id="isiTabelDashboard">
+            </tbody>
+         </table>
+      </div>
+
+   </div>
+
+   <script>
+      // 1. MENGATUR PETA DASAR (BASEMAP)
+      // Kita mulai dengan titik acak, nanti akan otomatis zoom ke lokasi tanah Anda
+      var map = L.map('map').setView([-6.9741048, 108.6971904, 2582], 15);
+
+      // Menambahkan Google Satellite sebagai latar belakang
+      L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+         maxZoom: 20,
+         subdomains: ['mt0', 'mt1', 'mt2', 'mt3']
+      }).addTo(map);
+
+      // 2. KONEKSI KE SUPABASE
+      const supabaseUrl = 'https://ftlzqrwrlivgszomwhhb.supabase.co';
+      const supabaseKey = 'sb_publishable_iGscw6ePzAq4ty_PFp20SQ_aR2HsxP9';
+      const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+      // Alat Pendeteksi URL parameter "?aksi=true"
+      const urlParams = new URLSearchParams(window.location.search);
+      const modeAdmin = urlParams.get('aksi') === 'true';
+      const modeHarga = urlParams.get('harga') === 'true';
+
+      // 3. FUNGSI MEMANGGIL & MENGGAMBAR PETA DARI SUPABASE
+      async function muatPeta() {
+         // Memanggil SQL Penerjemah yang baru saja kita buat
+         const { data, error } = await supabaseClient.rpc('get_peta_wetan_bersih');
+
+         if (error) {
+            console.error("Gagal menarik data:", error);
+            alert("Gagal memuat peta dari Supabase. Cek Console (F12).");
+            return;
+         }
+
+         // Memasukkan data ke dalam peta
+         window.layerPetaWetan = L.geoJSON(data, {
+
+            // --- KODE PEWARNAAN BARU MULAI DI SINI ---
+            style: function (feature) {
+               let props = feature.properties;
+
+               // Kita jadikan huruf kecil semua agar tidak sensitif huruf besar/kecil (Sukajaya = sukajaya)
+               let desa = props.desa ? props.desa.toLowerCase() : "";
+               let validasi = props.validasi;
+
+               // 1. STYLE BAWAAN (Sisanya: Garis merah, isian transparan)
+               let styleObj = { color: "black", weight: 0.5, fillOpacity: 0.2, fillColor: "white" };
+
+               // 2. KONDISI VALIDASI
+               let isKomplit = (validasi === 'Komplit');
+               let isProses = (validasi !== null && validasi !== '' && validasi !== 'Komplit');
+
+               // 3. LOGIKA PEWARNAAN PER DESA
+               // Jika desa dikenali, kita naikkan fillOpacity menjadi 0.7 agar warnanya terlihat jelas
+               if (desa === 'sukajaya') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#b541f9' : (isProses ? '#d799fc' : '#eed3fe');
+               }
+               else if (desa === 'mekarjaya') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#0ad598' : (isProses ? '#6fffd4' : '#c0ffec');
+               }
+               else if (desa === 'mulyajaya') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#0090e1' : (isProses ? '#65c8ff' : '#caecff');
+               }
+               else if (desa === 'cikeusal') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#fb4863' : (isProses ? '#f88697' : '#ffcfd7');
+               }
+               else if (desa === 'kananga') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#e78629' : (isProses ? '#fdbe81' : '#ffe4ca');
+               }
+               else if (desa === 'cimahi') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#1fd016' : (isProses ? '#75fd6e' : '#c6ffc3');
+               }
+               else if (desa === 'legok') {
+                  styleObj.fillOpacity = 0.7;
+                  styleObj.fillColor = isKomplit ? '#5568f7' : (isProses ? '#9faafd' : '#dce0ff');
+               }
+
+               return styleObj;
+            },
+            // --- KODE PEWARNAAN BARU SELESAI DI SINI ---
+
+            // Membuat Pop-up ketika diklik (Biarkan sama seperti sebelumnya)
+            onEachFeature: function (feature, layer) {
+               let idBidang = feature.properties.fid || 'Tidak ada ID';
+               let nib = feature.properties.nib || 'Tidak ada NIB';
+               let pemilik = feature.properties.pemilik || 'Tidak ada Pemilik';
+               let luas = feature.properties['Luas PTSL'] || '-';
+               let validasi = feature.properties.validasi || '';
+
+               let isiPopup = `
+                        Nib: <b>${nib}</b> <br>
+                        Pemilik: <b>${pemilik}</b> <br>
+                        Luas PTSL: <b>${luas} m²</b> <br>
+                        <b>FID-${idBidang}</b> <br> 
+                        <span style="padding:2px 6px; border-radius:3px; font-size:14px; color:white; background:${validasi === 'Komplit' ? 'green' : (validasi !== '' ? 'orange' : 'white')}">${validasi}</span> <br><br>
+                        ${modeAdmin ? `<button onclick="event.stopPropagation(); bukaDetail('${idBidang}')" style="padding:4px 8px; background:#17a2b8; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">⚙️ Aksi</button>` : ''}
+                    `;
+               layer.bindPopup(isiPopup);
+            }
+         }).addTo(map);
+
+         // Perintah Sakti: Otomatis Zoom layar mengepaskan ke area bidang tanah
+         //map.fitBounds(layerPetaWetan.getBounds());
+
+         //console.log("Peta berhasil dimuat dengan sukses!");
+
+         // Simpan data mentah ke variabel global agar bisa dipakai tabel
+         window.dataMentahGlobal = data.features;
+         renderTabelBawah(window.dataMentahGlobal); // Panggil fungsi pembuat tabel
+
+
+         // ==========================================
+         // --- MESIN PENGHITUNG DASHBOARD ---
+         // ==========================================
+
+         // 1. Daftar desa yang ingin dihitung
+         const daftarDesa = ['legok', 'mekarjaya', 'sukajaya', 'mulyajaya', 'cikeusal', 'kananga', 'cimahi'];
+
+         // 2. Siapkan penampung data & total keseluruhan
+         let rekapan = {};
+         let total = { bdg: 0, luas: 0, progBdg: 0, progLuas: 0, kompBdg: 0, kompLuas: 0, realBdg: 0, realLuas: 0 };
+
+         daftarDesa.forEach(d => {
+            rekapan[d] = { bdg: 0, luas: 0, progBdg: 0, progLuas: 0, kompBdg: 0, kompLuas: 0, realBdg: 0, realLuas: 0 };
+         });
+
+         // 3. Looping (Putar) semua data dari Supabase untuk dihitung
+         data.features.forEach(f => {
+            let props = f.properties;
+            let desa = props.desa ? props.desa.toLowerCase() : "";
+
+            // Jika desa ada di daftar kita, mulai berhitung
+            if (rekapan[desa]) {
+               // Ambil Luas (Pastikan namanya sesuai, saya pakai 'Luas PTSL' atau 'ptsl')
+               let luasM2 = parseFloat(props.ptsl);
+               let luasHa = luasM2 / 10000; // Ubah M2 ke Hektar
+
+               let validasi = props.validasi;
+               let realisasi = props.realisasi; // Pastikan kolom ini ada di database
+
+               let isKomplit = (validasi === 'Komplit');
+               let isProses = (validasi !== null && validasi !== '' && validasi !== 'Komplit');
+               let isRealisasi = (realisasi !== null && realisasi !== '');
+
+               // Hitung Semua Bidang
+               rekapan[desa].bdg++; rekapan[desa].luas += luasHa;
+               total.bdg++; total.luas += luasHa;
+
+               // Hitung On Progres
+               if (isProses) {
+                  rekapan[desa].progBdg++; rekapan[desa].progLuas += luasHa;
+                  total.progBdg++; total.progLuas += luasHa;
+               }
+               // Hitung Komplit
+               if (isKomplit) {
+                  rekapan[desa].kompBdg++; rekapan[desa].kompLuas += luasHa;
+                  total.kompBdg++; total.kompLuas += luasHa;
+               }
+               // Hitung Realisasi
+               if (isRealisasi) {
+                  rekapan[desa].realBdg++; rekapan[desa].realLuas += luasHa;
+                  total.realBdg++; total.realLuas += luasHa;
+               }
+            }
+         });
+
+         // 4. Buat Baris Tabel HTML
+         let htmlTabel = "";
+         daftarDesa.forEach(d => {
+            let r = rekapan[d];
+            // Huruf awal kapital (misal: legok -> Legok)
+            let namaDesa = d.charAt(0).toUpperCase() + d.slice(1);
+
+            htmlTabel += `
+                    <tr>
+                        <td style="padding:5px; border:1px solid #ccc; font-weight:bold; text-align:left;">${namaDesa}</td>
+                        <td style="padding:5px; border:1px solid #ccc;">${r.bdg} / ${r.luas.toFixed(2)} Ha</td>
+                        <td style="padding:5px; border:1px solid #ccc; color:#d68a00;">${r.progBdg} / ${r.progLuas.toFixed(2)} Ha</td>
+                        <td style="padding:5px; border:1px solid #ccc; color:green;">${r.kompBdg} / ${r.kompLuas.toFixed(2)} Ha</td>
+                        <td style="padding:5px; border:1px solid #ccc; color:blue;">${r.realBdg} / ${r.realLuas.toFixed(2)} Ha</td>
+                    </tr>
+                `;
+         });
+
+         // Baris Total
+         htmlTabel += `
+                <tr style="background:#eee; font-weight:bold;">
+                    <td style="padding:8px; border:1px solid #ccc;">TOTAL</td>
+                    <td style="padding:8px; border:1px solid #ccc;">${total.bdg} / ${total.luas.toFixed(2)} Ha</td>
+                    <td style="padding:8px; border:1px solid #ccc; color:#d68a00;">${total.progBdg} / ${total.progLuas.toFixed(2)} Ha</td>
+                    <td style="padding:8px; border:1px solid #ccc; color:green;">${total.kompBdg} / ${total.kompLuas.toFixed(2)} Ha</td>
+                    <td style="padding:8px; border:1px solid #ccc; color:blue;">${total.realBdg} / ${total.realLuas.toFixed(2)} Ha</td>
+                </tr>
+            `;
+
+         document.getElementById('isiTabelDashboard').innerHTML = htmlTabel;
+
+         // ==========================================
+         // --- TOMBOL LEAFLET CONTROL (KANAN ATAS) ---
+         // ==========================================
+         // Cek agar tombol tidak terbuat dobel saat fungsi dipanggil ulang
+         if (!window.dashboardButtonAdded) {
+            var DashboardControl = L.Control.extend({
+               options: { position: 'topright' },
+               onAdd: function () {
+                  var container = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+                  container.innerHTML = `<button style="background:white; padding:8px 12px; border:none; cursor:pointer; font-weight:bold; font-size:14px; box-shadow:0 1px 5px rgba(0,0,0,0.4); border-radius:4px;">📊 Dashboard</button>`;
+
+                  container.onclick = function (e) {
+                     e.stopPropagation(); // Mencegah klik tembus ke peta
+                     let panel = document.getElementById('dashboardPanel');
+                     // Buka-tutup panel
+                     panel.style.display = (panel.style.display === 'none') ? 'block' : 'none';
+                  }
+                  return container;
+               }
+            });
+            map.addControl(new DashboardControl());
+            window.dashboardButtonAdded = true;
+         }
+      }
+
+      // Jalankan!
+      muatPeta();
+
+      // ==========================================
+      // --- MESIN EDITOR & SMART UPLOAD (IMG & PDF) ---
+      // ==========================================
+      let idBidangAktif = "";
+      let tipeDokumenAktif = "";
+      let gambarAsli = new Image();
+      let sudutPutar = 0;
+      let fileUploadAsli = null;
+
+      const modal = document.getElementById('editorModal');
+      const kanvas = document.getElementById('canvasPreview');
+      const pdfPreview = document.getElementById('pdfPreview'); // Tambahan PDF
+      const ctx = kanvas.getContext('2d');
+      const inputFIle = document.getElementById('fileInput');
+      const btnPutar = document.getElementById('btnPutar');
+      const btnUpload = document.getElementById('btnUpload');
+      const statusTxt = document.getElementById('statusUpload');
+
+      // Buka Jendela Editor (Bisa dinamis untuk Gambar/PDF)
+      window.bukaEditor = function (fid, tipeDokumen) {
+         idBidangAktif = fid;
+         tipeDokumenAktif = tipeDokumen;
+
+         let teksJudul = fid + " (" + tipeDokumen.toUpperCase() + ")";
+
+         // LOGIKA PINTAR: Jika kolom 'bukti', izinkan PDF
+         if (tipeDokumen === 'bukti') {
+            inputFIle.accept = "image/*, application/pdf";
+            teksJudul += " - Bisa PDF/Foto";
+         } else {
+            inputFIle.accept = "image/*"; // Sisanya wajib foto
+         }
+
+         document.getElementById('fidTarget').innerText = teksJudul;
+         modal.style.display = 'block';
+         resetEditor();
+      }
+
+      function tutupEditor() { modal.style.display = 'none'; }
+
+      function resetEditor() {
+         inputFIle.value = "";
+         kanvas.style.display = 'none';
+         pdfPreview.style.display = 'none';
+         btnPutar.style.display = 'none';
+         btnUpload.style.display = 'none';
+         document.getElementById('kodeUpload').style.display = 'none';
+         statusTxt.innerText = "";
+         sudutPutar = 0;
+         fileUploadAsli = null;
+      }
+
+      // Saat File Dipilih dari HP/Laptop
+      inputFIle.addEventListener('change', function (e) {
+         fileUploadAsli = e.target.files[0];
+         if (!fileUploadAsli) return;
+
+         btnUpload.style.display = 'inline-block';
+         document.getElementById('kodeUpload').style.display = 'inline-block';
+
+         // JIKA YANG DIPILIH ADALAH PDF
+         if (fileUploadAsli.type === 'application/pdf') {
+            kanvas.style.display = 'none';
+            btnPutar.style.display = 'none'; // PDF tidak bisa diputar
+            pdfPreview.style.display = 'block';
+            pdfPreview.innerText = `📄 ${fileUploadAsli.name} (${(fileUploadAsli.size / 1024).toFixed(1)} KB)`;
+         }
+         // JIKA YANG DIPILIH ADALAH GAMBAR/FOTO
+         else {
+            pdfPreview.style.display = 'none';
+            let reader = new FileReader();
+            reader.onload = function (event) {
+               gambarAsli.onload = function () {
+                  kanvas.style.display = 'inline-block';
+                  btnPutar.style.display = 'inline-block';
+                  gambarKeKanvas();
+               }
+               gambarAsli.src = event.target.result;
+            }
+            reader.readAsDataURL(fileUploadAsli);
+         }
+      });
+
+      function gambarKeKanvas() {
+         let maxUkuran = 1000;
+         let lebar = gambarAsli.width;
+         let tinggi = gambarAsli.height;
+
+         if (lebar > tinggi && lebar > maxUkuran) {
+            tinggi *= maxUkuran / lebar; lebar = maxUkuran;
+         } else if (tinggi > maxUkuran) {
+            lebar *= maxUkuran / tinggi; tinggi = maxUkuran;
+         }
+
+         if (sudutPutar % 180 !== 0) {
+            kanvas.width = tinggi; kanvas.height = lebar;
+         } else {
+            kanvas.width = lebar; kanvas.height = tinggi;
+         }
+
+         ctx.clearRect(0, 0, kanvas.width, kanvas.height);
+         ctx.save();
+         ctx.translate(kanvas.width / 2, kanvas.height / 2);
+         ctx.rotate(sudutPutar * Math.PI / 180);
+         ctx.drawImage(gambarAsli, -lebar / 2, -tinggi / 2, lebar, tinggi);
+         ctx.restore();
+      }
+
+      btnPutar.onclick = function () {
+         sudutPutar += 90;
+         if (sudutPutar === 360) sudutPutar = 0;
+         gambarKeKanvas();
+      }
+
+      const dapatkanBlobKanvas = (kualitas) => {
+         return new Promise(resolve => {
+            kanvas.toBlob(blob => resolve(blob), 'image/jpeg', kualitas);
+         });
+      };
+
+      // Proses Upload & Bypass PDF
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      const seconds = String(now.getSeconds()).padStart(2, '0');
+      const formattedDate = `${year}${month}${day}_${hours}${minutes}${seconds}`;
+
+      btnUpload.onclick = async function () {
+         let kodeInput = document.getElementById('kodeUpload').value;
+         if (kodeInput !== "PETA2026") {
+            alert("⛔ Upload Gagal: Kode petugas kosong atau salah!");
+            return;
+         }
+
+         statusTxt.innerText = "⏳ Memproses file...";
+         btnUpload.disabled = true;
+
+         let namaFile = `${tipeDokumenAktif}_${idBidangAktif}_${formattedDate}`;
+         let dataUploadFinal = null;
+
+         // --- CABANG LOGIKA: PDF VS GAMBAR ---
+         if (fileUploadAsli.type === 'application/pdf') {
+            // BYPASS KOMPRESI UNTUK PDF
+            console.log("Bypass Kompresi: Upload PDF");
+            dataUploadFinal = fileUploadAsli;
+            namaFile += `.pdf`;
+         }
+         else {
+            // LOGIKA KOMPRESI GAMBAR 120KB
+            let targetMaksimal = 120 * 1024;
+            if (fileUploadAsli.size <= targetMaksimal && sudutPutar === 0) {
+               dataUploadFinal = fileUploadAsli;
+               let ekstensi = fileUploadAsli.name.split('.').pop();
+               namaFile += `.${ekstensi}`;
+            } else {
+               statusTxt.innerText = "⏳ Mengompresi gambar...";
+               let kualitas = 0.9;
+               dataUploadFinal = await dapatkanBlobKanvas(kualitas);
+
+               while (dataUploadFinal.size > targetMaksimal && kualitas > 0.1) {
+                  kualitas -= 0.15;
+                  dataUploadFinal = await dapatkanBlobKanvas(kualitas);
+               }
+               namaFile += `.jpg`;
+            }
+         }
+
+         statusTxt.innerText = "☁️ Mengunggah ke server...";
+         const { data: uploadData, error: uploadErr } = await supabaseClient
+            .storage
+            .from(tipeDokumenAktif)
+            .upload(namaFile, dataUploadFinal, { cacheControl: '3600', upsert: false });
+
+         if (uploadErr) {
+            statusTxt.innerText = "❌ Gagal Upload: " + uploadErr.message;
+            btnUpload.disabled = false;
+            return;
+         }
+
+         statusTxt.innerText = "💾 Menyimpan data...";
+         const { data: publicUrlData } = supabaseClient.storage.from(tipeDokumenAktif).getPublicUrl(namaFile);
+         let linkBerkas = publicUrlData.publicUrl;
+
+         const { error: dbErr } = await supabaseClient
+            .from('ONLINE_09_03_2026_2000')
+            .update({ [tipeDokumenAktif]: linkBerkas })
+            .eq('fid', idBidangAktif);
+
+         if (dbErr) {
+            statusTxt.innerText = "❌ Gagal Simpan Database.";
+         } else {
+            statusTxt.innerText = "✅ Sukses Upload & Tersimpan!";
+            document.getElementById('kodeUpload').value = "";
+
+            let f = window.dataMentahGlobal.find(f => f.properties.fid == idBidangAktif);
+            if (f) f.properties[tipeDokumenAktif] = linkBerkas;
+
+            setTimeout(() => {
+               tutupEditor();
+               bukaDetail(idBidangAktif);
+            }, 1500);
+         }
+         btnUpload.disabled = false;
+      };
+
+      // ==========================================
+      // --- MESIN TABEL BAWAH & PENCARIAN SAKTI ---
+      // ==========================================
+
+      // Munculkan Header "Aksi" jika mode Admin aktif
+      if (modeAdmin) {
+         document.getElementById('headerStatus').style.display = 'table-cell';
+         document.getElementById('headerHarga').style.display = 'table-cell';
+         document.getElementById('headerAksi').style.display = 'table-cell';
+      }
+      if (modeHarga) {
+         document.getElementById('headerStatus').style.display = 'table-cell';
+         document.getElementById('headerHarga').style.display = 'table-cell';
+      }
+
+      let dataTabelSaatIni = [];
+      let sortArah = 1; // 1 untuk A-Z, -1 untuk Z-A
+
+      function renderTabelBawah(dataArray) {
+         dataTabelSaatIni = dataArray; // Simpan status filter saat ini untuk Export
+         let html = "";
+         dataArray.forEach((f, index) => {
+            let props = f.properties;
+            let fid = props.fid || '-';
+            let desa = props.desa || '-';
+            let pemilik = props.pemilik || '-';
+            let nop = props.nop || '-';
+            let nama = props.nama || '-';
+            let validasi = props.validasi || '-';
+            let jenis = props.jenis;
+            let harga = props.harga ? `${Math.round(props.harga).toLocaleString('id-ID')}` : '';
+
+            // Format Luas PTSL: Bulatkan dan beri pemisah ribuan (contoh: 1.250)
+            let luasM2 = props.ptsl;
+            let luasFormat = Math.round(parseFloat(luasM2)).toLocaleString('id-ID');
+
+            // Siapkan kolom aksi, defaultnya KOSONG
+            let kolomStatusHtml = "";
+            let kolomHargaHtml = "";
+            let kolomAksiHtml = "";
+
+            // Jika URL mengandung ?aksi=true, isi kolom aksi dengan tombol SPPT
+            if (modeAdmin) {
+               kolomStatusHtml = `
+                        <td>${jenis}</td>
+                    `;
+               kolomHargaHtml = `
+                        <td style="text-align:right;">${harga}</td>
+                    `;
+               kolomAksiHtml = `
+                        <td>
+                            <button onclick="event.stopPropagation(); bukaDetail('${fid}')" style="padding:4px 8px; background:#17a2b8; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">⚙️</button>
+                        </td>
+                    `;
+            }
+            if (modeHarga) {
+               kolomStatusHtml = `
+                        <td>${jenis}</td>
+                    `;
+               kolomHargaHtml = `
+                        <td style="text-align:right;">${harga}</td>
+                    `;
+            }
+
+            html += `
+                    <tr onclick="zoomKeBidang('${fid}')" style="cursor:pointer;" title="Klik untuk melihat di peta">
+                        <td style="text-align:center;">${index + 1}</td>
+                        <td style="text-align:right;">${fid}</td>
+                        <td>${desa.toUpperCase()}</td>
+                        <td>${pemilik}</td>
+                        <td>${nop}</td>
+                        <td>${nama}</td>
+                        <td style="text-align:right;">${luasFormat}</td>
+                        ${kolomStatusHtml}
+                        ${kolomHargaHtml}
+                        <td><span style="padding:2px 6px; border-radius:3px; font-size:14px; color:white; background:${validasi === 'Komplit' ? 'green' : (validasi !== '-' ? 'orange' : '')}">${validasi}</span></td>
+                        ${kolomAksiHtml}
+                    </tr>
+                `;
+         });
+         document.getElementById('isiTabelData').innerHTML = html;
+      }
+
+      // PENCARIAN SUPER SAKTI
+      function filterTabel() {
+         let query = document.getElementById('inputCari').value.toLowerCase();
+         let dataAwal = window.dataMentahGlobal;
+
+         if (query.includes(':')) {
+            // Mode Pencarian Advanced (desa:a,b; pemilik:x)
+            let conditions = query.split(';'); // Pisahkan antar kolom
+
+            let filters = conditions.map(cond => {
+               let parts = cond.split(':');
+               if (parts.length === 2) {
+                  return { key: parts[0].trim(), values: parts[1].split(',').map(v => v.trim()) };
+               }
+               return null;
+            }).filter(c => c !== null);
+
+            let filtered = dataAwal.filter(f => {
+               let props = f.properties;
+               // Syarat: Harus lolos SEMUA kondisi kolom (AND)
+               return filters.every(cond => {
+                  let propValue = props[cond.key] ? String(props[cond.key]).toLowerCase() : "";
+                  // Syarat: Cukup cocok dengan SALAH SATU nilai ganda (OR)
+                  return cond.values.some(val => propValue.includes(val));
+               });
+            });
+            renderTabelBawah(filtered);
+
+         } else if (query !== "") {
+            // Mode Pencarian Biasa (Ketik asal, cari di semua kolom)
+            let filtered = dataAwal.filter(f => {
+               return Object.values(f.properties).some(val =>
+                  String(val).toLowerCase().includes(query)
+               );
+            });
+            renderTabelBawah(filtered);
+
+         } else {
+            // Kosongkan pencarian
+            renderTabelBawah(dataAwal);
+         }
+      }
+
+      // FUNGSI SORTING KOLOM PEMILIK (A-Z)
+      function sortTabel(kolom) {
+         let dataDiurutkan = [...dataTabelSaatIni];
+         dataDiurutkan.sort((a, b) => {
+            let valA = a.properties[kolom];
+            let valB = b.properties[kolom];
+
+            // Cek jika kolom adalah numerik (seperti fid atau ptsl)
+            if (!isNaN(valA) && !isNaN(valB) && valA !== null && valB !== null) {
+               valA = parseFloat(valA);
+               valB = parseFloat(valB);
+            } else {
+               // Jika bukan numerik, perlakukan sebagai string
+               valA = String(valA || "").toLowerCase();
+               valB = String(valB || "").toLowerCase();
+            }
+
+            if (valA < valB) return -1 * sortArah;
+            if (valA > valB) return 1 * sortArah;
+            return 0;
+         });
+         sortArah = sortArah * -1; // Balikkan arah untuk klik selanjutnya
+         renderTabelBawah(dataDiurutkan);
+      }
+
+      // FUNGSI EXPORT KE EXCEL (Rapi & Bersih)
+      function exportKeExcel() {
+         // Ambil data yang sedang tampil (sudah di-filter)
+         let dataExport = dataTabelSaatIni.map((f, i) => {
+            let props = f.properties;
+            return {
+               "No": i + 1,
+               "FID": props.fid || '',
+               "Desa": props.desa || '',
+               "Pemilik": props.pemilik || '',
+               "NOP": props.nop || '',
+               "Nama": props.nama || '',
+               "Luas PTSL (m2)": Math.round(parseFloat(props['Luas PTSL'] || props.ptsl || 0)),
+               "Validasi": props.validasi || '',
+               "Link SPPT": props.sppt || '',
+               "Link KTP": props.ktp || '',
+               "Link KK": props.kk || '',
+               "Link Bukti": props.bukti || '',
+               "Link KTP Agree": props.ktpagree || ''
+            };
+         });
+
+         // Ubah JSON ke Worksheet
+         let ws = XLSX.utils.json_to_sheet(dataExport);
+         let wb = XLSX.utils.book_new();
+         XLSX.utils.book_append_sheet(wb, ws, "DataBidang");
+
+         // Simpan File
+         let namaFile = `Rekap_Bidang_Tanah_${new Date().getTime()}.xlsx`;
+         XLSX.writeFile(wb, namaFile);
+      }
+      // ==========================================
+      // --- MESIN PENGGESER (RESIZER) BAWAAN ---
+      // ==========================================
+      const resizer = document.getElementById('resizer');
+      const mapElement = document.getElementById('map');
+      let isResizing = false;
+
+      // --- UNTUK LAPTOP (MOUSE) ---
+      resizer.addEventListener('mousedown', function (e) {
+         isResizing = true;
+         document.body.style.cursor = 'ns-resize'; // Ubah kursor jadi panah atas-bawah
+         e.preventDefault(); // Cegah teks ter-blokir saat ditarik
+      });
+
+      document.addEventListener('mousemove', function (e) {
+         if (!isResizing) return;
+         // Hitung posisi Y mouse. Batasi minimal 100px dari atas/bawah agar tidak hilang
+         let newHeight = e.clientY;
+         if (newHeight > 100 && newHeight < window.innerHeight - 100) {
+            mapElement.style.height = newHeight + 'px';
+            if (map) map.invalidateSize(); // Wajib agar peta Leaflet tidak error!
+         }
+      });
+
+      document.addEventListener('mouseup', function () {
+         if (isResizing) {
+            isResizing = false;
+            document.body.style.cursor = 'default';
+            if (map) map.invalidateSize();
+         }
+      });
+
+      // --- UNTUK HP (TOUCHSCREEN) ---
+      resizer.addEventListener('touchstart', function (e) {
+         isResizing = true;
+      }, { passive: false });
+
+      document.addEventListener('touchmove', function (e) {
+         if (!isResizing) return;
+         let newHeight = e.touches[0].clientY;
+         if (newHeight > 100 && newHeight < window.innerHeight - 100) {
+            mapElement.style.height = newHeight + 'px';
+            if (map) map.invalidateSize();
+         }
+      }, { passive: false });
+
+      document.addEventListener('touchend', function () {
+         if (isResizing) {
+            isResizing = false;
+            if (map) map.invalidateSize();
+         }
+      });
+      // ==========================================
+      // --- MESIN HIGHLIGHT & ZOOM DARI TABEL ---
+      // ==========================================
+      let layerHighlightSaatIni = null;
+
+      window.zoomKeBidang = function (fidCari) {
+         // Pastikan layer peta sudah selesai dimuat
+         if (!window.layerPetaWetan) return;
+
+         // Cari bidang tanah yang ID-nya cocok dengan baris tabel
+         window.layerPetaWetan.eachLayer(function (layer) {
+            if (layer.feature.properties.fid == fidCari) {
+
+               // 1. Terbang (Zoom) ke lokasi bidang tersebut
+               // maxZoom: 19 agar cukup dekat, durasi animasi 1.5 detik
+               map.flyToBounds(layer.getBounds(), { padding: [50, 50], maxZoom: 19, duration: 1.5 });
+               console.log(layer.getBounds());
+               // 2. Buka Pop-up nya otomatis
+               //layer.openPopup();
+
+               // 3. Kembalikan warna bidang sebelumnya ke warna asli (jika ada yang sedang kuning)
+               if (layerHighlightSaatIni) {
+                  window.layerPetaWetan.resetStyle(layerHighlightSaatIni);
+               }
+
+               // 4. Ubah warna bidang yang baru diklik menjadi KUNING MENYALA (Highlight)
+               layer.setStyle({
+                  color: "#FFFF00",
+                  weight: 4,
+                  fillColor: "#FFFF00",
+                  fillOpacity: 0.7
+               });
+
+               // Simpan sebagai bidang yang sedang di-highlight
+               layerHighlightSaatIni = layer;
+            }
+         });
+      };
+
+      // Otomatis kembalikan warna ke aslinya jika Pop-up ditutup (klik sembarang di peta)
+      map.on('popupclose', function () {
+         if (layerHighlightSaatIni && window.layerPetaWetan) {
+            window.layerPetaWetan.resetStyle(layerHighlightSaatIni);
+            layerHighlightSaatIni = null;
+         }
+      });
+
+      // ==========================================
+      // --- MESIN DETAIL & INLINE EDIT ---
+      // ==========================================
+
+      window.bukaDetail = function (fid) {
+         // 1. Cari data lengkap dari data mentah global
+         let feature = window.dataMentahGlobal.find(f => f.properties.fid == fid);
+         if (!feature) return;
+
+         let p = feature.properties;
+         document.getElementById('detailFidTarget').innerText = fid;
+
+         // 2. Fungsi pembantu pembuat baris (Teks / Edit)
+         function buatBarisEdit(label, fieldDB, nilai) {
+            let val = nilai || '';
+            return `
+                    <tr>
+                        <td style="padding:8px; border-bottom:1px solid #ddd; width:30%;"><b>${label}</b></td>
+                        <td style="padding:8px; border-bottom:1px solid #ddd;">
+                            <span id="txt_${fieldDB}">${val}</span>
+                            <button id="btn_${fieldDB}" onclick="modeEditTeks('${fid}', '${fieldDB}')" style="float:right; padding:2px 5px; cursor:pointer; font-size:10px;">✏️ Edit</button>
+                        </td>
+                    </tr>`;
+         }
+
+         // 3. Fungsi pembantu pembuat baris (Dokumen / Upload / Ganti)
+         function buatBarisDokumen(label, fieldDB, linkUrl, isGambar) {
+            let konten = "";
+
+            // JIKA DOKUMEN SUDAH ADA (Tampilkan Link/Foto + Tombol Ganti)
+            if (linkUrl && linkUrl.trim() !== "") {
+               let viewHtml = "";
+               if (isGambar) {
+                  viewHtml = `<a href="${linkUrl}" target="_blank"><img src="${linkUrl}" style="max-height:200px; border-radius:4px; border:1px solid #ccc; vertical-align:middle;"></a>`;
+               } else {
+                  viewHtml = `<a href="${linkUrl}" target="_blank" style="color:blue; text-decoration:underline;">Lihat Dokumen</a>`;
+               }
+
+               // Tombol Ganti memanggil fungsi bukaEditor yang sama seperti tombol Upload
+               let btnGanti = `<button onclick="bukaEditor('${fid}', '${fieldDB}')" style="padding:4px 8px; background:#ffc107; color:black; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">🔄 Ganti</button>`;
+
+               konten = `
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <div>${viewHtml}</div>
+                            <div>${btnGanti}</div>
+                        </div>`;
+            }
+            // JIKA DOKUMEN KOSONG (Tampilkan tombol Upload Hijau)
+            else {
+               konten = `<button onclick="bukaEditor('${fid}', '${fieldDB}')" style="padding:4px 8px; background:#28a745; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">📸 Upload</button>`;
+            }
+
+            return `
+                    <tr>
+                        <td style="padding:8px; border-bottom:1px solid #ddd; width:30%;"><b>${label}</b></td>
+                        <td style="padding:8px; border-bottom:1px solid #ddd;">${konten}</td>
+                    </tr>`;
+         }
+
+         // 4. Susun HTML Isi Detail
+         let htmlDetail = "";
+
+         // Baris Dokumen
+         htmlDetail += buatBarisDokumen("KTP", "ktp", p.ktp, true);
+
+         // Baris Edit Teks
+         htmlDetail += buatBarisEdit("Pemilik", "pemilik", p.pemilik);
+
+         // Baris Read-Only
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>Jenis</b></td><td style="padding:8px; border-bottom:1px solid #ddd;">${p.jenis || '-'}</td></tr>`;
+
+         // Baris Edit Angka/Teks
+         htmlDetail += buatBarisEdit("Pengali", "pengali", p.pengali);
+         htmlDetail += buatBarisEdit("Harga Satuan", "hrg_sat", p.hrg_sat ? `${Math.round(p.hrg_sat).toLocaleString('id-ID')}` : '');
+         htmlDetail += buatBarisEdit("Harga Total", "harga", p.harga ? `${Math.round(p.harga).toLocaleString('id-ID')}` : '');
+
+         // Baris Dokumen Lainnya
+         htmlDetail += buatBarisDokumen("SPPT", "sppt", p.sppt, false);
+         htmlDetail += buatBarisDokumen("Kartu Keluarga", "kk", p.kk, false);
+         htmlDetail += buatBarisDokumen("Bukti", "bukti", p.bukti, false);
+         htmlDetail += buatBarisDokumen("KTP Agree", "ktpagree", p.ktpagree, false);
+
+         // 5. Tampilkan ke layar
+         document.getElementById('detailIsiTabel').innerHTML = htmlDetail;
+         document.getElementById('detailModal').style.display = 'block';
+      };
+
+      // --- FUNGSI MENGUBAH TEKS JADI INPUTAN ---
+      window.modeEditTeks = function (fid, field) {
+         let span = document.getElementById('txt_' + field);
+         let btn = document.getElementById('btn_' + field);
+
+         let nilaiLama = span.innerText;
+         // Ubah teks jadi kotak input
+         span.innerHTML = `<input type="text" id="input_${field}" value="${nilaiLama.replaceAll(".", "")}" style="width:70%; padding:3px;">`;
+
+         // Ubah tombol Edit jadi Simpan
+         btn.innerText = "💾 Simpan";
+         btn.style.background = "#007bff";
+         btn.style.color = "white";
+         btn.onclick = function () { simpanTeksSupabase(fid, field); };
+      };
+
+      // --- FUNGSI MENYIMPAN INPUTAN KE SUPABASE ---
+      window.simpanTeksSupabase = async function (fid, field) {
+         let newVal = document.getElementById('input_' + field).value;
+         let btn = document.getElementById('btn_' + field);
+
+         btn.innerText = "⏳...";
+
+         // Tembak langsung ke Supabase
+         const { error } = await supabaseClient
+            .from('ONLINE_09_03_2026_2000')
+            .update({ [field]: newVal })
+            .eq('fid', fid);
+
+         if (error) {
+            alert("Gagal menyimpan: " + error.message);
+            btn.innerText = "💾 Simpan"; // Kembalikan tombol jika gagal
+         } else {
+            // Sukses! Kembalikan tampilan ke teks biasa
+            let span = document.getElementById('txt_' + field);
+            span.innerText = newVal;
+
+            btn.innerText = "✏️ Edit";
+            btn.style.background = "";
+            btn.style.color = "black";
+            btn.onclick = function () { modeEditTeks(fid, field); };
+
+            // Update juga data lokal di memori agar jika modal ditutup-buka tidak kembali ke awal
+            let f = window.dataMentahGlobal.find(f => f.properties.fid == fid);
+            if (f) f.properties[field] = newVal;
+         }
+      };
+   </script>
+</body>
+
+</html>

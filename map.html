@@ -10,6 +10,7 @@
     <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
     <!-- Force the browser to load a new version of the page -->
     <script>
@@ -84,7 +85,7 @@
         loadJS('js/pinbyurl.js');
 
         // DATA LAYERS
-        loadJS('data/UPDATE_19_01_2026_2107_23.js');
+        //loadJS('data/UPDATE_19_01_2026_2107_23.js');
         loadJS('data/Floating_24.js');
         loadJS('data/Kurang_25.js');
     </script>
@@ -389,17 +390,96 @@
             map.createPane('pane_UPDATE_19_01_2026_2107_0');
             map.getPane('pane_UPDATE_19_01_2026_2107_0').style.zIndex = 400;
             map.getPane('pane_UPDATE_19_01_2026_2107_0').style['mix-blend-mode'] = 'normal';
-            var layer_UPDATE_19_01_2026_2107_0 = new L.geoJson(json_UPDATE_19_01_2026_2107_23, {
-                attribution: '',
-                interactive: true,
-                dataVar: 'json_UPDATE_19_01_2026_2107_0',
-                layerName: 'layer_UPDATE_19_01_2026_2107_0',
-                pane: 'pane_UPDATE_19_01_2026_2107_0',
-                onEachFeature: pop_UPDATE_19_01_2026_2107_0,
-                style: style_UPDATE_19_01_2026_2107_0_0,
-            });
-            bounds_group.addLayer(layer_UPDATE_19_01_2026_2107_0);
-            map.addLayer(layer_UPDATE_19_01_2026_2107_0);
+
+            var layer_UPDATE_19_01_2026_2107_0;
+
+            // --- KODE KONEKSI SUPABASE (YANG DIPINDAHKAN) ---
+            const supabaseUrl = 'https://ftlzqrwrlivgszomwhhb.supabase.co';
+            const supabaseKey = 'sb_publishable_iGscw6ePzAq4ty_PFp20SQ_aR2HsxP9';
+            const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+            async function muatPetaDariSupabase() {
+                const { data, error } = await supabaseClient.rpc('get_peta_wetan');
+                if (error) {
+                    console.error("Aduh, gagal mengambil data dari Supabase:", error);
+                    return;
+                }
+
+                const geojsonData = {
+                    type: "FeatureCollection",
+                    features: data
+                };
+
+                layer_UPDATE_19_01_2026_2107_0 = new L.geoJson(geojsonData, {
+                    attribution: '',
+                    interactive: true,
+                    dataVar: 'geojsonData',
+                    layerName: 'layer_UPDATE_19_01_2026_2107_0',
+                    pane: 'pane_UPDATE_19_01_2026_2107_0',
+                    onEachFeature: pop_UPDATE_19_01_2026_2107_0,
+                    style: style_UPDATE_19_01_2026_2107_0_0,
+                });
+                bounds_group.addLayer(layer_UPDATE_19_01_2026_2107_0);
+                map.addLayer(layer_UPDATE_19_01_2026_2107_0);
+
+                // --- KODE YANG BERGANTUNG PADA LAYER DIPINDAHKAN KE SINI ---
+
+                // 1. Tambahkan label (jika diperlukan, saat ini di-comment)
+                var i = 0;
+                layer_UPDATE_19_01_2026_2107_0.eachLayer(function (layer) {
+                    var context = {
+                        feature: layer.feature,
+                        variables: {}
+                    };
+                    // Anda bisa mengaktifkan tooltip/label di sini jika mau
+                    // layer.bindTooltip((layer.feature.properties['label'] !== null ? String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>' : ''), { permanent: true, offset: [-0, -16], className: 'css_UPDATE_19_01_2026_2107_0' });
+                    // labels.push(layer);
+                    // totalMarkers += 1;
+                    // layer.added = true;
+                    // addLabel(layer, i);
+                    i++;
+                });
+
+                // 2. Inisialisasi kontrol pencarian
+                map.addControl(new L.Control.Search({
+                    layer: layer_UPDATE_19_01_2026_2107_0,
+                    initial: false,
+                    hideMarkerOnCollapse: true,
+                    propertyName: 'key2' // Ganti 'key2' dengan properti yang ingin Anda cari, misal 'fid'
+                }));
+                // Tambahkan ikon ke tombol search
+                if (document.getElementsByClassName('search-button')[0]) {
+                   document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
+                }
+
+                // 3. Atur ulang label saat ada perubahan
+                resetLabels([layer_UPDATE_19_01_2026_2107_0]);
+                map.on("zoomend", function () {
+                    resetLabels([layer_UPDATE_19_01_2026_2107_0]);
+                });
+                map.on("layeradd", function () {
+                    resetLabels([layer_UPDATE_19_01_2026_2107_0]);
+                });
+                map.on("layerremove", function () {
+                    resetLabels([layer_UPDATE_19_01_2026_2107_0]);
+                });
+
+                console.log("Hore! Peta berhasil dimuat dari Supabase!");
+            }
+            muatPetaDariSupabase();
+            // --- AKHIR KODE SUPABASE ---
+
+            // var layer_UPDATE_19_01_2026_2107_0 = new L.geoJson(json_UPDATE_19_01_2026_2107_23, {
+            //     attribution: '',
+            //     interactive: true,
+            //     dataVar: 'json_UPDATE_19_01_2026_2107_0',
+            //     layerName: 'layer_UPDATE_19_01_2026_2107_0',
+            //     pane: 'pane_UPDATE_19_01_2026_2107_0',
+            //     onEachFeature: pop_UPDATE_19_01_2026_2107_0,
+            //     style: style_UPDATE_19_01_2026_2107_0_0,
+            // });
+            //bounds_group.addLayer(layer_UPDATE_19_01_2026_2107_0);
+            //map.addLayer(layer_UPDATE_19_01_2026_2107_0);
 
             function pop_Floating_1(feature, layer) {
                 layer.on({
@@ -558,62 +638,6 @@
             bounds_group.addLayer(layer_Kurang_2);
             map.addLayer(layer_Kurang_2);
             setBounds();
-
-            // var i = 0;
-            // layer_UPDATE_19_01_2026_2107_0.eachLayer(function (layer) {
-            //     var context = {
-            //         feature: layer.feature,
-            //         variables: {}
-            //     };
-            //     layer.bindTooltip((layer.feature.properties['label'] !== null ? String('<div style="color: #323232; font-size: 10pt; font-family: \'Open Sans\', sans-serif;">' + layer.feature.properties['label']) + '</div>' : ''), { permanent: true, offset: [-0, -16], className: 'css_UPDATE_19_01_2026_2107_0' });
-            //     labels.push(layer);
-            //     totalMarkers += 1;
-            //     layer.added = true;
-            //     addLabel(layer, i);
-            //     i++;
-            // });
-            
-            map.addControl(new L.Control.Search({
-                layer: layer_UPDATE_19_01_2026_2107_0,
-                initial: false,
-                hideMarkerOnCollapse: true,
-                propertyName: 'key2'
-            }));
-            if (typeof url === 'undefined') {
-                document.getElementsByClassName('search-button')[0].className += ' fa fa-binoculars';
-            } else {
-                document.getElementsByClassName('search-button')[1].className += ' fa fa-binoculars';
-            }
-            resetLabels([layer_UPDATE_19_01_2026_2107_0]);
-            map.on("zoomend", function () {
-                resetLabels([layer_UPDATE_19_01_2026_2107_0]);
-            });
-            map.on("layeradd", function () {
-                resetLabels([layer_UPDATE_19_01_2026_2107_0]);
-            });
-            map.on("layerremove", function () {
-                resetLabels([layer_UPDATE_19_01_2026_2107_0]);
-            });
-
-            // --- FITUR PENCARIAN VIA URL ---
-            // Mencari di layer 'layer_UPDATE_19_01_2026_2107_0'
-            // Menggunakan parameter URL 'fid' untuk mencocokkan properti 'fid' di data
-            if (typeof searchAndHighlightByUrl === 'function') {
-                // searchAndHighlightByUrl(map, layer_UPDATE_19_01_2026_2107_0, 'fid', 'fid');
-                searchAndHighlightByUrl(map, layer_UPDATE_19_01_2026_2107_0, 'fid', 'fid', {
-                    marker: {
-                        icon: true,
-                        animate: true,
-                        circle: {
-                            radius: 10,
-                            weight: 3,
-                            color: "#e03",
-                            stroke: true,
-                            fill: false
-                        }
-                    }
-                });
-            }
 
         }); // End Window Load
     </script>
