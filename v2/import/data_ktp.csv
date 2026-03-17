@@ -1,109 +1,135 @@
-﻿fid
-26
-30
-55
-56
-77
-104
-106
-233
-262
-266
-274
-316
-321
-334
-342
-344
-423
-432
-917
-962
-972
-983
-989
-1009
-1024
-1037
-1048
-1055
-1059
-1061
-1069
-1073
-1081
-1082
-1085
-1088
-1094
-1096
-1102
-1110
-1125
-1143
-1146
-1147
-1509
-1511
-1513
-1514
-1515
-1520
-1521
-1522
-1534
-1548
-1550
-1552
-1554
-1565
-1566
-1573
-1579
-1581
-1582
-1593
-1611
-1616
-1618
-1621
-1622
-1645
-1653
-1656
-1662
-1671
-1681
-1725
-1747
-1748
-1749
-1750
-1751
-1754
-1758
-1762
-1765
-1766
-1770
-1782
-1787
-1789
-1791
-1792
-1797
-1799
-1801
-1802
-1804
-1805
-1806
-1808
-1809
-1816
-1821
-2075
-3306
-3321
-3323
-3333
+﻿nik;nama;gender;tgl_lahir;alamat;desa;kecamatan;file
+3208240107680012;Amsor;L;Kuningan, 01-07-1968;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208240107680012-amsor.jpg
+3208244107510007;Isah;P;Kuningan, 06-02-1951;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244107510007-isah.jpg
+3208246710690001;Aren;P;Kuningan, 27-10-1969;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208246710690001-aren.jpg
+3208090602020001;Addin Mohammad Yafis;L;Kuningan, 06-02-2002;Lingk Subur RT/RW 003/001;Windusengkahan;Kuningan;D:\KTP\ktp-3208090602020001-addin mohammad yafis.jpg
+3208093103020003;Muhammad Ibnu Fadillah;L;Kuningan, 31-03-2002;Lingk Pahing RT/RW 004/001;Purwawinangun;Kuningan;D:\KTP\ktp-3208093103020003-muhammad ibnu fadillah.jpg
+3208093107860001;Kokon Koswanto;L;Kuningan, 31-07-1986;Lingk Mukti RT/RW 011/004;Windusengkahan;Kuningan;D:\KTP\ktp-3208093107860001-kokon koswanto.jpg
+3208100505800009;Cucu Suhendra;L;Kuningan, 05-05-1981;Dusun Puhun RT/RW 004/002;Pamulihan;Cipicung;D:\KTP\ktp-3208100505800009-cucu suhendra.jpg
+3208122104070001;Zaiz Idris Aulia Rahman;L;Kuningan, 21-04-2007;Dusun Wage RT/RW 002/001;Sadamantra;Jalaksana;D:\KTP\ktp-3208122104070001-zaiz idris aulia rahman.jpg
+3208122307670005;Romli;L;Jakarta, 23-07-1967;Dusun IV RT/RW 024/004;Manislor;Jalaksana;D:\KTP\ktp-3208122307670005-romli.jpg
+3208240507700008;Dartim;L;Kuningan, 05-07-1969;Dusun II RT/RW 006/002;Sukajaya;Cimahi;D:\KTP\ktp-3208240507700008-dartim.jpg
+3208241003630005;Wantri;L;Kuningan, 10-03-1963;Dusun II RT/RW 008/002;Sukajaya;Cimahi;D:\KTP\ktp-3208241003630005-wantri.jpg
+3208241106880002;Dede Rohiman;L;Kuningan, 11-06-1968;Dusun Manis RT/RW 012/003;Cikeusal;Cimahi;D:\KTP\ktp-3208241106880002-dede rohiman.jpg
+3208242006610016;Katim;L;Kuningan, 20-06-1961;Dusun Kliwon RT/RW 005/002;Cikeusal;Cimahi;D:\KTP\ktp-3208242006610016-katim.jpg
+2101144606730001;Sa Onah;P;Numbing, 06-06-1973;Dusun Manis RT/RW 004/001;Cikeusik;Cidahu;D:\KTP\ktp-2101144606730001-sa onah.jpg
+3172016204540004;Srihaenah;P;Kuningan, 22-04-1954;Duta Harapan Indah Blok OO/64 RT/RW 006/002;Kapuk Muara;Penjaringan;D:\KTP\ktp-3172016204540004-srihaenah.jpg
+3173051303640005;Rois Hadayana Syaugie;L;Banjarmasin,13-03-1964;Jl. H. Usman No.119 RT/RW 008/008;Kelapa Dua;Kebon Jeruk;D:\KTP\ktp-3173051303640005-rois hadayana syaugie.jpg
+3173056308660001;Agustina Nuranie;P;Cimahi, 23-08-1966;Jl. H. Usman No.119 RT/RW 008/008;Kelapa Dua;Kebon Jeruk;D:\KTP\ktp-3173056308660001-agustina nuranie.jpg
+3174100211540002;Muhaimin Luthfie;L;Cirebon, 02-11-1954;Ulujami RT/RW 001/003;Ulujami;Pesanggrahan;D:\KTP\ktp-3174100211540002-muhaimin luthfie.jpg
+3174104504600002;Ratu Nurhawati;P;Kuningan, 05-04-1960;Ulujami RT/RW 001/003;Ulujami;Pesanggrahan;D:\KTP\ktp-3174104504600002-ratu nurhawati.jpg
+3175040209850002;Akhmad Bayu Sutomo;L;Jakarta, 02-09-1985;Jln. Rawa Gurih No.23 RT/RW 002/003;Balekambang;Kramat Jati;D:\KTP\ktp-3175040209850002-akhmad bayu sutomo.jpg
+3175040211520003;Drs Soetomo;L;Klaten, 02-11-1952;Jln. Rawa Gurih No.23 RT/RW 002/003;Balekambang;Kramat Jati;D:\KTP\ktp-3175040211520003-drs soetomo.jpg
+3175041003810003;Suhardho Mahartomo;L;Jakarta, 10-03-1981;Jln. Rawa Gurih No.23 RT/RW 002/003;Balekambang;Kramat Jati;D:\KTP\ktp-3175041003810003-suhardho mahartomo.jpg
+3175041007790004;Sumbogo Wirotomo;L;Jakarta, 10-07-1979;Jln. Rawa Gurih No.23 RT/RW 002/003;Balekambang;Kramat Jati;D:\KTP\ktp-3175041007790004-sumbogo wirotomo.jpg
+3175043012770007;Suhargo Gentur Pratomo;L;Jakarta, 30-12-1977;Jln. Rawa Gurih No.23 RT/RW 002/003;Balekambang;Kramat Jati;D:\KTP\ktp-3175043012770007-suhargo gentur pratomo.jpg
+3208062406580002;Udin Syarifudin;L;Kuningan, 24-06-1958;Dusun Cimaja RT/RW 001/001;Dukuhmaja;Luragung;D:\KTP\ktp-3208062406580002-udin syarifudin.jpg
+3208102505640001;Hamid;L;Kuningan, 25-05-1951;Dusun Kliwon RT/RW 001/005;Ciputat;Ciawigebang;D:\KTP\ktp-3208102505640001-hamid.jpg
+3208120811770003;Holik Saeful Cholik;L;Ciamis, 08-11-1977;Dusun Wage RT/RW 0002/001;Sadamantra;Jalaksana;D:\KTP\ktp-3208120811770003-holik saeful cholik.jpg
+3208240107450109;Muan;L;Kuningan, 01-07-1945;Dusun Manis RT/RW 013/004;Cikeusal;Cimahi;D:\KTP\ktp-3208240107450109-muan.jpg
+3208240107480078;Sartiwan;L;Kuningan, 01-07-1948;Dusun Kliwon RT/RW 002/002;Cikeusal;Cimahi;D:\KTP\ktp-3208240107480078-sartiwan.jpg
+3208240107580224;Udin Winda;L;Kuningan, 01-07-1958;Dusun Manis RT/RW 012/003;Cikeusal;Cimahi;D:\KTP\ktp-3208240107580224-udin winda.jpg
+3208240107780114;Wahyu;L;Kuningan, 01-07-1978;Dusun Manis RT/RW 016/004;Cikeusal;Cimahi;D:\KTP\ktp-3208240107780114-wahyu.jpg
+3208240205800002;Dedi;L;Kuningan, 02-05-1980;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208240205800002-dedi.jpg
+3208240205860001;Tisman;L;Kuningan, 02-05-1986;Dusun III RT/RW 011/003;Cimahi;Cimahi;D:\KTP\ktp-3208240205860001-tisman.jpg
+3208240305510001;Cariwan;L;Brebes, 03-05-1951;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208240305510001-cariwan.jpg
+3208240405540002;Waryono Santoni;L;Kuningan, 04-05-1954;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208240405540002-waryono santoni.jpg
+3208240502580003;Casman;L;Kuningan, 05-02-1958;Dusun II RT/RW 006/003;Sukajaya;Cimahi;D:\KTP\ktp-3208240502580003-casman.jpg
+3208240504700001;Tarkim;L;Kuningan, 05-04-1970;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208240504700001-tarkim.jpg
+3208240507390003;Hari;L;Kuningan, 05-07-1939;Dusun II RT/RW 018/002;Cimahi;Cimahi;D:\KTP\ktp-3208240507390003-hari.jpg
+3208240511790003;Iwan;L;Kuningan, 05-11-1979;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208240511790003-iwan.jpg
+3208240708830002;Handria Nursyahbana;L;Kuningan, 07-08-1983;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208240708830002-handria nursyahbana.jpg
+3208240712600001;Darja;L;Kuningan, 07-12-1960;Dusun II RT/RW 016/002;Cimahi;Cimahi;D:\KTP\ktp-3208240712600001-darja.jpg
+3208240801760002;Surwa;L;Kuningan, 14-07-1974;Dusun I RT/RW 004/001;Cimahi;Cimahi;D:\KTP\ktp-3208240801760002-surwa.jpg
+3208240806770004;Dastim;L;Kuningan, 08-06-1977;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208240806770004-dastim.jpg
+3208240809570003;Oman;L;Kuningan, 08-09-1957;Dusun II RT/RW 007/002;Sukajaya;Cimahi;D:\KTP\ktp-3208240809570003-oman.jpg
+3208241003620004;Caslim;L;Kuningan, 10-03-1962;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241003620004-caslim.jpg
+3208241108500002;Sunaya;L;Kuningan, 11-08-1950;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208241108500002-sunaya.jpg
+3208241204680011;Waskim;L;Kuningan, 12-04-1968;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208241204680011-waskim.jpg
+3208241204690001;Raskim;L;Kuningan, 12-04-1969;Dusun II RT/RW 015/002;Cimahi;Cimahi;D:\KTP\ktp-3208241204690001-raskim.jpg
+3208241208610001;Carta;L;Kuningan, 12-08-1961;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241208610001-carta.jpg
+3208241302440001;Kuswanda;L;Kuningan, 13-02-1944;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208241302440001-kuswanda.jpg
+3208241312630002;Timu;L;Kuningan, 13-12-1963;Dusun III RT/RW 009/003;Cimahi;Cimahi;D:\KTP\ktp-3208241312630002-timu.jpg
+3208241501690004;Joi;L;Kuningan, 17-12-1967;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241501690004-joi.jpg
+3208241504850003;Rany;P;Kuningan, 02-02-1985;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241504850003-rany.jpg
+3208241505700003;Ruswa;L;Kuningan, 15-05-1970;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208241505700003-ruswa.jpg
+3208241506700009;Caya;L;Kuningan, 15-06-1970;Dusun Kliwon RT/RW 006/002;Cikeusal;Cimahi;D:\KTP\ktp-3208241506700009-caya.jpg
+3208241507700001;Tarsono;L;Kuningan, 15-07-1970;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208241507700001-tarsono.jpg
+3208241805600001;Rukadi;L;Kuningan, 05-03-1962;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208241805600001-rukadi.jpg
+3208241808580001;Wastono;L;Kuningan, 18-08-1958;Dusun II RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208241808580001-wastono.jpg
+3208241904630002;Karya;L;Kuningan, 19-04-1963;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208241904630002-karya.jpg
+3208241907740001;Ahnan;L;Kuningan, 06-07-1978;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208241907740001-ahnan.jpg
+3208242006750004;Mukti;L;Kuningan, 20-06-1975;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208242006750004-mukti.jpg
+3208242011590003;Rasta;L;Kuningan, 14-03-1959;Dusun II RT/RW 005/002;Sukajaya;Cimahi;D:\KTP\ktp-3208242011590003-rasta.jpg
+3208242311570001;Darta;L;Kuningan, 23-11-1957;Dusun Manis RT/RW 015/005;Kananga;Cimahi;D:\KTP\ktp-3208242311570001-darta.jpg
+3208242407830002;Emom Rasman;L;Kuningan, 24-07-1983;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208242407830002-emom rasman.jpg
+3208242408660002;Wahyono;L;Kuningan, 24-08-1966;Dusun Puhun RT/RW 028/007;Cikeusal;Cimahi;D:\KTP\ktp-3208242408660002-wahyono.jpg
+3208242602500001;Darji;L;Kuningan, 26-02-1950;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208242602500001-darji.jpg
+3208244107480107;Surli;P;Kuningan, 01-07-1948;Dusun Kliwon RT/RW 002/002;Cikeusal;Cimahi;D:\KTP\ktp-3208244107480107-surli.jpg
+3208244107500016;Tengsi;P;Kuningan, 01-07-1950;Dusun II RT/RW 007/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244107500016-tengsi.jpg
+3208244107520124;Carwen;P;Kuningan, 01-07-1952;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208244107520124-carwen.jpg
+3208244107590128;Wastini;P;Kuningan, 01-07-1959;Dusun Pahing RT/RW 017/005;Cikeusal;Cimahi;D:\KTP\ktp-3208244107590128-wastini.jpg
+3208244107730176;Titin;P;Kuningan, 03-06-1974;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244107730176-titin.jpg
+3208244202840002;Elina;P;Kuningan, 02-02-1984;Dusun Manis RT/RW 013/004;Cikeusal;Cimahi;D:\KTP\ktp-3208244202840002-elina.jpg
+3208244207410002;Ruski;P;Kuningan, 02-07-1941;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208244207410002-ruski.jpg
+3208244308520001;Taryani;P;Kuningan, 03-08-1952;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208244308520001-taryani.jpg
+3208244310780001;Wisri;P;Kuningan, 03-10-1978;Dusun Manis RT/RW 011/003;Cikeusal;Cimahi;D:\KTP\ktp-3208244310780001-wisri.jpg
+3208244312850001;Daeti;P;Kuningan, 03-12-1985;Dusun Manis RT/RW 010/003;Cikeusal;Cimahi;D:\KTP\ktp-3208244312850001-daeti.jpg
+3208244403660002;Rutini;P;Kuningan, 04-03-1966;Dusun III RT/RW 013/003;Cimahi;Cimahi;D:\KTP\ktp-3208244403660002-rutini.jpg
+3208244406630003;Asiti;P;Kuningan, 04-06-1963;Dusun III RT/RW 006/001;Cimahi;Cimahi;D:\KTP\ktp-3208244406630003-asiti.jpg
+3208244503550003;Turmi;P;Kuningan, 05-01-1955;Dusun II RT/RW 007/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244503550003-turmi.jpg
+3208244506650006;Wasni;P;Kuningan, 05-06-1965;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208244506650006-wasni.jpg
+3208245003470001;Tarwiah;P;Kuningan, 10-03-1947;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208245003470001-tarwiah.jpg
+3208245105450001;Wasmiati;P;Kuningan, 11-05-1945;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208245105450001-wasmiati.jpg
+3208245105660002;Rusmi;P;Kuningan, 11-05-1966;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208245105660002-rusmi.jpg
+3208245107870001;Carwi;P;Kuningan, 11-07-1987;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208245107870001-carwi.jpg
+3208245109540001;Suniah;P;Kuningan, 11-09-1954;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208245109540001-suniah.jpg
+3208245201620002;Wati;P;Kuningan, 28-12-1967;Dusun I RT/RW 002/001;Cimahi;Cimahi;D:\KTP\ktp-3208245201620002-wati.jpg
+3208245202730001;Resih;P;Kuningan, 12-02-1973;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208245202730001-resih.jpg
+3208245304500002;Darinah;P;Kuningan, 13-04-1950;Dusun I RT/RW 002/001;Cimahi;Cimahi;D:\KTP\ktp-3208245304500002-darinah.jpg
+3208245305740001;Karsiti;P;Kuningan, 13-05-1974;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208245305740001-karsiti.jpg
+3208245506780006;Deri;P;Kuningan, 15-06-1978;Dusun Manis RT/RW 010/003;Cikeusal;Cimahi;D:\KTP\ktp-3208245506780006-deri.jpg
+3208245508730001;Sari;P;Kuningan, 15-08-1973;Dusun I RT/RW 007/001;Cimahi;Cimahi;D:\KTP\ktp-3208245508730001-sari.jpg
+3208245604710002;Sutini;P;Kuningan, 16-04-1971;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208245604710002-sutini.jpg
+3208245612600001;Rohati;P;Kuningan, 16-12-1960;Dusun I RT/RW 003/001;Cimahi;Cimahi;D:\KTP\ktp-3208245612600001-rohati.jpg
+3208245702760001;Anah Nurjanah;P;Kuningan, 17-02-1976;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208245702760001-anah nurjanah.jpg
+3208245704550001;Rastem;P;Kuningan, 17-04-1955;Dusun III RT/RW 008/003;Cimahi;Cimahi;D:\KTP\ktp-3208245704550001-rastem.jpg
+3208246007880001;Aat Suhaeti;P;Kuningan, 20-07-1988;Dusun II RT/RW 016/002;Cimahi;Cimahi;D:\KTP\ktp-3208246007880001-aat suhaeti.jpg
+3208246104640002;Jueni;P;Kuningan, 21-04-1964;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3208246104640002-jueni.jpg
+3208246504730001;Warsinah;P;Kuningan, 25-04-1973;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208246504730001-warsinah.jpg
+3208247004640001;Casti;P;Kuningan, 30-04-1964;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208247004640001-casti.jpg
+3208426106720001;Cartinah;P;Kuningan, 21-06-1972;Dusun I RT/RW 005/001;Cimahi;Cimahi;D:\KTP\ktp-3208426106720001-cartinah.jpg
+3275041412710011;Rasto;L;Kuningan, 14-12-1971;Dusun I RT/RW 002/001;Cimahi;Cimahi;D:\KTP\ktp-3275041412710011-rasto.jpg
+3328010308850003;Nana Rusmana;L;Kuningan, 03-08-1985;Dusun Manis RT/RW 009/003;Cikeusal;Cimahi;D:\KTP\ktp-3328010308850003-nana rusmana.jpg
+3573021203830004;Perwira Yodanto;L;Malang, 12-03-1983;Komp. Pondok Safari Indah Jl. Sedap Malam D. RT/RW 010/015;Jurangmangu Barat;Pondok Aren;D:\KTP\ktp-3573021203830004-perwira yodanto.jpg
+3208245512970003;Elis Komalasari;P;Kuningan, 15-12-1997;Dusun Kliwon RT/RW 008/002;Cikeusal;Cimahi;D:\KTP\ktp-3208245512970003-elis komalasari.jpg
+3208243105900001;Hasan Warsan;L;Kuningan, 31-07-1990;Dusun Kliwon RT/RW 008/002;Cikeusal;Cimahi;D:\KTP\ktp-3208243105900001-hasan warsan.jpg
+3208244511700002;Sani;P;Kuningan, 05-11-1970;Dusun Kliwon RT/RW 007/002;Cikeusal;Cimahi;D:\KTP\ktp-3208244511700002-sani.jpg
+3208245011550002;Ratip;P;Kuningan, 10-11-1955;Dusun Kliwon RT/RW 007/002;Cikeusal;Cimahi;D:\KTP\ktp-3208245011550002-ratip.jpg
+3208241007610001;Sajad;L;Kuningan, 10-07-1961;Dusun Pahing RT/RW 001/003;Cikeusal;Cimahi;D:\KTP\ktp-3208241007610001-sajad.jpg
+3208242707640002;Kasi;L;Kuningan, 27-07-1964;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208242707640002-kasi.jpg
+3208244103690003;Eeng;P;Kuningan, 01-03-1969;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244103690003-eeng.jpg
+3208244107620161;Renti;P;Kuningan, 01-07-1962;Dusun Kliwon RT/RW 007/002;Cikeusal;Cimahi;D:\KTP\ktp-3208244107620161-renti.jpg
+3208241001570001;Ono;L;Kuningan, 10-01-1959;Dusun I RT/RW 002/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241001570001-ono.jpg
+3208244208540001;Warsiti;P;Kuningan, 02-08-1954;Dusun II RT/RW 007/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244208540001-warsiti.jpg
+3208244211510002;Kempi;P;Kuningan, 02-11-1951;Dusun I RT/RW 003/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244211510002-kempi.jpg
+3208241208680001;Rastam;L;Kuningan, 12-08-1968;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208241208680001-rastam.jpg
+3208244307620002;Rukinah;P;Kuningan, 03-07-1962;Dusun II RT/RW 005/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244307620002-rukinah.jpg
+3208244607750006;Satimah;P;Kuningan, 06-07-1975;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244607750006-satimah.jpg
+3208246101640003;Karsini;P;Kuningan, 15-02-1958;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208246101640003-karsini.jpg
+3208244503820004;Royani;P;Kuningan, 05-03-1982;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244503820004-royani.jpg
+3208240507500002;Sardin;L;Kuningan, 05-07-1950;Dusun I RT/RW 006/001;Cimahi;Cimahi;D:\KTP\ktp-3208240507500002-sardin.jpg
+3208241603500002;Yatno;L;Kuningan, 16-03-1950;Dusun I RT/RW 006/001;Cimahi;Cimahi;D:\KTP\ktp-3208241603500002-yatno.jpg
+3208244402600001;Dasuki;P;Kuningan, 04-02-1960;Dusun I RT/RW 006/001;Cimahi;Cimahi;D:\KTP\ktp-3208244402600001-dasuki.jpg
+3208244712800001;Ernawati;P;Kuningan, 07-12-1980;Dusun I RT/RW 006/001;Cimahi;Cimahi;D:\KTP\ktp-3208244712800001-ernawati.jpg
+3208245605760001;Wasih;P;Kuningan, 16-05-1976;Dusun I RT/RW 001/001;Cimahi;Cimahi;D:\KTP\ktp-3208245605760001-wasih.jpg
+3208246208650001;Rasini;P;Kuningan, 22-08-1965;Dusun I RT/RW 002/001;Cimahi;Cimahi;D:\KTP\ktp-3208246208650001-rasini.jpg
+3208240112610001;Surdi;L;Kuningan, 01-12-1961;Dusun I RT/RW 002/001;Cimahi;Cimahi;D:\KTP\ktp-3208240112610001-surdi.jpg
+3208240104520001;Tarmudi;L;Kuningan, 01-04-1952;Dusun I RT/RW 001/001;Sukajaya;Cimahi;D:\KTP\ktp-3208240104520001-tarmudi.jpg
+3208240108710007;Kucin;L;Kuningan, 01-08-1968;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208240108710007-kucin.jpg
+3208241907680001;Tarmad Supriatno;L;Kuningan, 19-07-1968;Dusun II RT/RW 005/003;Sukajaya;Cimahi;D:\KTP\ktp-3208241907680001-tarmad supriatno.jpg
+3208242006680001;Suka;L;Kuningan, 20-06-1968;Dusun II RT/RW 005/002;Sukajaya;Cimahi;D:\KTP\ktp-3208242006680001-suka.jpg
+3208244806720001;Ikah;P;Kuningan, 08-06-1962;Dusun I RT/RW 004/001;Sukajaya;Cimahi;D:\KTP\ktp-3208244806720001-ikah.jpg
+3208246005730004;Inah;P;Kuningan, 20-05-1973;Dusun II RT/RW 005/002;Sukajaya;Cimahi;D:\KTP\ktp-3208246005730004-inah.jpg
+3208244702740001;Anti Susanti;P;Kuningan, 07-02-1974;Dusun I RT/RW 004/002;Sukajaya;Cimahi;D:\KTP\ktp-3208244702740001-anti susanti.jpg
+3208240406690001;Asikin;L;Kuningan, 04-06-1969;Dusun I RT/RW 004/002;Sukajaya;Cimahi;D:\KTP\ktp-3208240406690001-asikin.jpg

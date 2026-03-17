@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Input Data KTP</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        body { font-family: sans-serif; background: #e9ecef; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; margin: 0; padding: 20px 0; }
+        .card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 450px; }
+        h2 { text-align: center; color: #333; margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px;}
+        .form-group { margin-bottom: 15px; }
+        .form-row { display: flex; gap: 10px; }
+        .form-row .form-group { flex: 1; }
+        label { display: block; font-weight: bold; margin-bottom: 5px; color: #555; font-size: 13px; }
+        input[type="text"], input[type="file"], select, textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-family: sans-serif; font-size: 14px;}
+        textarea { resize: vertical; }
+        button { width: 100%; padding: 12px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; font-weight: bold; margin-top: 10px; }
+        button:hover { background: #0056b3; }
+        #pesan { text-align: center; font-weight: bold; margin-top: 15px; font-size: 14px;}
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>🪪 Form Input KTP Lengkap</h2>
+        
+        <div class="form-group">
+            <label>NIK (16 Digit)</label>
+            <input type="text" id="inpNik" placeholder="Masukkan 16 Digit NIK" maxlength="16">
+        </div>
+        <div class="form-group">
+            <label>Nama Lengkap</label>
+            <input type="text" id="inpNama" placeholder="Nama Sesuai KTP">
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group" style="flex: 0.4;">
+                <label>Gender</label>
+                <select id="inpGender">
+                    <option value="L">Laki-laki (L)</option>
+                    <option value="P">Perempuan (P)</option>
+                </select>
+            </div>
+            <div class="form-group" style="flex: 0.6;">
+                <label>Tempat, Tgl Lahir</label>
+                <input type="text" id="inpTglLahir" placeholder="Kuningan, 31-07-1986">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Alamat Lengkap</label>
+            <textarea id="inpAlamat" rows="2" placeholder="Dusun, RT/RW..."></textarea>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Desa</label>
+                <input type="text" id="inpDesa" placeholder="Nama Desa">
+            </div>
+            <div class="form-group">
+                <label>Kecamatan</label>
+                <input type="text" id="inpKecamatan" placeholder="Nama Kecamatan">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>No. Handphone (WA)</label>
+            <input type="text" id="inpHp" placeholder="Contoh: 081234567890" maxlength="20">
+        </div>
+
+        <div class="form-group">
+            <label>Foto KTP (Upload)</label>
+            <input type="file" id="inpFile" accept="image/*" capture="environment">
+        </div>
+        
+        <button id="btnSimpan" onclick="simpanDataKtp()">💾 Simpan ke Database</button>
+        <div id="pesan"></div>
+    </div>
+
+    <script>
+        // --- KONEKSI SUPABASE ---
+        const supabaseUrl = 'https://ftlzqrwrlivgszomwhhb.supabase.co';
+        const supabaseKey = 'sb_publishable_iGscw6ePzAq4ty_PFp20SQ_aR2HsxP9';
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+        // Variabel penanda apakah tab ini dibuka dari Peta atau dibuka manual
+        let modeTutupOtomatis = false;
+
+        // ==========================================
+        // --- MESIN PENANGKAP DATA DARI URL ---
+        // ==========================================
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const bawaanNik = urlParams.get('nik');
+            const bawaanNama = urlParams.get('nama');
+            
+            // JIKA ADA KIRIMAN DATA: Aktifkan mode tutup otomatis & ubah teks tombol
+            if (bawaanNik || bawaanNama) {
+                modeTutupOtomatis = true;
+                document.getElementById('btnSimpan').innerText = "💾 Simpan & Keluar";
+                document.getElementById('btnSimpan').style.background = "#dc3545"; // Ubah jadi merah agar admin sadar ini akan menutup tab
+            }
+
+            if (bawaanNik) {
+                document.getElementById('inpNik').value = bawaanNik;
+                document.getElementById('inpNama').focus();
+            } else if (bawaanNama) {
+                document.getElementById('inpNama').value = bawaanNama;
+                document.getElementById('inpNik').focus();
+            } else {
+                document.getElementById('inpNik').focus();
+            }
+        };
+
+        async function simpanDataKtp() {
+            // Ambil semua nilai
+            let hp = document.getElementById('inpHp').value.trim();
+            let nik = document.getElementById('inpNik').value.trim();
+            let nama = document.getElementById('inpNama').value.trim();
+            let gender = document.getElementById('inpGender').value;
+            let tgl_lahir = document.getElementById('inpTglLahir').value.trim();
+            let alamat = document.getElementById('inpAlamat').value.trim();
+            let desa = document.getElementById('inpDesa').value.trim();
+            let kecamatan = document.getElementById('inpKecamatan').value.trim();
+            let fileInput = document.getElementById('inpFile');
+            let pesanDiv = document.getElementById('pesan');
+            let btn = document.getElementById('btnSimpan');
+
+            // Validasi Dasar
+            if (nik.length < 16) { alert("NIK harus 16 digit!"); return; }
+            if (nama === "") { alert("Nama tidak boleh kosong!"); return; }
+            if (fileInput.files.length === 0) { alert("Pilih foto KTP!"); return; }
+
+            pesanDiv.innerHTML = "⏳ Mengupload Foto...";
+            pesanDiv.style.color = "blue";
+            btn.disabled = true;
+
+            let fileFoto = fileInput.files[0];
+            let namaFileUnik = `KTP_${nik}_${Date.now()}.jpg`;
+
+            // 1. Upload Foto
+            const { error: uploadErr } = await supabaseClient.storage
+                .from('ktp')
+                .upload(namaFileUnik, fileFoto, { cacheControl: '3600', upsert: false });
+
+            if (uploadErr) {
+                pesanDiv.innerHTML = "❌ Gagal Upload Foto: " + uploadErr.message;
+                pesanDiv.style.color = "red";
+                btn.disabled = false;
+                return;
+            }
+
+            // 2. Ambil Link Public
+            const { data: urlData } = supabaseClient.storage.from('ktp').getPublicUrl(namaFileUnik);
+            let linkFoto = urlData.publicUrl;
+
+            pesanDiv.innerHTML = "⏳ Menyimpan Data Lengkap...";
+
+            // 3. Masukkan ke tabel dbKtp
+            const { error: dbErr } = await supabaseClient
+                .from('dbKtp')
+                .insert([{ 
+                    nik: nik, 
+                    nama: nama, 
+                    gender: gender,
+                    tgl_lahir: tgl_lahir,
+                    alamat: alamat,
+                    desa: desa,
+                    kecamatan: kecamatan,
+                    hp: hp,
+                    foto_ktp: linkFoto 
+                }]);
+
+            if (dbErr) {
+                pesanDiv.innerHTML = "❌ Gagal Simpan: NIK mungkin sudah terdaftar.";
+                pesanDiv.style.color = "red";
+            } else {
+                pesanDiv.innerHTML = "✅ Berhasil Disimpan!";
+                pesanDiv.style.color = "green";
+                
+                // CEK MODE PENYIMPANAN
+                if (modeTutupOtomatis) {
+                    pesanDiv.innerHTML += "<br>⏳ Menutup tab otomatis...";
+                    // Beri waktu 1.5 detik agar admin sempat membaca pesan sukses, lalu tutup tabnya
+                    setTimeout(() => {
+                        window.close();
+                    }, 1500);
+                } else {
+                    // Jika dibuka manual (bukan dari Peta), cukup bersihkan form seperti biasa
+                    document.getElementById('inpNik').value = "";
+                    document.getElementById('inpNama').value = "";
+                    document.getElementById('inpHp').value = "";
+                    document.getElementById('inpTglLahir').value = "";
+                    document.getElementById('inpAlamat').value = "";
+                    document.getElementById('inpDesa').value = "";
+                    document.getElementById('inpKecamatan').value = "";
+                    document.getElementById('inpFile').value = "";
+                    
+                    setTimeout(() => {
+                        alert("Data KTP berhasil ditambahkan!");
+                        pesanDiv.innerHTML = "";
+                    }, 1000);
+                }
+            }
+            btn.disabled = false;
+        }
+    </script>
+</body>
+</html>

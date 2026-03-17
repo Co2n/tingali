@@ -86,6 +86,7 @@
       /* Area Tabel */
       #tableWrapper {
          flex: 1;
+         min-height: 0;
          overflow-y: auto;
          overflow-x: auto;
       }
@@ -121,6 +122,91 @@
 
       #tabelData tr:hover {
          background-color: #f1f1f1;
+      }
+
+      /* Modal Edit KTP di Peta */
+      .modal-bg {
+         display: none;
+         position: fixed;
+         top: 0;
+         left: 0;
+         width: 100%;
+         height: 100%;
+         background: rgba(0, 0, 0, 0.6);
+         z-index: 9999;
+      }
+
+      .modal-content {
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%);
+         background: white;
+         padding: 25px;
+         border-radius: 8px;
+         width: 90%;
+         max-width: 450px;
+         max-height: 90vh;
+         overflow-y: auto;
+      }
+
+      .modal-content label {
+         display: block;
+         font-weight: bold;
+         margin-top: 12px;
+         margin-bottom: 4px;
+         font-size: 12px;
+         color: #555;
+      }
+
+      .modal-content input[type="text"],
+      .modal-content input[type="file"],
+      .modal-content select,
+      .modal-content textarea {
+         width: 100%;
+         padding: 8px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         box-sizing: border-box;
+         font-family: sans-serif;
+         font-size: 13px;
+      }
+
+      .modal-content textarea {
+         resize: vertical;
+      }
+
+      .form-row {
+         display: flex;
+         gap: 10px;
+      }
+
+      .form-row>div {
+         flex: 1;
+      }
+
+      .btn-simpan-modal {
+         background: #28a745;
+         color: white;
+         border: none;
+         padding: 10px;
+         width: 100%;
+         margin-top: 15px;
+         border-radius: 4px;
+         cursor: pointer;
+         font-weight: bold;
+      }
+
+      .btn-batal-modal {
+         background: #dc3545;
+         color: white;
+         border: none;
+         padding: 10px;
+         width: 100%;
+         margin-top: 5px;
+         border-radius: 4px;
+         cursor: pointer;
+         font-weight: bold;
       }
    </style>
    <style>
@@ -184,7 +270,7 @@
                   <th>PTSL</th>
                   <th id="headerStatus" style="display:none;">Status</th>
                   <th id="headerHarga" style="display:none;">Harga</th>
-                  <th onclick="sortTabel('validasi')" title="Klik untuk mengurutkan A-Z / Z-A">Kekurangan</th>
+                  <th onclick="sortTabel('validasi')" title="Klik untuk mengurutkan A-Z / Z-A">Validasi</th>
                   <th id="headerAksi" style="display:none;">Aksi</th>
                </tr>
             </thead>
@@ -224,23 +310,53 @@
    </div>
 
    <div id="detailModal"
-      style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; z-index:9998; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:10px; width: 95%; max-width: 500px; max-height: 90vh; overflow-y: auto; font-family: sans-serif;">
+      style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; z-index:9998; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:10px; width: 95%; max-width: 500px; font-family: sans-serif;">
+
       <div
-         style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #007bff; padding-bottom:10px; margin-bottom: 15px;">
+         style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #007bff; padding-bottom:10px; margin-bottom: 10px;">
          <h3 style="margin:0;">📋 Detail Bidang: <span id="detailFidTarget" style="color:red;"></span></h3>
          <button onclick="document.getElementById('detailModal').style.display='none'"
             style="background:red; color:white; border:none; border-radius:3px; cursor:pointer; padding:5px 10px; font-weight:bold;">✖
             Tutup</button>
       </div>
-      <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
-         <tbody id="detailIsiTabel">
-         </tbody>
-      </table>
 
-      <div style="margin-top:20px; text-align:center;">
+      <div id="detailStatusBerkas"
+         style="margin-bottom: 15px; padding: 10px; border-radius: 5px; text-align: center; font-size: 14px; font-weight: bold; display: none;">
+      </div>
+
+      <div style="max-height: 55vh; overflow-y: auto; padding-right: 5px;">
+         <table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: left;">
+            <tbody id="detailIsiTabel">
+            </tbody>
+         </table>
+      </div>
+
+      <div style="margin-top:15px; text-align:center; border-top: 1px solid #eee; padding-top: 15px;">
          <button onclick="location.reload()"
             style="padding:10px 20px; background:red; color:white; border:none; border-radius:5px; cursor:pointer; font-weight:bold; width:100%;">🚪
             Keluar & Refresh Halaman</button>
+      </div>
+   </div>
+
+   <div id="modalCariNik"
+      style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:white; padding:20px; z-index:9999; box-shadow:0 0 20px rgba(0,0,0,0.5); border-radius:10px; width: 90%; max-width: 500px; font-family:sans-serif;">
+      <div
+         style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #007bff; padding-bottom:10px; margin-bottom: 15px;">
+         <h3 style="margin:0;">🔍 Cari NIK / Nama</h3>
+         <button onclick="document.getElementById('modalCariNik').style.display='none'"
+            style="background:red; color:white; border:none; border-radius:3px; cursor:pointer; padding:5px 10px; font-weight:bold;">✖</button>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-bottom: 15px;">
+         <input type="text" id="inputCariKtp" placeholder="Ketik NIK atau Nama..."
+            style="flex:1; padding:8px; border:1px solid #ccc; border-radius:4px;">
+         <button onclick="cariKtpDb()"
+            style="padding:8px 15px; background:#007bff; color:white; border:none; border-radius:4px; cursor:pointer; font-weight:bold;">Cari</button>
+      </div>
+
+      <div id="hasilCariKtp"
+         style="max-height: 250px; overflow-y: auto; border: 1px solid #eee; padding: 10px; border-radius:4px;">
+         <p style="text-align:center; color:#777;">Ketik NIK atau Nama lalu klik cari...</p>
       </div>
    </div>
 
@@ -270,6 +386,59 @@
          </table>
       </div>
 
+   </div>
+
+   <div id="modalEdit" class="modal-bg">
+      <div class="modal-content">
+         <h3 style="margin-top:0; border-bottom:2px solid #ffc107; padding-bottom:10px; text-align:center;">✏️ Edit Data
+            Master KTP</h3>
+
+         <label>NIK (Tidak Bisa Diubah)</label>
+         <input type="text" id="editNik" disabled style="background:#e9ecef; font-weight:bold; color:#555;">
+
+         <label>Nama Lengkap</label>
+         <input type="text" id="editNama">
+
+         <label>No. Handphone (WA)</label>
+         <input type="text" id="editHp" maxlength="20" placeholder="Contoh: 081234567890">
+
+         <div class="form-row">
+            <div style="flex: 0.4;">
+               <label>Gender</label>
+               <select id="editGender">
+                  <option value="L">Laki-laki (L)</option>
+                  <option value="P">Perempuan (P)</option>
+               </select>
+            </div>
+            <div style="flex: 0.6;">
+               <label>Tempat, Tgl Lahir</label>
+               <input type="text" id="editTglLahir" placeholder="Kuningan, 31-07-1986">
+            </div>
+         </div>
+
+         <label>Alamat Lengkap</label>
+         <textarea id="editAlamat" rows="2"></textarea>
+
+         <div class="form-row">
+            <div>
+               <label>Desa</label>
+               <input type="text" id="editDesa">
+            </div>
+            <div>
+               <label>Kecamatan</label>
+               <input type="text" id="editKecamatan">
+            </div>
+         </div>
+
+         <label>Ganti Foto KTP? (Opsional)</label>
+         <input type="file" id="editFile" accept="image/*" capture="environment">
+         <small style="color:gray; font-size:10px;">*Biarkan kosong jika tidak ingin mengganti foto lama.</small>
+
+         <p id="pesanEdit" style="text-align:center; font-weight:bold; font-size:13px; margin-top:10px;"></p>
+
+         <button id="btnSimpanEdit" class="btn-simpan-modal" onclick="simpanEditKtp()">💾 Simpan Perubahan</button>
+         <button class="btn-batal-modal" onclick="tutupModalEdit()">✖ Batal</button>
+      </div>
    </div>
 
    <script>
@@ -362,15 +531,16 @@
                let idBidang = feature.properties.fid || 'Tidak ada ID';
                let nib = feature.properties.nib || 'Tidak ada NIB';
                let pemilik = feature.properties.pemilik || 'Tidak ada Pemilik';
-               let luas = feature.properties['Luas PTSL'] || '-';
+               //let luas = feature.properties['Luas PTSL'] || '-';
+               let luas = feature.properties.ptsl || '-';
                let validasi = feature.properties.validasi || '';
 
                let isiPopup = `
                         Nib: <b>${nib}</b> <br>
                         Pemilik: <b>${pemilik}</b> <br>
-                        Luas PTSL: <b>${luas} m²</b> <br>
-                        <b>FID-${idBidang}</b> <br> 
-                        <span style="padding:2px 6px; border-radius:3px; font-size:14px; color:white; background:${validasi === 'Komplit' ? 'green' : (validasi !== '' ? 'orange' : 'white')}">${validasi}</span> <br><br>
+                        Luas PTSL: <b>${Math.round(luas).toLocaleString('id-ID')} m²</b> <br>
+                        <b>FID-${idBidang}</b>  
+                        <span style="padding:2px 6px; border-radius:3px; font-size:14px; color:white; background:${validasi === 'Komplit' ? 'green' : (validasi !== '' ? 'orange' : 'white')}">${validasi === 'Komplit' ? 'sudah ' : (validasi !== '' ? 'Kurang : ' : '')}${validasi}</span> <br><br>
                         ${modeAdmin ? `<button onclick="event.stopPropagation(); bukaDetail('${idBidang}')" style="padding:4px 8px; background:#17a2b8; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">⚙️ Aksi</button>` : ''}
                     `;
                layer.bindPopup(isiPopup);
@@ -991,10 +1161,42 @@
       });
 
       // ==========================================
+      // --- KAMUS KODE WILAYAH NIK (Provinsi & Kabupaten) ---
+      // ==========================================
+      const kamusWilayah = {
+         // PROVINSI (2 Digit Awal)
+         prov: {
+            "31": "DKI Jakarta", "32": "Jawa Barat", "33": "Jawa Tengah",
+            "34": "DI Yogyakarta", "35": "Jawa Timur", "36": "Banten",
+            // ... (Tambahkan provinsi lain jika diperlukan)
+         },
+         // KABUPATEN/KOTA (4 Digit Awal)
+         kab: {
+            "3208": "Kab. Kuningan", "3209": "Kab. Cirebon", "3274": "Kota Cirebon",
+            "3210": "Kab. Majalengka", "3211": "Kab. Sumedang", "3273": "Kota Bandung",
+            "3172": "Kota Jakarta Utara", "3173": "Kota Jakarta Barat", "3174": "Kota Jakarta Selatan",
+            "3175": "Kota Jakarta Timur", "3176": "Kota Jakarta Pusat",
+            // ... (Tambahkan kode kabupaten sekitarnya jika diperlukan)
+         }
+      };
+
+      // Fungsi Pengekstrak
+      function ekstrakWilayahNik(nik) {
+         if (!nik || nik.length < 4) return { prov: "Tidak Diketahui", kab: "Tidak Diketahui" };
+         let kodeProv = nik.substring(0, 2);
+         let kodeKab = nik.substring(0, 4);
+         return {
+            prov: kamusWilayah.prov[kodeProv] || `Prov (${kodeProv})`,
+            kab: kamusWilayah.kab[kodeKab] || `Kab/Kota (${kodeKab})`
+         };
+      }
+
+      // ==========================================
       // --- MESIN DETAIL & INLINE EDIT ---
       // ==========================================
 
       window.bukaDetail = function (fid) {
+
          // 1. Cari data lengkap dari data mentah global
          let feature = window.dataMentahGlobal.find(f => f.properties.fid == fid);
          if (!feature) return;
@@ -1052,44 +1254,222 @@
          // 4. Susun HTML Isi Detail
          let htmlDetail = "";
 
-         // Baris Dokumen
-         htmlDetail += buatBarisDokumen("KTP", "ktp", p.ktp, true);
+         // Fungsi pembantu khusus pencarian NIK & Hapus NIK
+         function buatBarisCariNIK(label, fieldDB, nilai) {
+            let val = nilai || '-';
 
-         // Baris Edit Teks
+            // Tombol Hapus hanya muncul jika NIK sudah ada isinya
+            let btnHapus = (nilai && String(nilai).trim() !== '')
+               ? `<button onclick="hapusNikBidang('${fid}', '${fieldDB}')" style="float:right; margin-right:5px; padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:3px; cursor:pointer; font-size:10px; font-weight:bold;" title="Putuskan NIK dari bidang ini">🗑️ Hapus</button>`
+               : '';
+
+            return `
+                 <tr>
+                     <td style="padding:8px; border-bottom:1px solid #ddd; width:30%;"><b>${label}</b></td>
+                     <td style="padding:8px; border-bottom:1px solid #ddd;">
+                         <span>${val}</span>
+                         <button onclick="bukaPencarianNik('${fid}', '${fieldDB}')" style="float:right; padding:4px 8px; background:#6c757d; color:white; border:none; border-radius:3px; cursor:pointer; font-size:10px; font-weight:bold;">🔍 Cari</button>
+                         ${btnHapus}
+                     </td>
+                 </tr>`;
+         }
+
+         // Baris Edit Teks Pemilik
          htmlDetail += buatBarisEdit("Pemilik", "pemilik", p.pemilik);
 
-         // Baris Read-Only
+         // --- KTP PEMILIK (Dengan Logika UX Pintar) ---
+         htmlDetail += buatBarisCariNIK("NIK KTP Pemilik", "ktp", p.ktp);
+
+         let namaKtp = "";
+         let fotoKtp = "";
+
+         // Jika kolom NIK (ktp) masih kosong
+         // ==========================================
+         // --- LOGIKA KTP PEMILIK ---
+         // ==========================================
+         if (!p.ktp || String(p.ktp).trim() === '') {
+            namaKtp = 'Menunggu NIK';
+         } else {
+            namaKtp = p.nama_sesuai_ktp || 'Belum Terdaftar di dbKtp';
+            let btnEditKtp = `<br><button onclick="bukaModalEditKtp('${p.ktp}')" style="margin-top:8px; padding:4px 8px; background:#ffc107; color:black; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">✏️ Edit Master KTP</button>`;
+
+            fotoKtp = p.url_foto_ktp
+               ? `<a href="${p.url_foto_ktp}" target="_blank"><img src="${p.url_foto_ktp}" style="max-height:150px; border-radius:4px; border:1px solid #ccc; vertical-align:middle; display:block;"></a> ${btnEditKtp}`
+               : `<span style="color:red; font-size:11px; font-weight:bold;">❌ Foto KTP tidak ditemukan di dbKtp.</span> ${btnEditKtp}`;
+         }
+
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd; width:30%;"><b>KTP</b><br><span style="font-size:10px; color:#007bff;">(${namaKtp})</span></td><td style="padding:8px; border-bottom:1px solid #ddd;">${fotoKtp}</td></tr>`;
+
+         // --- BARIS NO HP PEMILIK (Bisa Diedit & Tombol WhatsApp) ---
+         let htmlHp = '<span style="color:gray; font-style:italic;">Menunggu NIK KTP</span>';
+
+         // Pastikan NIK sudah ada sebelum memunculkan tombol Edit HP
+         if (p.ktp && String(p.ktp).trim() !== '') {
+            let noHp = p.hp_sesuai_ktp || '';
+            let waBtn = '';
+
+            // Jika No HP ada isinya, buatkan tombol Chat WA
+            if (noHp.trim() !== '') {
+               let waLink = String(noHp).trim();
+               if (waLink.startsWith('0')) waLink = '62' + waLink.substring(1);
+               waLink = waLink.replace(/[^0-9]/g, '');
+               waBtn = `<a id="wa_hp_pemilik" href="https://wa.me/${waLink}" target="_blank" style="margin-left:5px; padding:2px 5px; background:#25D366; color:white; text-decoration:none; border-radius:3px; font-size:10px; font-weight:bold; box-shadow:0 1px 2px rgba(0,0,0,0.2);">💬 WA</a>`;
+            }
+
+            // Tampilkan Teks HP, Tombol WA (Jika ada), dan Tombol Edit
+            htmlHp = `
+                 <span id="txt_hp_pemilik" style="font-weight:bold; font-size:13px; color:#333;">${noHp || '-'}</span> 
+                 ${waBtn}
+                 <button id="btn_hp_pemilik" onclick="modeEditHp('${fid}', '${p.ktp}')" style="float:right; padding:2px 5px; cursor:pointer; font-size:10px;">✏️ Edit</button>
+             `;
+         }
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>No. HP (WA)</b></td><td style="padding:8px; border-bottom:1px solid #ddd;">${htmlHp}</td></tr>`;
+         // --- BARIS BARU: Menampilkan Alamat dari dbKtp ---
+         let alamatKtp = p.alamat_sesuai_ktp || '<span style="color:gray; font-style:italic;">Belum ada data alamat di dbKtp</span>';
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>Alamat</b></td><td style="padding:8px; border-bottom:1px solid #ddd; line-height:1.4;">${alamatKtp}</td></tr>`;
+         let desaKtp = p.desa_sesuai_ktp || '<span style="color:gray; font-style:italic;">Belum ada data desa di dbKtp</span>';
+         let kecamatanKtp = p.kec_sesuai_ktp || '<span style="color:gray; font-style:italic;">Belum ada data kecamatan di dbKtp</span>';
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>Desa - Kec</b></td><td style="padding:8px; border-bottom:1px solid #ddd; line-height:1.4;">${desaKtp} - ${kecamatanKtp}</td></tr>`;
+
+         // --- BARIS BARU: Ekstraksi Otomatis Kab/Kota & Provinsi dari NIK ---
+         let wilayahEkstrak = ekstrakWilayahNik(p.ktp); // Menggunakan fungsi kamus di atas
+         let kabupatenKtp = wilayahEkstrak.kab;
+         let provinsiKtp = wilayahEkstrak.prov;
+
+         // Hanya tampilkan jika NIK sudah terisi
+         if (p.ktp && String(p.ktp).trim() !== '') {
+            htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>Kab/Kota - Prov</b></td><td style="padding:8px; border-bottom:1px solid #ddd; line-height:1.4;">${kabupatenKtp} - ${provinsiKtp}</td></tr>`;
+         }
+
+         // Baris Pembatas
+         htmlDetail += `<tr style="background-color: #f2f2f2;"><td style="padding:8px; border-bottom:1px solid #ddd;" colspan="2"><b>Data SPPT</b><br><span style="font-size:10px; color:#007bff;">(jika lebih dari 1 SPPT, maka penulisannya di beri tanda +. Contoh nama sppt : JOHAN+DEWI)</span><br><span style="font-size:10px; color:#007bff;">(2 sppt berdampingan dalam 1 foto yang di upload)</span></td></tr>`;
+
+         // Baris Edit Teks Nama
+         htmlDetail += buatBarisEdit("Nama", "nama", p.nama);
+         htmlDetail += buatBarisDokumen("SPPT", "sppt", p.sppt, false);
+         htmlDetail += buatBarisEdit("NOP", "nop", p.nop);
+         htmlDetail += buatBarisEdit("Luas (m²)", "luas", p.luas ? `${Math.round(p.luas).toLocaleString('id-ID')}` : '');
+         htmlDetail += buatBarisEdit("PTSL (m²)", "Luas PTSL", p.ptsl ? `${Math.round(p.ptsl).toLocaleString('id-ID')}` : '');
+
+         // Baris Pembatas
+         htmlDetail += `<tr style="background-color: #f2f2f2;"><td style="padding:8px; border-bottom:1px solid #ddd;" colspan="2"><b>Detail HARGA</b></td></tr>`;
+
+         // Baris Read-Only Jenis
          htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd;"><b>Jenis</b></td><td style="padding:8px; border-bottom:1px solid #ddd;">${p.jenis || '-'}</td></tr>`;
 
          // Baris Edit Angka/Teks
-         htmlDetail += buatBarisEdit("Pengali", "pengali", p.pengali);
-         htmlDetail += buatBarisEdit("Harga Satuan", "hrg_sat", p.hrg_sat ? `${Math.round(p.hrg_sat).toLocaleString('id-ID')}` : '');
-         htmlDetail += buatBarisEdit("Harga Total", "harga", p.harga ? `${Math.round(p.harga).toLocaleString('id-ID')}` : '');
+         htmlDetail += buatBarisEdit("Pengali (Luas di)", "pengali", p.pengali);
+         htmlDetail += buatBarisEdit("Harga Satuan (Rp)", "hrg_sat", p.hrg_sat ? `${Math.round(p.hrg_sat).toLocaleString('id-ID')}` : '');
+         htmlDetail += buatBarisEdit("Harga Total (Rp)", "harga", p.harga ? `${Math.round(p.harga).toLocaleString('id-ID')}` : '');
 
-         // Baris Dokumen Lainnya
-         htmlDetail += buatBarisDokumen("SPPT", "sppt", p.sppt, false);
-         htmlDetail += buatBarisDokumen("Kartu Keluarga", "kk", p.kk, false);
+         // --- BARIS BARU: KALKULATOR MINI LAPANGAN ---
+         htmlDetail += `
+         <tr>
+             <td style="padding:8px; border-bottom:1px solid #ddd; background:#f0f8ff;">
+                 <b>🧮 Kalkulator</b><br><span style="font-size:10px; color:#666;">(Bantu Hitung)</span>
+             </td>
+             <td style="padding:8px; border-bottom:1px solid #ddd; background:#f0f8ff;">
+                 <div style="display:flex; gap:5px; margin-bottom:5px;">
+                     <input type="text" id="calcInput_${fid}" placeholder="Cth: 2.5*150000" style="flex:1; padding:4px; border:1px solid #ccc; border-radius:3px; font-size:12px; font-family:monospace;">
+                 </div>
+                 <div style="display:flex; gap:5px; align-items:center;">
+                     <button onclick="hitungKalkulator('${fid}')" style="padding:4px 8px; background:#17a2b8; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">= Hasil</button>
+                     <button onclick="resetKalkulator('${fid}')" style="padding:4px 8px; background:#dc3545; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">✖ Reset</button>
+                     <span id="calcResult_${fid}" style="margin-left:5px; font-weight:bold; color:#28a745; font-size:14px;"></span>
+                 </div>
+             </td>
+         </tr>`;
+
+         // Baris Pembatas
+         htmlDetail += `<tr style="background-color: #f2f2f2;"><td style="padding:8px; border-bottom:1px solid #ddd;" colspan="2"><b>Dokumen PENDUKUNG</b></td></tr>`;
+
+         // --- DOKUMEN LAINNYA ---
+         htmlDetail += buatBarisEdit("No Bukti", "nobukti", p.nobukti);
          htmlDetail += buatBarisDokumen("Bukti", "bukti", p.bukti, false);
-         htmlDetail += buatBarisDokumen("KTP Agree", "ktpagree", p.ktpagree, false);
+         htmlDetail += buatBarisDokumen("Kartu Keluarga<br>Pemilik", "kk", p.kk, false);
+
+         // --- KTP AGREE (Dengan Logika UX Pintar) ---
+         htmlDetail += buatBarisCariNIK("NIK KTP<br>Persetujuan", "ktpagree", p.ktpagree);
+
+         let namaKtpAgree = "";
+         let fotoKtpAgree = "";
+
+         // ==========================================
+         // --- LOGIKA KTP AGREE (Penyetuju) ---
+         // ==========================================
+         // (Cari bagian ini di bawah, lalu ganti juga agar sama pintarnya)
+         if (!p.ktpagree || String(p.ktpagree).trim() === '') {
+            namaKtpAgree = 'Menunggu NIK';
+         } else {
+            namaKtpAgree = p.nama_penyetuju || 'Belum Terdaftar di dbKtp';
+            let btnEditKtpAgree = `<br><button onclick="bukaModalEditKtp('${p.ktpagree}')" style="margin-top:8px; padding:4px 8px; background:#ffc107; color:black; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">✏️ Edit Master KTP</button>`;
+
+            fotoKtpAgree = p.url_foto_ktpagree
+               ? `<a href="${p.url_foto_ktpagree}" target="_blank"><img src="${p.url_foto_ktpagree}" style="max-height:150px; border-radius:4px; border:1px solid #ccc; vertical-align:middle; display:block;"></a> ${btnEditKtpAgree}`
+               : `<span style="color:red; font-size:11px; font-weight:bold;">❌ Foto KTP tidak ditemukan di dbKtp.</span> ${btnEditKtpAgree}`;
+         }
+
+         htmlDetail += `<tr><td style="padding:8px; border-bottom:1px solid #ddd; width:30%;"><b>KTP Agree</b><br><span style="font-size:10px; color:#007bff;">(${namaKtpAgree})</span></td><td style="padding:8px; border-bottom:1px solid #ddd;">${fotoKtpAgree}</td></tr>`;
+
+         // --- PAPAN PENGUMUMAN: STATUS BERKAS (FIXED) ---
+         let divStatus = document.getElementById('detailStatusBerkas');
+         if (p.validasi) {
+            let isKomplit = (p.validasi === 'Komplit');
+
+            // Pewarnaan gaya "Alert Box" profesional
+            let bgColor = isKomplit ? '#d4edda' : '#f8d7da'; // Hijau muda / Merah muda
+            let txtColor = isKomplit ? '#155724' : '#721c24'; // Hijau tua / Merah tua
+            let borderColor = isKomplit ? '#c3e6cb' : '#f5c6cb';
+            let iconValidasi = isKomplit ? '✅ ' : '⚠️ Kurang: ';
+
+            divStatus.innerHTML = `${iconValidasi} ${p.validasi}`;
+            divStatus.style.backgroundColor = bgColor;
+            divStatus.style.color = txtColor;
+            divStatus.style.border = `1px solid ${borderColor}`;
+            divStatus.style.display = 'block'; // Tampilkan kotak
+         } else {
+            divStatus.style.display = 'none'; // Sembunyikan jika kosong
+         }
 
          // 5. Tampilkan ke layar
          document.getElementById('detailIsiTabel').innerHTML = htmlDetail;
          document.getElementById('detailModal').style.display = 'block';
       };
 
-      // --- FUNGSI MENGUBAH TEKS JADI INPUTAN ---
+      // --- FUNGSI MENGUBAH TEKS MENJADI KOTAK INPUT ATAU DROPDOWN ---
       window.modeEditTeks = function (fid, field) {
          let span = document.getElementById('txt_' + field);
          let btn = document.getElementById('btn_' + field);
-
          let nilaiLama = span.innerText;
-         // Ubah teks jadi kotak input
-         span.innerHTML = `<input type="text" id="input_${field}" value="${nilaiLama.replaceAll(".", "")}" style="width:70%; padding:3px;">`;
 
-         // Ubah tombol Edit jadi Simpan
+         // 1. JIKA YANG DIEDIT ADALAH 'PENGALI' (Munculkan Dropdown Select)
+         if (field === 'pengali') {
+            // Cek nilai lama untuk menentukan mana yang 'terpilih' secara default
+            let isSppt = (nilaiLama.toLowerCase() === 'sppt') ? 'selected' : '';
+            let isPtsl = (nilaiLama.toLowerCase() === 'ptsl') ? 'selected' : '';
+
+            span.innerHTML = `
+                 <select id="input_${field}" style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc; font-weight:bold;">
+                     <option value="sppt" ${isSppt}>sppt</option>
+                     <option value="ptsl" ${isPtsl}>ptsl</option>
+                 </select>
+             `;
+         }
+         // 2. JIKA YANG DIEDIT ADALAH HARGA (Hilangkan titik ribuan agar mudah diketik)
+         else if (field === 'hrg_sat' || field === 'harga') {
+            span.innerHTML = `<input type="number" id="input_${field}" value="${nilaiLama.replaceAll(".", "")}" style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc;">`;
+         }
+         // 3. JIKA YANG DIEDIT ADALAH TEKS BIASA (Misal: Pemilik)
+         else {
+            span.innerHTML = `<input type="text" id="input_${field}" value="${nilaiLama === '-' ? '' : nilaiLama}" style="padding:4px; width:160px; border-radius:4px; border:1px solid #ccc;">`;
+         }
+
+         // Ubah tombol Edit menjadi tombol Simpan
          btn.innerText = "💾 Simpan";
-         btn.style.background = "#007bff";
+         btn.style.background = "#28a745";
          btn.style.color = "white";
+
+         // Ubah fungsi tombol saat diklik menjadi simpan
          btn.onclick = function () { simpanTeksSupabase(fid, field); };
       };
 
@@ -1100,7 +1480,7 @@
 
          btn.innerText = "⏳...";
 
-         // Tembak langsung ke Supabase
+         // Tembak langsung ke Supabase (Kirim angka mentahnya)
          const { error } = await supabaseClient
             .from('ONLINE_09_03_2026_2000')
             .update({ [field]: newVal })
@@ -1108,22 +1488,369 @@
 
          if (error) {
             alert("Gagal menyimpan: " + error.message);
-            btn.innerText = "💾 Simpan"; // Kembalikan tombol jika gagal
+            btn.innerText = "💾 Simpan";
          } else {
-            // Sukses! Kembalikan tampilan ke teks biasa
+            // SUKSES! 
             let span = document.getElementById('txt_' + field);
-            span.innerText = newVal;
 
+            // --- SIHIR PEMISAH RIBUAN (TITIK) ---
+            let nilaiTampil = newVal;
+            // Cek apakah kolom yang diedit adalah kolom harga
+            if (field === 'hrg_sat' || field === 'harga' || field === 'luas') {
+               // Pastikan yang diketik benar-benar angka dan tidak kosong
+               if (!isNaN(newVal) && newVal.trim() !== "") {
+                  // Ubah jadi angka murni, bulatkan, lalu pasang titik ala Indonesia
+                  nilaiTampil = Math.round(parseFloat(newVal)).toLocaleString('id-ID');
+               }
+            }
+
+            // Cetak nilai yang sudah diformat ke layar
+            span.innerText = nilaiTampil;
+
+            // Kembalikan tombol ke mode Edit
             btn.innerText = "✏️ Edit";
             btn.style.background = "";
             btn.style.color = "black";
             btn.onclick = function () { modeEditTeks(fid, field); };
 
-            // Update juga data lokal di memori agar jika modal ditutup-buka tidak kembali ke awal
+            // Update data lokal di memori
             let f = window.dataMentahGlobal.find(f => f.properties.fid == fid);
             if (f) f.properties[field] = newVal;
          }
       };
+
+      // ==========================================
+      // --- MESIN PENCARI NIK KE DBKTP ---
+      // ==========================================
+      let targetFidKtp = "";
+      let targetFieldKtp = "";
+
+      window.bukaPencarianNik = function (fid, field) {
+         targetFidKtp = fid;
+         targetFieldKtp = field; // Menyimpan apakah ini untuk 'ktp' atau 'ktpagree'
+         document.getElementById('inputCariKtp').value = "";
+         document.getElementById('hasilCariKtp').innerHTML = `<p style="text-align:center; color:#777;">Ketik NIK atau Nama lalu klik cari...</p>`;
+         document.getElementById('modalCariNik').style.display = 'block';
+         document.getElementById('inputCariKtp').focus();
+
+      }
+
+      window.cariKtpDb = async function () {
+         let keyword = document.getElementById('inputCariKtp').value.trim();
+         let hasilDiv = document.getElementById('hasilCariKtp');
+
+         if (keyword.length < 3) {
+            hasilDiv.innerHTML = `<p style="color:red; text-align:center;">Ketik minimal 3 huruf/angka</p>`;
+            return;
+         }
+
+         hasilDiv.innerHTML = `<p style="text-align:center;">⏳ Mencari ke database...</p>`;
+
+         // Cari di Supabase dbKtp (Mencocokkan nama ATAU NIK)
+         const { data, error } = await supabaseClient
+            .from('dbKtp')
+            .select('*')
+            .or(`nik.ilike.%${keyword}%,nama.ilike.%${keyword}%`);
+
+         if (error) {
+            hasilDiv.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+            return;
+         }
+
+         if (data.length === 0) {
+            // JIKA TIDAK KETEMU: Munculkan tombol Upload KTP ke tab baru
+            hasilDiv.innerHTML = `
+                    <div style="text-align:center; padding:15px;">
+                        <p style="color:red; font-weight:bold;">❌ Data tidak ditemukan.</p>
+                        <button onclick="bukaAppKtpBawaData()" style="padding:6px 12px; background:#28a745; color:white; border:none; border-radius:3px; cursor:pointer; font-size:11px; font-weight:bold;">➕ Upload KTP Baru</button>
+                    </div>
+                `;
+         } else {
+            // JIKA KETEMU: Munculkan daftar orangnya
+            let html = `<table style="width:100%; border-collapse:collapse; font-size:12px; text-align:left;">`;
+            data.forEach(d => {
+               let img = d.file ? `<img src="${d.file}" style="height:40px; border-radius:3px;">` : '-';
+               html += `
+                        <tr style="border-bottom:1px solid #eee;">
+                            <td style="padding:5px;">${img}</td>
+                            <td style="padding:5px;"><b>${d.nama}</b><br>${d.nik}</td>
+                            <td style="padding:5px; text-align:right;">
+                                <button onclick="pakaiNikIni('${d.nik}')" style="padding:5px 10px; background:#17a2b8; color:white; border:none; border-radius:3px; cursor:pointer; font-weight:bold;">✅ Pakai Ini</button>
+                            </td>
+                        </tr>
+                    `;
+            });
+            html += `</table>`;
+            hasilDiv.innerHTML = html;
+         }
+      }
+
+      window.pakaiNikIni = async function (nikTerpilih) {
+         document.getElementById('modalCariNik').style.display = 'none';
+
+         // Simpan NIK tersebut ke tabel Bidang Tanah
+         const { error } = await supabaseClient
+            .from('ONLINE_09_03_2026_2000')
+            .update({ [targetFieldKtp]: nikTerpilih })
+            .eq('fid', targetFidKtp);
+
+         if (error) {
+            alert("Gagal memasangkan NIK: " + error.message);
+         } else {
+            alert("✅ NIK berhasil dipasangkan!\n\nKarena ini melibatkan gabungan dua tabel, silakan Refresh halaman web untuk melihat foto barunya muncul di detail.");
+            // Update memori lokal agar tulisan NIK-nya langsung berubah
+            let f = window.dataMentahGlobal.find(f => f.properties.fid == targetFidKtp);
+            if (f) f.properties[targetFieldKtp] = nikTerpilih;
+            bukaDetail(targetFidKtp);
+         }
+      }
+
+      // ==========================================
+      // --- MESIN PEMUTUS NIK (HAPUS RELASI) ---
+      // ==========================================
+      window.hapusNikBidang = async function (fid, field) {
+         let namaKolom = (field === 'ktp') ? 'KTP Pemilik' : 'KTP Agree';
+
+         let konfirmasi = confirm(`⚠️ Yakin ingin menghapus NIK ${namaKolom} dari bidang ini?\n\n(Tenang saja, data KTP asli di Master dbKtp TIDAK akan terhapus, ini hanya memutus sambungannya saja).`);
+
+         if (!konfirmasi) return;
+
+         // Kosongkan NIK di tabel Peta Supabase
+         const { error } = await supabaseClient
+            .from('ONLINE_09_03_2026_2000')
+            .update({ [field]: null }) // Mengubah nilainya jadi kosong (null)
+            .eq('fid', fid);
+
+         if (error) {
+            alert("❌ Gagal menghapus NIK: " + error.message);
+         } else {
+            // Update data lokal di memori agar langsung hilang dari layar
+            let f = window.dataMentahGlobal.find(f => f.properties.fid == fid);
+            if (f) {
+               f.properties[field] = null;
+
+               // Kita juga harus mengosongkan data tarikan dari dbKtp di memori lokal
+               if (field === 'ktp') {
+                  f.properties.url_foto_ktp = null;
+                  f.properties.nama_sesuai_ktp = null;
+                  f.properties.alamat_sesuai_ktp = null;
+                  f.properties.desa_sesuai_ktp = null;
+                  f.properties.kec_sesuai_ktp = null;
+               } else if (field === 'ktpagree') {
+                  f.properties.url_foto_ktpagree = null;
+                  f.properties.nama_penyetuju = null;
+               }
+            }
+
+            // Refresh jendela pop-up secara otomatis
+            bukaDetail(fid);
+         }
+      }
+      // ==========================================
+      // --- MESIN KALKULATOR MINI ---
+      // ==========================================
+      window.hitungKalkulator = function (fid) {
+         let inputField = document.getElementById('calcInput_' + fid);
+         let resultSpan = document.getElementById('calcResult_' + fid);
+         let ekspresi = inputField.value.trim();
+
+         if (!ekspresi) return;
+
+         try {
+            // Ganti koma menjadi titik (jaga-jaga user ngetik 2,5 bukannya 2.5)
+            let rumusBersih = ekspresi.replace(/,/g, '.');
+
+            // Evaluasi string matematika menjadi angka (cara aman)
+            let hasil = new Function('return ' + rumusBersih)();
+
+            // Cek apakah hasilnya angka valid
+            if (!isNaN(hasil) && hasil !== Infinity) {
+               // Tampilkan dengan format ribuan bergaya Indonesia
+               resultSpan.innerText = '= ' + Math.round(hasil).toLocaleString('id-ID');
+            } else {
+               resultSpan.innerText = '= ❌ Error';
+               resultSpan.style.color = 'red';
+            }
+         } catch (e) {
+            // Jika user mengetik sembarangan (misal: 2*+a)
+            resultSpan.innerText = '= ❌ Error';
+            resultSpan.style.color = 'red';
+         }
+      };
+
+      window.resetKalkulator = function (fid) {
+         document.getElementById('calcInput_' + fid).value = '';
+         let resultSpan = document.getElementById('calcResult_' + fid);
+         resultSpan.innerText = '';
+         resultSpan.style.color = '#28a745'; // kembalikan warna sukses
+      };
+
+      // ==========================================
+      // --- MESIN EDIT KHUSUS HP (Tembus ke dbKtp) ---
+      // ==========================================
+      window.modeEditHp = function (fid, nik) {
+         let span = document.getElementById('txt_hp_pemilik');
+         let btn = document.getElementById('btn_hp_pemilik');
+         let waBtn = document.getElementById('wa_hp_pemilik');
+
+         // Sembunyikan tombol WA saat sedang mode ngetik
+         if (waBtn) waBtn.style.display = 'none';
+
+         let nilaiLama = span.innerText === '-' ? '' : span.innerText;
+
+         // Ubah teks menjadi kotak input
+         span.innerHTML = `<input type="text" id="input_hp_pemilik" value="${nilaiLama}" placeholder="0812..." style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc; font-size:12px;" maxlength="20">`;
+
+         // Ubah tombol Edit menjadi Simpan
+         btn.innerText = "💾 Simpan";
+         btn.style.background = "#28a745";
+         btn.style.color = "white";
+         btn.onclick = function () { simpanHpSupabase(fid, nik); };
+      };
+
+      window.simpanHpSupabase = async function (fid, nik) {
+         let newVal = document.getElementById('input_hp_pemilik').value.trim();
+         let btn = document.getElementById('btn_hp_pemilik');
+         btn.innerText = "⏳...";
+
+         // Tembak langsung ke tabel dbKtp (Bukan tabel Peta!)
+         const { error } = await supabaseClient
+            .from('dbKtp')
+            .update({ hp: newVal })
+            .eq('nik', nik);
+
+         if (error) {
+            alert("❌ Gagal menyimpan No HP: " + error.message);
+            btn.innerText = "💾 Simpan";
+         } else {
+            // Berhasil! Update memori lokal agar tidak perlu refresh halaman web
+            let f = window.dataMentahGlobal.find(feature => feature.properties.fid == fid);
+            if (f) {
+               f.properties.hp_sesuai_ktp = newVal;
+            }
+
+            // Refresh jendela pop-up secara otomatis untuk memunculkan ulang tombol WA
+            bukaDetail(fid);
+         }
+      };
+
+      // ==========================================
+      // --- MESIN MODAL EDIT MASTER KTP DARI PETA ---
+      // ==========================================
+      window.bukaModalEditKtp = async function (nik) {
+         document.getElementById('pesanEdit').innerText = "⏳ Memuat data master...";
+         document.getElementById('pesanEdit').style.color = "blue";
+         document.getElementById('modalEdit').style.display = 'block';
+
+         // Tarik data langsung yang paling segar dari dbKtp
+         let { data, error } = await supabaseClient.from('dbKtp').select('*').eq('nik', nik).single();
+
+         if (error || !data) {
+            document.getElementById('pesanEdit').innerText = "❌ Data tidak ditemukan. Mungkin belum diinput.";
+            document.getElementById('pesanEdit').style.color = "red";
+            return;
+         }
+
+         // Isi form
+         document.getElementById('editNik').value = data.nik;
+         document.getElementById('editNama').value = data.nama || '';
+         document.getElementById('editHp').value = data.hp || '';
+         document.getElementById('editGender').value = data.gender || 'L';
+         document.getElementById('editTglLahir').value = data.tgl_lahir || '';
+         document.getElementById('editAlamat').value = data.alamat || '';
+         document.getElementById('editDesa').value = data.desa || '';
+         document.getElementById('editKecamatan').value = data.kecamatan || '';
+
+         document.getElementById('editFile').value = '';
+         document.getElementById('pesanEdit').innerText = '';
+      }
+
+      window.tutupModalEdit = function () {
+         document.getElementById('modalEdit').style.display = 'none';
+      }
+
+      window.simpanEditKtp = async function () {
+         let nik = document.getElementById('editNik').value;
+         let namaBaru = document.getElementById('editNama').value.trim();
+         let hpBaru = document.getElementById('editHp').value.trim();
+         let genderBaru = document.getElementById('editGender').value;
+         let tglLahirBaru = document.getElementById('editTglLahir').value.trim();
+         let alamatBaru = document.getElementById('editAlamat').value.trim();
+         let desaBaru = document.getElementById('editDesa').value.trim();
+         let kecamatanBaru = document.getElementById('editKecamatan').value.trim();
+
+         let fileInput = document.getElementById('editFile');
+         let pesanDiv = document.getElementById('pesanEdit');
+         let btn = document.getElementById('btnSimpanEdit');
+
+         if (namaBaru === "") { alert("Nama tidak boleh kosong!"); return; }
+
+         pesanDiv.innerText = "⏳ Memproses perubahan...";
+         pesanDiv.style.color = "blue";
+         btn.disabled = true;
+
+         let dataUpdate = {
+            nama: namaBaru, hp: hpBaru, gender: genderBaru,
+            tgl_lahir: tglLahirBaru, alamat: alamatBaru,
+            desa: desaBaru, kecamatan: kecamatanBaru
+         };
+
+         if (fileInput.files.length > 0) {
+            pesanDiv.innerText = "⏳ Mengunggah foto baru...";
+            let fileFoto = fileInput.files[0];
+            let namaFileUnik = `KTP_${nik}_${Date.now()}.jpg`;
+
+            const { error: uploadErr } = await supabaseClient.storage.from('ktp').upload(namaFileUnik, fileFoto, { cacheControl: '3600', upsert: false });
+
+            if (uploadErr) {
+               pesanDiv.innerText = "❌ Gagal Upload: " + uploadErr.message;
+               pesanDiv.style.color = "red";
+               btn.disabled = false; return;
+            }
+
+            const { data: urlData } = supabaseClient.storage.from('ktp').getPublicUrl(namaFileUnik);
+            dataUpdate.foto_ktp = urlData.publicUrl;
+         }
+
+         pesanDiv.innerText = "💾 Menyimpan ke database master...";
+         const { error: dbErr } = await supabaseClient.from('dbKtp').update(dataUpdate).eq('nik', nik);
+
+         if (dbErr) {
+            pesanDiv.innerText = "❌ Gagal Simpan: " + dbErr.message;
+            pesanDiv.style.color = "red";
+         } else {
+            pesanDiv.innerText = "✅ Berhasil disimpan! Memuat ulang Peta...";
+            pesanDiv.style.color = "green";
+
+            // Refresh halaman untuk menarik data Master yang baru ke layar Peta
+            setTimeout(() => {
+               location.reload();
+            }, 1500);
+         }
+         btn.disabled = false;
+      }
+
+      // ==========================================
+      // --- MESIN PELONTAR DATA KE APP KTP ---
+      // ==========================================
+      window.bukaAppKtpBawaData = function () {
+         // Ambil apa yang sedang diketik admin di kotak pencarian
+         let keyword = document.getElementById('inputCariKtp').value.trim();
+         let url = 'app_ktp.html';
+
+         if (keyword !== '') {
+            // Cek apakah isinya angka semua? (Jika ya, berarti NIK)
+            if (/^\d+$/.test(keyword)) {
+               url += '?nik=' + encodeURIComponent(keyword);
+            }
+            // Jika mengandung huruf (berarti cari pakai Nama)
+            else {
+               url += '?nama=' + encodeURIComponent(keyword);
+            }
+         }
+         // Buka tab baru dengan URL yang sudah disuntik data
+         window.open(url, '_blank');
+      }
    </script>
 </body>
 

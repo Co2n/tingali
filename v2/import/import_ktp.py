@@ -5,8 +5,8 @@ from datetime import datetime
 from supabase import create_client, Client
 
 # 1. KREDENSIAL SUPABASE
-url = "MASUKKAN_PROJECT_URL_SUPABASE_ANDA"
-key = "MASUKKAN_SERVICE_ROLE_KEY_ANDA"
+url = "https://ftlzqrwrlivgszomwhhb.supabase.co"
+key = "aeyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ0bHpxcndybGl2Z3N6b213aGhiIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzA0NzgwMywiZXhwIjoyMDg4NjIzODAzfQ._cpBfS42rnPzdI0eRQfYU2KzCG4h2uepEv095gIyS7E"
 supabase: Client = create_client(url, key)
 
 nama_tabel = "dbKtp"
@@ -17,7 +17,7 @@ print(f"Membaca file {file_csv}...\n")
 
 try:
     with open(file_csv, mode='r', encoding='utf-8-sig') as f:
-        reader = csv.DictReader(f)
+        reader = csv.DictReader(f, delimiter=';')
         
         for row in reader:
             nik = row['nik']
