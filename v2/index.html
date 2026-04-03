@@ -4,7 +4,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title>WebGIS Peta Wetan Bersih</title>
+   <title>WebGIS Peta Pembebasan</title>
 
    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -1442,12 +1442,10 @@
          let btn = document.getElementById('btn_' + field);
          let nilaiLama = span.innerText;
 
-         // 1. JIKA YANG DIEDIT ADALAH 'PENGALI' (Munculkan Dropdown Select)
+         // 1. JIKA YANG DIEDIT ADALAH 'PENGALI'
          if (field === 'pengali') {
-            // Cek nilai lama untuk menentukan mana yang 'terpilih' secara default
             let isSppt = (nilaiLama.toLowerCase() === 'sppt') ? 'selected' : '';
             let isPtsl = (nilaiLama.toLowerCase() === 'ptsl') ? 'selected' : '';
-
             span.innerHTML = `
                  <select id="input_${field}" style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc; font-weight:bold;">
                      <option value="sppt" ${isSppt}>sppt</option>
@@ -1455,32 +1453,53 @@
                  </select>
              `;
          }
-         // 2. JIKA YANG DIEDIT ADALAH HARGA (Hilangkan titik ribuan agar mudah diketik)
-         else if (field === 'hrg_sat' || field === 'harga') {
-            span.innerHTML = `<input type="number" id="input_${field}" value="${nilaiLama.replaceAll(".", "")}" style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc;">`;
+         // 2. JIKA YANG DIEDIT ADALAH ANGKA (Harga atau Luas)
+         else if (field === 'hrg_sat' || field === 'harga' || field === 'luas' || field === 'Luas PTSL') {
+            // Hapus titik agar mudah diedit, dan gunakan type="text" agar bisa ngetik operator (+ - * /)
+            span.innerHTML = `<input type="text" id="input_${field}" value="${nilaiLama.replaceAll(".", "")}" placeholder="Cth: 123+1" style="padding:4px; width:120px; border-radius:4px; border:1px solid #ccc;">`;
          }
-         // 3. JIKA YANG DIEDIT ADALAH TEKS BIASA (Misal: Pemilik)
+         // 3. JIKA YANG DIEDIT ADALAH TEKS BIASA
          else {
             span.innerHTML = `<input type="text" id="input_${field}" value="${nilaiLama === '-' ? '' : nilaiLama}" style="padding:4px; width:160px; border-radius:4px; border:1px solid #ccc;">`;
          }
 
-         // Ubah tombol Edit menjadi tombol Simpan
          btn.innerText = "💾 Simpan";
          btn.style.background = "#28a745";
          btn.style.color = "white";
-
-         // Ubah fungsi tombol saat diklik menjadi simpan
          btn.onclick = function () { simpanTeksSupabase(fid, field); };
       };
 
       // --- FUNGSI MENYIMPAN INPUTAN KE SUPABASE ---
       window.simpanTeksSupabase = async function (fid, field) {
-         let newVal = document.getElementById('input_' + field).value;
+         let newVal = document.getElementById('input_' + field).value.trim();
          let btn = document.getElementById('btn_' + field);
 
          btn.innerText = "⏳...";
 
-         // Tembak langsung ke Supabase (Kirim angka mentahnya)
+         // ==========================================
+         // --- SIHIR KALKULATOR OTOMATIS ---
+         // ==========================================
+         // (Hanya jalan kalau inputannya TIDAK kosong)
+         if (newVal !== "" && (field === 'hrg_sat' || field === 'harga' || field === 'luas' || field === 'Luas PTSL' || field === 'ptsl')) {
+             try {
+                 let rumusBersih = newVal.replace(/,/g, '.');
+                 let hasil = new Function('return ' + rumusBersih)();
+                 
+                 if (!isNaN(hasil) && hasil !== Infinity) {
+                     newVal = hasil; // Timpa dengan hasil hitungan
+                 }
+             } catch (e) {}
+         }
+
+         // ==========================================
+         // --- PENCEGAH ERROR "DOUBLE PRECISION" ---
+         // ==========================================
+         // Jika setelah dicek ternyata kosong, kita jadikan 'null' agar PostgreSQL tidak marah
+         if (newVal === "") {
+             newVal = null;
+         }
+
+         // Tembak langsung ke Supabase
          const { error } = await supabaseClient
             .from('ONLINE_09_03_2026_2000')
             .update({ [field]: newVal })
@@ -1492,28 +1511,24 @@
          } else {
             // SUKSES! 
             let span = document.getElementById('txt_' + field);
+            
+            // Jika nilainya null, tampilkan tanda strip (-) di layar
+            let nilaiTampil = (newVal === null) ? '-' : newVal;
 
-            // --- SIHIR PEMISAH RIBUAN (TITIK) ---
-            let nilaiTampil = newVal;
-            // Cek apakah kolom yang diedit adalah kolom harga
-            if (field === 'hrg_sat' || field === 'harga' || field === 'luas') {
-               // Pastikan yang diketik benar-benar angka dan tidak kosong
-               if (!isNaN(newVal) && newVal.trim() !== "") {
-                  // Ubah jadi angka murni, bulatkan, lalu pasang titik ala Indonesia
+            // Kembalikan format titik ribuan untuk Luas dan Harga (jika tidak null)
+            if (newVal !== null && (field === 'hrg_sat' || field === 'harga' || field === 'luas' || field === 'Luas PTSL' || field === 'ptsl')) {
+               if (!isNaN(newVal) && String(newVal).trim() !== "") {
                   nilaiTampil = Math.round(parseFloat(newVal)).toLocaleString('id-ID');
                }
             }
 
-            // Cetak nilai yang sudah diformat ke layar
             span.innerText = nilaiTampil;
 
-            // Kembalikan tombol ke mode Edit
             btn.innerText = "✏️ Edit";
             btn.style.background = "";
             btn.style.color = "black";
             btn.onclick = function () { modeEditTeks(fid, field); };
 
-            // Update data lokal di memori
             let f = window.dataMentahGlobal.find(f => f.properties.fid == fid);
             if (f) f.properties[field] = newVal;
          }
