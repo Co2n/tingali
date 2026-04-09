@@ -11,7 +11,7 @@ supabase: Client = create_client(url, key)
 
 nama_tabel = "dbKtp"
 nama_bucket = "ktp"
-file_csv = "data_ktp.csv" # Sesuaikan dengan nama file CSV Anda
+file_csv = "data_ktp2.csv" # Sesuaikan dengan nama file CSV Anda
 
 print(f"Membaca file {file_csv}...\n")
 
